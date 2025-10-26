@@ -7,8 +7,9 @@ languageCode = "en-us"
 title = "907.life"
 
 # Pagination
-paginate = 20
-paginatePath = "page"
+[pagination]
+  pagerSize = 20
+  path = "page"
 
 # Permalinks
 [permalinks]

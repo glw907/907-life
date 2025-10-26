@@ -1,0 +1,13 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "907.life",
+  "home_page_url": "https://907.life/",
+  "feed_url": "https://907.life/feed.json",
+  "description": "Practical realities of living without a smartphone — what works, what doesn't, and how to navigate common obstacles.",
+  "authors": [
+    {
+      "name": "Geoff Wright"
+    }
+  ],
+  "items": []
+}

@@ -1,0 +1,28 @@
+{{- $pages := where site.RegularPages "Type" "post" -}}
+{{- $filtered := where $pages "Params.tags" "not in" (slice "also") -}}
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "{{ .Site.Title }}",
+  "home_page_url": "{{ .Site.BaseURL }}",
+  "feed_url": "{{ "feed.json" | absURL }}",
+  "description": "{{ .Site.Params.description }}",
+  "authors": [
+    {
+      "name": "{{ .Site.Params.author }}"
+    }
+  ],
+  "items": [
+    {{- range $index, $page := first 20 $filtered -}}
+    {{- if $index }},{{ end }}
+    {
+      "id": "{{ $page.Permalink }}",
+      "url": "{{ $page.Permalink }}",
+      "title": {{ $page.Title | jsonify }},
+      "content_html": {{ $page.Content | jsonify }},
+      "date_published": "{{ $page.Date.Format "2006-01-02T15:04:05-07:00" }}",
+      {{- if $page.Lastmod }}"date_modified": "{{ $page.Lastmod.Format "2006-01-02T15:04:05-07:00" }}",{{ end }}
+      "tags": {{ $page.Params.categories | jsonify }}
+    }
+    {{- end -}}
+  ]
+}

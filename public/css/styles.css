@@ -1,0 +1,554 @@
+/* ===================================================
+   907.life Stylesheet
+   Clean, focused design for smartphone-free living
+   =================================================== */
+
+/* ===================================================
+   CSS VARIABLES
+   =================================================== */
+
+:root {
+  --color-link: #134d85;
+  --color-link-hover: #123765;
+  --color-text: #3a3a3a;
+  --color-text-light: #666;
+  --color-bg: #fdfcf9;
+  --color-heading-dark: #050505;
+  --color-heading-medium: #0a0a0a;
+  --color-heading-light: #0f0f0f;
+  --color-heading-h4: #1a1a1a;
+  --border-opacity: 0.12;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-link: #8ac1ff;
+    --color-link-hover: #a8d1ff;
+    --color-text: #e6e6e6;
+    --color-text-light: #999;
+    --color-bg: #181818;
+    --color-heading-dark: #f5f5f5;
+    --color-heading-medium: #efefef;
+    --color-heading-light: #e9e9e9;
+    --color-heading-h4: #ccc;
+    --border-opacity: 0.15;
+  }
+}
+
+/* ===================================================
+   FONT STACKS
+   =================================================== */
+
+:root {
+  --font_classical_humanist: Optima, Candara, 'Noto Sans', source-sans-pro, sans-serif;
+  --font_neo-grotesque: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+  --font_monospace_code: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+}
+
+/* ===================================================
+   BASE LAYOUT & TYPOGRAPHY
+   =================================================== */
+
+html {
+  font-size: 16px;
+}
+
+@media (min-width: 48rem) {
+  html {
+    font-size: 17px;
+  }
+}
+
+body {
+  max-width: 40em;
+  margin: 2em auto;
+  padding: 0 1em;
+  font-family: var(--font_classical_humanist);
+  font-size: 1rem;
+  line-height: 1.6;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+header {
+  margin-bottom: 2em;
+}
+
+p {
+  margin: 0 0 1.1em;
+}
+
+strong, b {
+  font-weight: 550;
+}
+
+/* ===================================================
+   HEADING HIERARCHY
+   =================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font_neo-grotesque);
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 2rem 0 0.8rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--color-heading-dark);
+}
+
+h2 {
+  font-size: 1.6rem;
+  line-height: 1.25;
+  margin: 1.8rem 0 0.7rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-heading-medium);
+}
+
+h3 {
+  font-size: 1.3rem;
+  line-height: 1.4;
+  margin: 2rem 0 0.6rem;
+  font-weight: 550;
+  letter-spacing: 0;
+  color: var(--color-heading-light);
+}
+
+h4 {
+  font-size: 1.06rem;
+  font-weight: 575;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  font-variant: small-caps;
+  margin: 1.5rem 0 0;
+  padding-bottom: 0.15rem;
+  border-bottom: 1px solid rgba(0, 0, 0, var(--border-opacity));
+  color: var(--color-heading-h4);
+}
+
+h4 a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+h4 a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+/* Post titles */
+.page h2.p-name,
+.post h2.p-name,
+.archive h2.p-name {
+  font-size: 1.85rem;
+  line-height: 1.2;
+  margin: 2rem 0 1rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--color-heading-dark);
+}
+
+/* Site header */
+.site-header h1 {
+  font-size: 2.2rem;
+  letter-spacing: 0.03em;
+  margin: 0.5rem 0;
+  line-height: 1.1;
+}
+
+.site-header .site-title {
+  color: var(--color-heading-medium);
+  text-decoration: none;
+}
+
+.site-header .site-title:hover {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+.site-number {
+  font-weight: 600;
+  font-size: 1em;
+}
+
+.site-domain {
+  font-weight: 400;
+  font-size: 0.85em;
+}
+
+/* Post date styling */
+.post-date {
+  display: inline-block;
+  margin-bottom: 0.3rem;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+.h-entry h1.p-name,
+.h-entry h2.p-name,
+.h-entry h3.p-name {
+  margin-top: 0.3rem;
+}
+
+/* ===================================================
+   LISTS
+   =================================================== */
+
+ul {
+  list-style-type: none;
+  padding-left: 1.5em;
+}
+
+ul li {
+  position: relative;
+  line-height: 1.5;
+}
+
+ul li::before {
+  content: "–";
+  position: absolute;
+  margin-left: -1.5em;
+  color: var(--color-text-light);
+}
+
+ol li {
+  line-height: 1.5;
+}
+
+/* Remove bullets from navigation */
+nav ul li::before {
+  content: none;
+}
+
+/* Archive category lists */
+.archive-categories ul {
+  padding-left: 0;
+}
+
+.archive-categories ul li::before {
+  content: none;
+}
+
+/* ===================================================
+   CATEGORY/TAG LISTS
+   =================================================== */
+
+.post-tags {
+  padding-left: 0;
+}
+
+.post-tags li::before {
+  content: none;
+}
+
+.post-tags::before {
+  content: "Categories: ";
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  font-style: italic;
+  margin-right: 0.3em;
+}
+
+.post-tags li {
+  display: inline;
+}
+
+.post-tags li:not(:last-child)::after {
+  content: " | ";
+  color: var(--color-text-light);
+  margin: 0 0.2em;
+}
+
+.post-tags a {
+  text-decoration-color: rgba(19, 77, 133, 0.5);
+}
+
+.post-tags a:hover {
+  text-decoration-color: rgba(18, 55, 101, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  .post-tags a {
+    text-decoration-color: rgba(138, 193, 255, 0.5);
+  }
+
+  .post-tags a:hover {
+    text-decoration-color: rgba(168, 209, 255, 0.8);
+  }
+}
+
+/* ===================================================
+   LINKS
+   =================================================== */
+
+a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+a:visited {
+  color: var(--color-link);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+a:focus,
+h4 a:focus {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+/* ===================================================
+   MEDIA ELEMENTS
+   =================================================== */
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+figure {
+  margin: 1.25rem 0;
+}
+
+figcaption {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+blockquote {
+  border-left: 3px solid currentColor;
+  padding: 0.6rem 1rem;
+  margin: 1.2rem 0;
+}
+
+/* ===================================================
+   CODE
+   =================================================== */
+
+code {
+  font-family: var(--font_monospace_code);
+}
+
+p > code,
+li > code {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 2px 4px;
+  font-size: 0.9em;
+  border-radius: 5px;
+}
+
+pre code {
+  display: block;
+  padding: 0.8rem;
+  overflow-x: auto;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  p > code,
+  li > code {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  pre code {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* ===================================================
+   TABLES
+   =================================================== */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+th, td {
+  border: 1px solid rgba(0, 0, 0, var(--border-opacity));
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+}
+
+thead th {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  thead th {
+    background: rgba(255, 255, 255, 0.07);
+  }
+}
+
+/* ===================================================
+   FOOTER
+   =================================================== */
+
+.page-footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: rgba(26, 26, 26, 0.6);
+}
+
+.page-footer.is-post {
+  border-top: 1px solid rgba(0, 0, 0, var(--border-opacity));
+}
+
+.footer-links {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 1.25rem;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: inherit;
+  padding: 0.25em 0.4em;
+}
+
+.footer-links a:hover,
+.footer-links a:active {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.footer-links i {
+  margin-right: 0.15em;
+  vertical-align: -0.05em;
+  opacity: 0.75;
+}
+
+.footer-links a + a {
+  margin-left: 0.8em;
+}
+
+@media (prefers-color-scheme: dark) {
+  .page-footer {
+    color: rgba(230, 230, 230, 0.55);
+  }
+
+  .footer-links {
+    opacity: 0.75;
+  }
+}
+
+/* ===================================================
+   FONT AWESOME ICONS
+   =================================================== */
+
+.fa-solid, .fa-regular {
+  margin-right: 0.4em;
+  color: inherit;
+  opacity: 0.7;
+  vertical-align: middle;
+}
+
+h2 .fa-solid {
+  font-size: 0.75em;
+  margin-right: 0.5em;
+  opacity: 0.7;
+}
+
+h4 .fa-solid {
+  font-size: 0.9em;
+  margin-right: 0.4em;
+  opacity: 0.7;
+}
+
+nav .fa-solid,
+nav .fa-regular {
+  font-size: 0.75em;
+  margin-right: 0.4em;
+  opacity: 0.55;
+  vertical-align: 0.05em;
+}
+
+.post-date .fa-regular {
+  font-size: 0.9em;
+  margin-right: 0.3em;
+  opacity: 0.7;
+}
+
+.full-archives .fa-asterisk,
+.full-archives .fa-phone-slash {
+  font-size: 0.75em;
+  margin-right: 0.3em;
+  opacity: 0.7;
+  color: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .fa-solid, .fa-regular {
+    opacity: 0.6;
+  }
+
+  h2 .fa-solid {
+    opacity: 0.6;
+  }
+
+  h4 .fa-solid {
+    opacity: 0.6;
+  }
+
+  nav .fa-solid,
+  nav .fa-regular {
+    opacity: 0.45;
+  }
+
+  .post-date .fa-regular {
+    opacity: 0.6;
+  }
+
+  .full-archives .fa-asterisk,
+  .full-archives .fa-phone-slash {
+    opacity: 0.5;
+  }
+}
+
+/* ===================================================
+   PRINT STYLES
+   =================================================== */
+
+@media print {
+  body {
+    background-color: white;
+    color: black;
+    font-size: 12pt;
+  }
+
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+
+  .site-header,
+  .page-footer,
+  nav {
+    display: none;
+  }
+
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+  }
+
+  img {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+}
