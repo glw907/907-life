@@ -24,8 +24,8 @@
              Older posts accessible via full archive. */}}
         {{ range first 15 $also }}
           <div class="post-preview h-entry">
-            {{/* Display post date using custom byline partial */}}
-            {{ partial "microhook-post-list-byline.html" . }}
+            {{/* Display post date */}}
+            {{ partial "post-date.html" . }}
 
             {{/* Display logic: same as homepage - titled posts can show excerpt */}}
             {{ if .Title }}

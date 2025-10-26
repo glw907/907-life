@@ -1,6 +1,10 @@
 /* ===================================================
+   907.life Stylesheet
+   Clean, focused design for smartphone-free living
+   =================================================== */
+
+/* ===================================================
    CSS VARIABLES
-   Centralized color values for easier maintenance
    =================================================== */
 
 :root {
@@ -32,45 +36,59 @@
 }
 
 /* ===================================================
-   TYPOGRAPHY + PALETTE
-   Body: humanist text for long reads
-   Headings: neo-grotesque for contrast
-   Palette: warm cream with dark text
+   FONT STACKS
    =================================================== */
 
+:root {
+  --font_classical_humanist: Optima, Candara, 'Noto Sans', source-sans-pro, sans-serif;
+  --font_neo-grotesque: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+  --font_monospace_code: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+}
+
+/* ===================================================
+   BASE LAYOUT & TYPOGRAPHY
+   =================================================== */
+
+html {
+  font-size: 16px;
+}
+
+@media (min-width: 48rem) {
+  html {
+    font-size: 17px;
+  }
+}
+
 body {
+  max-width: 40em;
+  margin: 2em auto;
+  padding: 0 1em;
   font-family: var(--font_classical_humanist);
+  font-size: 1rem;
+  line-height: 1.6;
   background-color: var(--color-bg);
   color: var(--color-text);
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font_neo-grotesque);
+header {
+  margin-bottom: 2em;
+}
+
+p {
+  margin: 0 0 1.1em;
+}
+
+strong, b {
+  font-weight: 550;
 }
 
 /* ===================================================
-   BASE SIZE + VERTICAL RHYTHM
-   Root font size: 16px, 17px on wider screens
-   Body font-size set to 1rem to override Tiny's 18px
-   Body line-height for reading comfort
-   Paragraphs get modest bottom margin
-   =================================================== */
-
-html { font-size: 16px; }
-body { font-size: 1rem; } /* Override Tiny's 18px base */
-@media (min-width: 48rem) { html { font-size: 17px; } }
-
-body { line-height: 1.6; }
-p { margin: 0 0 1.1em; }
-
-/* ===================================================
    HEADING HIERARCHY
-   H1–H4 sizing and spacing for posts and pages
-   - Post titles (h2.p-name) enlarged and bolded
-   - Header title tuned for compact branding
-   - h4 uses small caps with bottom rule
-   - Reduces spacing between post date and title
    =================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font_neo-grotesque);
+}
 
 h1 {
   font-size: 2rem;
@@ -99,6 +117,29 @@ h3 {
   color: var(--color-heading-light);
 }
 
+h4 {
+  font-size: 1.06rem;
+  font-weight: 575;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  font-variant: small-caps;
+  margin: 1.5rem 0 0;
+  padding-bottom: 0.15rem;
+  border-bottom: 1px solid rgba(0, 0, 0, var(--border-opacity));
+  color: var(--color-heading-h4);
+}
+
+h4 a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+h4 a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+/* Post titles */
 .page h2.p-name,
 .post h2.p-name,
 .archive h2.p-name {
@@ -110,6 +151,7 @@ h3 {
   color: var(--color-heading-dark);
 }
 
+/* Site header */
 .site-header h1 {
   font-size: 2.2rem;
   letter-spacing: 0.03em;
@@ -137,28 +179,7 @@ h3 {
   font-size: 0.85em;
 }
 
-h4 {
-  font-size: 1.06rem;
-  font-weight: 575;
-  line-height: 1.4;
-  letter-spacing: 0.02em;
-  font-variant: small-caps;
-  margin: 1.5rem 0 0;
-  padding-bottom: 0.15rem;
-  border-bottom: 1px solid rgba(0, 0, 0, var(--border-opacity));
-  color: var(--color-heading-h4);
-}
-
-h4 a {
-  color: var(--color-link);
-  text-decoration: none;
-}
-
-h4 a:hover {
-  color: var(--color-link-hover);
-  text-decoration: underline;
-}
-
+/* Post date styling */
 .post-date {
   display: inline-block;
   margin-bottom: 0.3rem;
@@ -173,18 +194,7 @@ h4 a:hover {
 }
 
 /* ===================================================
-   INLINE TEXT STYLES
-   Strong and b elements use a mid-heavy weight
-   Keeps emphasis visible without harsh bold
-   =================================================== */
-
-strong, b { font-weight: 550; }
-
-/* ===================================================
    LISTS
-   Unordered lists use en dash bullets
-   Nav and archive lists remove custom bullets
-   Consistent line-height for list items
    =================================================== */
 
 ul {
@@ -197,8 +207,6 @@ ul li {
   line-height: 1.5;
 }
 
-ol li { line-height: 1.5; }
-
 ul li::before {
   content: "–";
   position: absolute;
@@ -206,22 +214,35 @@ ul li::before {
   color: var(--color-text-light);
 }
 
-nav ul li::before { content: none; }
+ol li {
+  line-height: 1.5;
+}
 
-.archive-categories ul { padding-left: 0; }
+/* Remove bullets from navigation */
+nav ul li::before {
+  content: none;
+}
 
-.archive-categories ul li::before { content: none; }
+/* Archive category lists */
+.archive-categories ul {
+  padding-left: 0;
+}
+
+.archive-categories ul li::before {
+  content: none;
+}
 
 /* ===================================================
-   CATEGORY AND TAG LISTS
-   Inline category list with pipe separators
-   Prefix label added via ::before
-   Link underline color softened
+   CATEGORY/TAG LISTS
    =================================================== */
 
-.post-tags { padding-left: 0; }
+.post-tags {
+  padding-left: 0;
+}
 
-.post-tags li::before { content: none; }
+.post-tags li::before {
+  content: none;
+}
 
 .post-tags::before {
   content: "Categories: ";
@@ -231,7 +252,9 @@ nav ul li::before { content: none; }
   margin-right: 0.3em;
 }
 
-.post-tags li { display: inline; }
+.post-tags li {
+  display: inline;
+}
 
 .post-tags li:not(:last-child)::after {
   content: " | ";
@@ -259,10 +282,6 @@ nav ul li::before { content: none; }
 
 /* ===================================================
    LINKS
-   Underlines offset for readability
-   Hover darkens color but keeps underline
-   Visited color matches to reduce surprise
-   Focus states for keyboard accessibility
    =================================================== */
 
 a {
@@ -289,9 +308,6 @@ h4 a:focus {
 
 /* ===================================================
    MEDIA ELEMENTS
-   Images are fluid with soft corners
-   Figures get margin and readable captions
-   Blockquotes use a simple left rule
    =================================================== */
 
 img {
@@ -300,7 +316,9 @@ img {
   border-radius: 4px;
 }
 
-figure { margin: 1.25rem 0; }
+figure {
+  margin: 1.25rem 0;
+}
 
 figcaption {
   font-size: 0.9rem;
@@ -314,15 +332,11 @@ blockquote {
 }
 
 /* ===================================================
-   CODE AND TABLES
-   Code uses system monospace fallbacks
-   Inline code (p>code, li>code) matches pre code background
-   Pre blocks scroll horizontally when needed
-   Tables are compact and full width
+   CODE
    =================================================== */
 
 code {
-  font-family: var(--font_monospace_code, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-family: var(--font_monospace_code);
 }
 
 p > code,
@@ -341,6 +355,21 @@ pre code {
   background: rgba(0, 0, 0, 0.04);
 }
 
+@media (prefers-color-scheme: dark) {
+  p > code,
+  li > code {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  pre code {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* ===================================================
+   TABLES
+   =================================================== */
+
 table {
   border-collapse: collapse;
   width: 100%;
@@ -358,15 +387,6 @@ thead th {
 }
 
 @media (prefers-color-scheme: dark) {
-  p > code,
-  li > code {
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  pre code {
-    background: rgba(255, 255, 255, 0.06);
-  }
-
   thead th {
     background: rgba(255, 255, 255, 0.07);
   }
@@ -374,9 +394,6 @@ thead th {
 
 /* ===================================================
    FOOTER
-   Unified footer: post text + Contact/RSS/JSON links
-   Small italic type with muted color
-   Centered text with relaxed leading
    =================================================== */
 
 .page-footer {
@@ -433,10 +450,6 @@ thead th {
 
 /* ===================================================
    FONT AWESOME ICONS
-   Icons inherit color and use modest opacity
-   Sizes and margins tuned by context
-   Nav icons intentionally lighter (0.55/0.45)
-   Archive utility icons kept compact
    =================================================== */
 
 .fa-solid, .fa-regular {
@@ -462,8 +475,8 @@ nav .fa-solid,
 nav .fa-regular {
   font-size: 0.75em;
   margin-right: 0.4em;
-  opacity: 0.55; /* Intentionally lighter */
-  vertical-align: 0.05em; /* Center smaller icons with nav text */
+  opacity: 0.55;
+  vertical-align: 0.05em;
 }
 
 .post-date .fa-regular {
@@ -495,7 +508,7 @@ nav .fa-regular {
 
   nav .fa-solid,
   nav .fa-regular {
-    opacity: 0.45; /* Intentionally lighter */
+    opacity: 0.45;
   }
 
   .post-date .fa-regular {
@@ -510,8 +523,6 @@ nav .fa-regular {
 
 /* ===================================================
    PRINT STYLES
-   Clean layout for printed articles
-   Hides navigation and non-content elements
    =================================================== */
 
 @media print {
