@@ -1,0 +1,67 @@
+{{/*
+  Template: /layouts/also/list.html
+  Purpose: Displays recent personal writing from the "also" section.
+
+  Shows 15 most recent posts to keep page focused on recent work.
+  Links to full archive for older posts. This is the landing page for
+  all personal content (Alaska adventures, recipes, etc.) that doesn't
+  fit the smartphone-free living theme.
+*/}}
+
+{{ define "main" }}
+<div class="archive">
+  <h2 class="p-name">Also</h2>
+  <p><em>This page contains all my various "non-dumbphone" writing topics including Alaska adventures, philosophical musings, reviews, recipes, and whatever else comes to mind.</em></p>
+
+  {{/* Get all posts tagged "also" - intersect ensures we match the tag */}}
+  {{ $all := where site.RegularPages.ByDate.Reverse "Type" "post" }}
+  {{ $also := where $all "Params.tags" "intersect" (slice "also") }}
+
+  {{ if gt (len $also) 0 }}
+    <div class="posts h-feed">
+      <div class="post_list" role="main">
+        {{/* Limit to 15 posts to avoid overwhelming the page.
+             Older posts accessible via full archive. */}}
+        {{ range first 15 $also }}
+          <div class="post-preview h-entry">
+            {{/* Display post date using custom byline partial */}}
+            {{ partial "microhook-post-list-byline.html" . }}
+
+            {{/* Display logic: same as homepage - titled posts can show excerpt */}}
+            {{ if .Title }}
+              <h3 class="post-title p-name"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+              {{ if in .RawContent "<!--more-->" }}
+                <div class="p-summary">
+                  {{/* Extract content before <!--more--> and strip footnote references */}}
+                  {{ $split := split .RawContent "<!--more-->" }}
+                  {{ $summary := index $split 0 | replaceRE "\\[\\^.*?\\]" "" | replaceRE "\\n\\[\\^.*?\\]:.*" "" }}
+                  {{ $summary | markdownify }}
+                  <p><a class="read-more" href="{{ .Permalink }}">Continue reading →</a></p>
+                </div>
+              {{ else if .Params.custom_summary }}
+                <div class="p-summary"><p>{{ .Summary | safeHTML }}</p></div>
+              {{ else }}
+                <div class="e-content">{{ .Content }}</div>
+              {{ end }}
+            {{ else }}
+              {{/* Untitled posts show full content (microblog style) */}}
+              <div class="e-content">{{ .Content }}</div>
+            {{ end }}
+          </div>
+        {{ end }}
+
+        <p style="margin-top:2rem;font-style:italic;">
+          Showing the 15 most recent posts. For older posts, visit the <a href="/archive/">archive</a>.
+        </p>
+      </div>
+    </div>
+  {{ else }}
+    {{/* Empty state - should rarely happen */}}
+    <div class="posts h-feed">
+      <div class="post_list" role="main">
+        <p>There are no posts in the <em>also</em> category.</p>
+      </div>
+    </div>
+  {{ end }}
+</div>
+{{ end }}

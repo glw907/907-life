@@ -1,0 +1,78 @@
+{{/*
+  Template: /layouts/index.html
+  Purpose: Homepage that displays smartphone-free living content only.
+
+  Filters out posts tagged "also" to keep homepage focused on main content.
+  Personal writing appears in /also/ section instead.
+*/}}
+
+{{ define "main" }}
+  {{/* Get all posts, sorted newest first */}}
+  {{ $posts := where .Site.RegularPages "Type" "post" }}
+  {{ $sorted := $posts.ByDate.Reverse }}
+
+  {{/* Filter out "also" tag to separate personal writing from main content.
+       This keeps the homepage focused on smartphone-free living topics. */}}
+  {{ $noAlso := slice }}
+  {{ range $sorted }}
+    {{ if not (in .Params.tags "also") }}
+      {{ $noAlso = $noAlso | append . }}
+    {{ end }}
+  {{ end }}
+
+  {{ if gt (len $noAlso) 0 }}
+  <div class="posts h-feed">
+    <div class="post_list" role="main">
+      {{ $paginator := .Paginate $noAlso }}
+      {{ range $paginator.Pages }}
+      <div class="post-preview h-entry">
+        {{/* Display post date using custom byline partial */}}
+        {{ partial "microhook-post-list-byline.html" . }}
+
+        {{/* Display logic: titled posts show title + summary, untitled show full content */}}
+        {{ if .Title }}
+          <h2 class="post-title p-name"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+          {{/* Check for <!--more--> tag to show excerpt with "Read More" link */}}
+          {{ if in .RawContent "<!--more-->" }}
+            <div class="p-summary">
+              {{/* Extract content before <!--more--> and strip footnote references */}}
+              {{ $split := split .RawContent "<!--more-->" }}
+              {{ $summary := index $split 0 | replaceRE "\\[\\^.*?\\]" "" | replaceRE "\\n\\[\\^.*?\\]:.*" "" }}
+              {{ $summary | markdownify }}
+              <p><a class="read-more" href="{{ .Permalink }}">Continue reading →</a></p>
+            </div>
+          {{ else if .Params.custom_summary }}
+            {{/* Use custom summary if specified in front matter */}}
+            <div class="p-summary"><p>{{ .Summary | safeHTML }}</p></div>
+          {{ else }}
+            {{/* No <!--more--> tag, show full content */}}
+            <div class="e-content">{{ .Content }}</div>
+          {{ end }}
+        {{ else }}
+          {{/* Untitled posts (microblog style) show full content */}}
+          <div class="e-content">{{ .Content }}</div>
+        {{ end }}
+      </div>
+      {{ end }}
+    </div>
+  </div>
+
+  {{/* Pagination navigation */}}
+  <div class="post-nav">
+    {{ if .Paginator.HasPrev }}
+      <span class="prev"><a href="{{ .Paginator.Prev.URL }}"><span class="arrow">← Newer Posts</span></a></span>
+    {{ end }}
+    {{ if .Paginator.HasNext }}
+      <span class="next"><a href="{{ .Paginator.Next.URL }}"><span class="arrow">Older Posts →</span></a></span>
+    {{ end }}
+  </div>
+
+  {{ else }}
+  {{/* Empty state when no posts exist (should rarely happen) */}}
+  <div class="posts h-feed">
+    <div class="post_list" role="main">
+      <p>There are no smartphone-free life posts yet.</p>
+    </div>
+  </div>
+  {{ end }}
+{{ end }}

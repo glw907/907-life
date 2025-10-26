@@ -1,0 +1,102 @@
+{{/*
+  Template: /layouts/guides/list.html
+  Purpose: Auto-filtered subcategory pages (Tier 2 of two-tier architecture)
+
+  TWO-TIER ARCHITECTURE:
+  This template is part of a two-tier design pattern:
+
+  Tier 1 (section.html):
+  - Used for top-level editorial hub: /guides/
+  - Displays manually curated content explaining philosophy and linking to subcategories
+
+  Tier 2 (THIS FILE - list.html):
+  - Used for auto-filtered subcategory pages: /guides/parenting/, /guides/philosophy/
+  - Automatically displays posts tagged with both "guides" AND specific topic
+  - Extracts category from URL path (e.g., /guides/parenting/ → "parenting")
+  - Maps category to appropriate icon and display title
+  - No manual maintenance needed when adding posts
+
+  Hugo determines which template to use based on URL depth:
+  - /guides/ → section.html
+  - /guides/{topic}/ → list.html (this file)
+
+  TAGGING REQUIREMENT:
+  Posts must be tagged with "guides" tag AND categorized with the specific topic:
+  tags:
+  - guides
+  categories:
+  - parenting
+
+  Example URLs: /guides/dumbphones/, /guides/parenting/, /guides/philosophy/
+*/}}
+
+{{ define "main" }}
+<div class="archive">
+  {{/* Extract category from URL path: /guides/{category}/ */}}
+  {{ $segments := split .RelPermalink "/" }}
+  {{ $cat := index $segments 2 }}
+
+  {{/* Map each category to appropriate icon and display title.
+       Icons provide visual distinction and reinforce topic at a glance. */}}
+  {{ $guideCat := "" }}
+  {{ $icon := "" }}
+  {{ if eq $cat "dumbphones" }}
+    {{ $guideCat = "Dumbphone Guides" }}
+    {{ $icon = "fa-solid fa-phone" }}
+  {{ else if eq $cat "companion-devices" }}
+    {{ $guideCat = "Companion Device Guides" }}
+    {{ $icon = "fa-laptop" }}
+  {{ else if eq $cat "auxiliary-devices" }}
+    {{ $guideCat = "Auxiliary Device Guides" }}
+    {{ $icon = "fa-solid fa-screwdriver-wrench" }}
+  {{ else if eq $cat "analog-tools" }}
+    {{ $guideCat = "Analog Tools Guides" }}
+    {{ $icon = "fa-solid fa-book-open" }}
+  {{ else if eq $cat "software" }}
+    {{ $guideCat = "Software Guides" }}
+    {{ $icon = "fa-code" }}
+  {{ else if eq $cat "parenting" }}
+    {{ $guideCat = "Parenting Guides" }}
+    {{ $icon = "fa-solid fa-children" }}
+  {{ else if eq $cat "philosophy" }}
+    {{ $guideCat = "Philosophy Guides" }}
+    {{ $icon = "fa-solid fa-book" }}
+  {{ else if eq $cat "research" }}
+    {{ $guideCat = "Research Guides" }}
+    {{ $icon = "fa-solid fa-flask" }}
+  {{ else if eq $cat "social-friction" }}
+    {{ $guideCat = "Social Friction Guides" }}
+    {{ $icon = "fa-solid fa-users" }}
+  {{ else if eq $cat "success-stories" }}
+    {{ $guideCat = "Success Stories" }}
+    {{ $icon = "fa-solid fa-star" }}
+  {{ else if eq $cat "workarounds" }}
+    {{ $guideCat = "Workarounds" }}
+    {{ $icon = "fa-solid fa-wrench" }}
+  {{ end }}
+
+  <h2 class="p-name"><i class="fa-solid {{ $icon }}"></i>{{ $guideCat }}</h2>
+
+  {{/* Filter posts by category using intersect to match any post with this tag.
+       Posts must be tagged with BOTH "guides" AND the specific category. */}}
+  {{ $all := .Site.RegularPages }}
+  {{ $list := where $all "Params.categories" "intersect" (slice $cat) }}
+
+  {{ if gt (len $list) 0 }}
+    <div class="posts h-feed">
+      {{ range $list }}
+        <div class="post-preview h-entry">
+          <a href="{{ .Permalink }}" class="post-date u-url">
+            <i class="fa-regular fa-calendar"></i>
+            <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+          </a>
+          <h3 class="post-title p-name"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+          <div class="p-summary">{{ .Summary }}</div>
+        </div>
+      {{ end }}
+    </div>
+  {{ else }}
+    <p>No posts found in this category.</p>
+  {{ end }}
+</div>
+{{ end }}

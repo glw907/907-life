@@ -1,0 +1,35 @@
+{{/*
+  Template: /layouts/reviews/section.html
+  Purpose: Editorial hub page for /reviews/ section (Tier 1 of two-tier architecture)
+
+  TWO-TIER ARCHITECTURE:
+  This template is part of a two-tier design pattern:
+
+  Tier 1 (THIS FILE - section.html):
+  - Used for top-level editorial hub: /reviews/
+  - Displays manually curated content from _index.md
+  - Allows explaining review methodology, setting standards, linking to categories
+  - Full editorial control over messaging and organization
+  - Content written via Micro.blog web interface
+
+  Tier 2 (list.html):
+  - Used for auto-filtered subcategory pages: /reviews/dumbphones/, /reviews/software/
+  - Automatically displays posts tagged with both "reviews" AND device type
+  - No manual maintenance needed when adding posts
+
+  Hugo determines which template to use based on URL depth:
+  - /reviews/ → section.html (this file)
+  - /reviews/{device-type}/ → list.html
+
+  This separation provides editorial control at top level while automating
+  the display of filtered posts at the category level.
+*/}}
+
+{{ define "main" }}
+<div class="archive">
+  <h2>{{ .Title }}</h2>
+  <div class="page-content">
+    {{ .Content }}
+  </div>
+</div>
+{{ end }}

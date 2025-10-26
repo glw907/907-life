@@ -1,0 +1,35 @@
+{{/*
+  Template: /layouts/guides/section.html
+  Purpose: Editorial hub page for /guides/ section (Tier 1 of two-tier architecture)
+
+  TWO-TIER ARCHITECTURE:
+  This template is part of a two-tier design pattern:
+
+  Tier 1 (THIS FILE - section.html):
+  - Used for top-level editorial hub: /guides/
+  - Displays manually curated content from _index.md
+  - Allows explaining philosophy, providing context, linking to subcategories
+  - Full editorial control over messaging and organization
+  - Content written via Micro.blog web interface
+
+  Tier 2 (list.html):
+  - Used for auto-filtered subcategory pages: /guides/parenting/, /guides/philosophy/
+  - Automatically displays posts tagged with both "guides" AND subcategory
+  - No manual maintenance needed when adding posts
+
+  Hugo determines which template to use based on URL depth:
+  - /guides/ → section.html (this file)
+  - /guides/{subcategory}/ → list.html
+
+  This separation provides editorial control at top level while automating
+  the display of filtered posts at the category level.
+*/}}
+
+{{ define "main" }}
+<div class="archive">
+  <h2>{{ .Title }}</h2>
+  <div class="page-content">
+    {{ .Content }}
+  </div>
+</div>
+{{ end }}

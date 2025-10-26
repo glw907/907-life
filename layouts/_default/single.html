@@ -1,0 +1,39 @@
+{{/*
+  Template: /layouts/_default/single.html
+  Purpose: Individual post/page display.
+*/}}
+
+{{ define "main" }}
+<div class="page h-entry">
+  {{- /* Post date for posts */ -}}
+  {{ if eq .Type "post" }}
+    <p class="post-date">
+      <a href="{{ .Permalink }}" class="u-url">
+        <i class="fa-regular fa-calendar"></i>
+        <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
+          {{ .Date.Format "January 2, 2006" }}
+        </time>
+      </a>
+    </p>
+  {{ end }}
+
+  {{- /* Post/page title */ -}}
+  {{ if .Title }}
+    <h2 class="p-name">{{ .Title }}</h2>
+  {{ end }}
+
+  {{- /* Post content */ -}}
+  <article class="post-content e-content">
+    {{ .Content }}
+  </article>
+
+  {{- /* Category tags for posts */ -}}
+  {{ if and (eq .Type "post") .Params.categories }}
+    <ul class="post-tags">
+      {{ range .Params.categories }}
+        <li><a href="{{ "/categories/" | relURL }}{{ . | urlize }}">{{ . }}</a></li>
+      {{ end }}
+    </ul>
+  {{ end }}
+</div>
+{{ end }}

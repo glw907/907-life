@@ -1,0 +1,84 @@
+{{/*
+  Template: /layouts/reviews/list.html
+  Purpose: Auto-filtered subcategory pages (Tier 2 of two-tier architecture)
+
+  TWO-TIER ARCHITECTURE:
+  This template is part of a two-tier design pattern:
+
+  Tier 1 (section.html):
+  - Used for top-level editorial hub: /reviews/
+  - Displays manually curated content explaining review methodology and standards
+
+  Tier 2 (THIS FILE - list.html):
+  - Used for auto-filtered subcategory pages: /reviews/dumbphones/, /reviews/software/
+  - Automatically displays posts tagged with both "reviews" AND specific device type
+  - Extracts category from URL path (e.g., /reviews/dumbphones/ → "dumbphones")
+  - Maps category to appropriate icon and display title
+  - No manual maintenance needed when adding posts
+
+  Hugo determines which template to use based on URL depth:
+  - /reviews/ → section.html
+  - /reviews/{device-type}/ → list.html (this file)
+
+  TAGGING REQUIREMENT:
+  Posts must be tagged with "reviews" tag AND categorized with the specific device type:
+  tags:
+  - reviews
+  categories:
+  - dumbphones
+
+  Example URLs: /reviews/dumbphones/, /reviews/companion-devices/, /reviews/software/
+*/}}
+
+{{ define "main" }}
+<div class="archive">
+  {{/* Extract category from URL path: /reviews/{category}/ */}}
+  {{ $segments := split .RelPermalink "/" }}
+  {{ $cat := index $segments 2 }}
+
+  {{/* Map each device type to appropriate icon and display title.
+       Icons provide visual distinction and reinforce topic at a glance. */}}
+  {{ $reviewCat := "" }}
+  {{ $icon := "" }}
+  {{ if eq $cat "dumbphones" }}
+    {{ $reviewCat = "Dumbphone Reviews" }}
+    {{ $icon = "fa-solid fa-phone" }}
+  {{ else if eq $cat "companion-devices" }}
+    {{ $reviewCat = "Companion Device Reviews" }}
+    {{ $icon = "fa-laptop" }}
+  {{ else if eq $cat "auxiliary-devices" }}
+    {{ $reviewCat = "Auxiliary Device Reviews" }}
+    {{ $icon = "fa-solid fa-screwdriver-wrench" }}
+  {{ else if eq $cat "analog-tools" }}
+    {{ $reviewCat = "Analog Tools Reviews" }}
+    {{ $icon = "fa-solid fa-book-open" }}
+  {{ else if eq $cat "software" }}
+    {{ $reviewCat = "Software Reviews" }}
+    {{ $icon = "fa-code" }}
+  {{ end }}
+
+  <h2 class="p-name"><i class="fa-solid {{ $icon }}"></i>{{ $reviewCat }}</h2>
+
+  {{/* Filter posts by category using intersect to match any post with this tag.
+       Posts must be tagged with BOTH "reviews" AND the specific device type. */}}
+  {{ $all := .Site.RegularPages }}
+  {{ $list := where $all "Params.categories" "intersect" (slice $cat) }}
+
+  {{ if gt (len $list) 0 }}
+    <div class="posts h-feed">
+      {{ range $list }}
+        <div class="post-preview h-entry">
+          <a href="{{ .Permalink }}" class="post-date u-url">
+            <i class="fa-regular fa-calendar"></i>
+            <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+          </a>
+          <h3 class="post-title p-name"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+          <div class="p-summary">{{ .Summary }}</div>
+        </div>
+      {{ end }}
+    </div>
+  {{ else }}
+    <p>No posts found in this category.</p>
+  {{ end }}
+</div>
+{{ end }}

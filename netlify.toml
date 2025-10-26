@@ -1,0 +1,26 @@
+# Netlify Configuration for 907.life
+# Hugo static site deployment
+
+[build]
+  publish = "public"
+  command = "hugo --gc --minify"
+
+[build.environment]
+  HUGO_VERSION = "0.152.2"
+  HUGO_ENV = "production"
+  HUGO_ENABLEGITINFO = "true"
+
+[context.production.environment]
+  HUGO_ENV = "production"
+
+[context.deploy-preview.environment]
+  HUGO_VERSION = "0.152.2"
+
+[context.branch-deploy.environment]
+  HUGO_VERSION = "0.152.2"
+
+# Redirect rules (if needed in the future)
+# [[redirects]]
+#   from = "/old-path/*"
+#   to = "/new-path/:splat"
+#   status = 301

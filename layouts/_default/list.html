@@ -1,0 +1,71 @@
+{{/*
+  Template: /layouts/_default/list.html
+  Purpose: Archive and category/tag listing pages with pagination.
+*/}}
+
+{{ define "main" }}
+<div class="archive h-feed {{ .Title }}">
+  <h2 class="p-name category-title">{{ .Title }}</h2>
+
+  {{ if .Description }}
+    <div class="list-description">{{ .Description | markdownify }}</div>
+  {{ end }}
+
+  <ul class="post-list">
+    {{ $paginator := .Paginate (where .Pages "Type" "post") }}
+    {{ range .Paginator.Pages }}
+      <div class="post-preview h-entry">
+        {{- /* Post date */ -}}
+        <p class="post-date">
+          <a href="{{ .Permalink }}" class="u-url">
+            <i class="fa-regular fa-calendar"></i>
+            <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
+              {{ .Date.Format "January 2, 2006" }}
+            </time>
+          </a>
+        </p>
+
+        {{- /* Post title with icon for special content types */ -}}
+        {{ if .Title }}
+          <h4>
+            {{- if in .Params.tags "reviews" -}}
+              <i class="fa-solid fa-star"></i>
+            {{- else if in .Params.tags "guides" -}}
+              <i class="fa-solid fa-compass"></i>
+            {{- else if in .Params.tags "also" -}}
+              <i class="fa-solid fa-asterisk"></i>
+            {{- end -}}
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+          </h4>
+
+          {{- /* Summary/excerpt if available */ -}}
+          {{ if in .RawContent "<!--more-->" }}
+            <div class="p-summary">
+              {{ $splitContents := split .RawContent "<!--more-->" }}
+              {{ index $splitContents 0 | markdownify }}
+              <p><a class="read-more" href="{{ .Permalink }}">Continue reading &rarr;</a></p>
+            </div>
+          {{ else if .Summary }}
+            <div class="p-summary">
+              {{ .Summary }}
+              <p><a class="read-more" href="{{ .Permalink }}">Continue reading &rarr;</a></p>
+            </div>
+          {{ end }}
+        {{ end }}
+      </div>
+    {{ end }}
+  </ul>
+
+  {{- /* Pagination */ -}}
+  {{ if gt .Paginator.TotalPages 1 }}
+    <nav class="pagination">
+      {{ if .Paginator.HasPrev }}
+        <a href="{{ .Paginator.Prev.URL }}">&larr; Newer</a>
+      {{ end }}
+      {{ if .Paginator.HasNext }}
+        <a href="{{ .Paginator.Next.URL }}">Older &rarr;</a>
+      {{ end }}
+    </nav>
+  {{ end }}
+</div>
+{{ end }}

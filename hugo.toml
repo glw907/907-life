@@ -1,0 +1,108 @@
+# 907.life Hugo Configuration
+# Created: 2025-10-25
+# Hugo Version: 0.152.2
+
+baseURL = "https://907.life/"
+languageCode = "en-us"
+title = "907.life"
+
+# Pagination
+paginate = 20
+paginatePath = "page"
+
+# Permalinks
+[permalinks]
+  posts = "/:year/:month/:day/:slug/"
+
+# Taxonomies
+# Tags = content types (also, reviews, guides)
+# Categories = topics (parenting, dumbphones, philosophy, workarounds, etc.)
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+# Menu configuration
+[menu]
+  [[menu.main]]
+    name = "Welcome"
+    url = "/welcome/"
+    weight = 1
+
+  [[menu.main]]
+    name = "Guides"
+    url = "/guides/"
+    weight = 2
+
+  [[menu.main]]
+    name = "Reviews"
+    url = "/reviews/"
+    weight = 3
+
+  [[menu.main]]
+    name = "Archive"
+    url = "/archive/"
+    weight = 4
+
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 5
+
+  [[menu.main]]
+    name = "Also"
+    url = "/also/"
+    weight = 6
+
+# Markup configuration
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true  # Allow HTML in Markdown
+
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = false
+    lineNos = false
+    style = "monokai"
+
+# Output formats
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+
+# RSS configuration
+[outputFormats.RSS]
+  mediaType = "application/rss+xml"
+  baseName = "feed"
+
+# JSON feed configuration
+[outputFormats.JSON]
+  mediaType = "application/json"
+  baseName = "feed"
+  isPlainText = true
+
+# Author information
+[params]
+  author = "Geoff Wright"
+  description = "Practical realities of living without a smartphone — what works, what doesn't, and how to navigate common obstacles."
+
+  # Social/Contact
+  email = "geoff@907.life"
+
+  # Footer text
+  footerText = "Thanks for reading 907.life. If you found this useful, please consider sharing it with someone who might benefit."
+
+# Privacy configuration
+[privacy]
+  [privacy.disqus]
+    disable = true
+  [privacy.googleAnalytics]
+    disable = true
+  [privacy.instagram]
+    disable = true
+  [privacy.twitter]
+    disable = false
+  [privacy.vimeo]
+    disable = true
+  [privacy.youtube]
+    disable = false

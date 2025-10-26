@@ -1,0 +1,105 @@
+{{ define "main" }}
+{{/*
+  Template: /layouts/_default/list.archivehtml.html
+  Purpose: Archive page that organizes all content into two philosophical groups.
+
+  Separates categories based on "also" tag to distinguish:
+  - Smartphone-free living content (main focus of the site)
+  - Personal writing (Alaska adventures, recipes, etc.)
+
+  Also includes chronological full article list with visual icons.
+*/}}
+<div class="archive">
+  <h2 class="p-name">Archive</h2>
+  {{/* Include custom introductory text for archive page */}}
+  {{ partial "microhook-archive-lead.html" . }}
+
+  {{/* Get all category pages for grouping.
+       Using modern Hugo syntax (0.73.0+) instead of deprecated "taxonomyTerm". */}}
+  {{ $list := (site.GetPage "/categories").Pages }}
+  {{ if gt (len $list) 0 }}
+  <div class="archive-categories">
+    <h3>Article Categories</h3>
+
+    {{/* Section 1: Smartphone-free living categories
+         Shows categories where posts are NOT tagged "also" */}}
+    <section>
+      <h4><i class="fa-solid fa-phone-slash"></i>Smartphone-free living</h4>
+      <ul>
+      {{ range $list }}
+        {{ $name := .Title }}
+        {{/* Skip the "Also" category itself - it's not a content category */}}
+        {{ if ne $name "Also" }}
+          {{/* Check if this category contains any posts tagged "also".
+               Break early once found for efficiency. */}}
+          {{ $hasAlso := false }}
+          {{ range .Pages }}
+            {{ if in .Params.tags "also" }}
+              {{ $hasAlso = true }}
+              {{ break }}
+            {{ end }}
+          {{ end }}
+          {{/* Only show if category has NO "also" posts and has content */}}
+          {{ if and (not $hasAlso) (gt (len .Pages) 0) }}
+            <li><a href="{{ .Permalink }}">{{ .Title }}</a> ({{ len .Pages }})</li>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+      </ul>
+    </section>
+
+    {{/* Section 2: Personal writing categories
+         Shows categories where posts ARE tagged "also" */}}
+    <section>
+      <h4><i class="fa-solid fa-asterisk"></i>Also</h4>
+      <ul>
+      {{ range $list }}
+        {{ $name := .Title }}
+        {{/* Skip the "Also" category itself */}}
+        {{ if ne $name "Also" }}
+          {{/* Check if this category contains any posts tagged "also".
+               Break early once found for efficiency. */}}
+          {{ $hasAlso := false }}
+          {{ range .Pages }}
+            {{ if in .Params.tags "also" }}
+              {{ $hasAlso = true }}
+              {{ break }}
+            {{ end }}
+          {{ end }}
+          {{/* Only show if category HAS "also" posts and has content */}}
+          {{ if and $hasAlso (gt (len .Pages) 0) }}
+            <li><a href="{{ .Permalink }}">{{ .Title }}</a> ({{ len .Pages }})</li>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+      </ul>
+    </section>
+  </div>
+  {{ end }}
+
+  {{/* Full chronological article list with visual category indicators */}}
+  <div class="full-archives h-feed">
+    <h3>Full Article List</h3>
+    {{ $list := (where .Site.Pages "Type" "post") }}
+    {{ range $list }}
+      <p class="h-entry">
+        <a href="{{ .Permalink }}" class="u-url">
+          {{/* Visual icons distinguish content type at a glance:
+               Asterisk = personal "also" content (tag)
+               Phone-slash = smartphone-free living content */}}
+          {{ if in .Params.tags "also" }}
+            <i class="fa-solid fa-asterisk"></i>
+          {{ else }}
+            <i class="fa-solid fa-phone-slash"></i>
+          {{ end }}
+          <span class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">{{ .Date.Format "Jan 2, 2006" }}</span>
+        </a>:
+        {{ if .Title }}
+          <span class="p-name"><b>{{ .Title }}</b></span>
+        {{ end }}
+        <span class="p-summary">{{ .Summary | truncate 150 }}</span>
+      </p>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
