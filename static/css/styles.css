@@ -8,6 +8,7 @@
    =================================================== */
 
 :root {
+  /* Site colors */
   --color-link: #134d85;
   --color-link-hover: #123765;
   --color-text: #3a3a3a;
@@ -18,10 +19,22 @@
   --color-heading-light: #0f0f0f;
   --color-heading-h4: #1a1a1a;
   --border-opacity: 0.12;
+
+  /* Tiny theme compatibility (for contact form) */
+  --text: #000000;
+  --link: #1565C0;
+  --accent2: #666666;
+  --background: #ffffff;
+  --button-text: #ffffff;
+  --note: #e8f5e9;
+  --note-border: #d5e1d6;
+  --alert: #ffebee;
+  --alert-border: #d32f2f;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Site colors */
     --color-link: #8ac1ff;
     --color-link-hover: #a8d1ff;
     --color-text: #e6e6e6;
@@ -32,6 +45,17 @@
     --color-heading-light: #e9e9e9;
     --color-heading-h4: #ccc;
     --border-opacity: 0.15;
+
+    /* Tiny theme compatibility (for contact form) */
+    --text: #f8f8f2;
+    --link: #8be9fd;
+    --accent2: #f8f8f2;
+    --background: #282a36;
+    --button-text: #282a36;
+    --note: #3f444a;
+    --note-border: #4f545a;
+    --alert: #ff5555;
+    --alert-border: #ff6e6e;
   }
 }
 
