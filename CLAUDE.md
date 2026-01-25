@@ -269,13 +269,169 @@ Set in Cloudflare Workers dashboard (Settings → Variables):
 - Hard refresh browser (`Ctrl+Shift+R`)
 - Check file is saved
 
+## Cloudflare Workers Deployment (2026)
+
+This section documents the current (January 2026) process for deploying a Hugo site to Cloudflare Workers with Git integration.
+
+### Project Structure for Workers
+
+```
+907-life/
+├── wrangler.toml      # Workers configuration (required)
+├── build.sh           # Build script for Hugo (required for version control)
+├── src/
+│   └── worker.js      # Worker script (handles contact form)
+├── content/           # Hugo content
+├── layouts/           # Hugo layouts
+├── static/            # Static assets
+└── public/            # Build output (generated, gitignored)
+```
+
+### Key Configuration Files
+
+**wrangler.toml** - Defines the Worker name, build command, and static assets:
+
+```toml
+name = "907-life"
+compatibility_date = "2025-01-25"
+
+[build]
+command = "chmod +x build.sh && ./build.sh"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "404-page"
+
+run_worker_first = ["/contact"]
+
+main = "src/worker.js"
+```
+
+**build.sh** - Downloads and installs specific Hugo version:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+HUGO_VERSION="${HUGO_VERSION:-0.123.7}"
+# Downloads Hugo, extracts, and runs hugo --gc --minify
+```
+
+### Git Integration Setup (Step-by-Step)
+
+**Important**: The Worker name in the dashboard must match the `name` in wrangler.toml or the build will fail.
+
+1. **Navigate to Workers & Pages**
+   - Cloudflare Dashboard → Compute (Workers) → Workers & Pages
+
+2. **Import Repository**
+   - Click **Create** (or **Create application**)
+   - Select **Import a repository** under "Get started"
+   - Connect your GitHub account if not already connected
+   - Select the repository: `glw907/907-life`
+
+3. **Configure Build Settings**
+
+   The dashboard shows a simplified configuration screen. Most settings are auto-detected from wrangler.toml:
+
+   | Field | Value | Notes |
+   |-------|-------|-------|
+   | Worker name | `907-life` | Must match `name` in wrangler.toml |
+   | Production branch | `main` | Branch that triggers production deploys |
+   | Root directory | `/` | Leave as default (or specify for monorepos) |
+
+   **Note**: You will NOT see a "Build output directory" field. This is configured in wrangler.toml under `[assets] directory = "./public"`.
+
+4. **Click Save and Deploy**
+   - Cloudflare clones the repo
+   - Runs the build command from wrangler.toml (`./build.sh`)
+   - Uploads static assets from `public/`
+   - Deploys the Worker
+
+5. **Initial Deployment**
+   - Wait 2-3 minutes for first build
+   - Worker available at: `https://907-life.{subdomain}.workers.dev`
+   - Check **Deployments** tab for build logs
+
+### Environment Variables
+
+After initial deployment, add environment variables:
+
+1. Go to **Workers & Pages** → **907-life** → **Settings** → **Variables**
+2. Add variables:
+
+   | Variable | Value | Type |
+   |----------|-------|------|
+   | `TURNSTILE_SECRET_KEY` | (your secret key) | Encrypted |
+   | `CONTACT_EMAIL` | `geoff@907.life` | Plain text |
+
+3. Click **Deploy** to apply changes
+
+**Note**: `HUGO_VERSION` can optionally be set as a Build Variable to override the version in build.sh.
+
+### Custom Domain Setup
+
+1. **Add Domain to Cloudflare**
+   - Cloudflare Dashboard → Add a site → `907.life`
+   - Update nameservers at your registrar to Cloudflare's
+
+2. **Connect Domain to Worker**
+   - Workers & Pages → 907-life → Settings → Domains & Routes
+   - Click **Add** → **Custom domain**
+   - Enter: `907.life`
+   - SSL certificate provisions automatically
+
+3. **Configure www Redirect**
+   - Cloudflare Dashboard → Rules → Redirect Rules
+   - Create rule: `www.907.life` → `https://907.life${http.request.uri.path}` (301)
+
+### Automatic Deployments
+
+Once connected, every push to `main` triggers:
+1. Cloudflare receives webhook from GitHub
+2. Clones repository and runs build.sh
+3. Hugo builds site to `public/`
+4. Static assets uploaded to Cloudflare's CDN
+5. Worker deployed globally
+
+Build time: ~2-3 minutes
+
+### Troubleshooting Deployment
+
+| Issue | Solution |
+|-------|----------|
+| "Worker name mismatch" | Ensure `name` in wrangler.toml matches Worker name in dashboard |
+| "Hugo command not found" | Check build.sh is executable and HUGO_VERSION is valid |
+| Build timeout | Hugo builds should complete in seconds; check for infinite loops |
+| 404 on all pages | Verify `[assets] directory = "./public"` and Hugo outputs to public/ |
+| Contact form 404 | Check `run_worker_first = ["/contact"]` in wrangler.toml |
+| Environment variables not working | Add to Settings → Variables, then click Deploy |
+
+### Alternative: CLI Deployment
+
+For manual deployment without Git integration:
+
+```bash
+# Install wrangler
+npm install -g wrangler
+
+# Login to Cloudflare
+wrangler login
+
+# Build Hugo locally
+hugo --gc --minify
+
+# Deploy
+wrangler deploy
+```
+
 ## Related Documentation
 
 - [Hugo Documentation](https://gohugo.io/documentation/)
 - [Cloudflare Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
-- [Pages to Workers Migration Guide](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)
+- [Cloudflare Workers Git Integration](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/)
+- [Cloudflare Workers Builds Configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)
 - [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
-- [MailChannels for Workers](https://developers.cloudflare.com/pages/functions/plugins/mailchannels/)
 
 ---
 
