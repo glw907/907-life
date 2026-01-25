@@ -355,3 +355,77 @@ layouts/partials/       # Partial templates
 - No errors encountered
 - Layout warnings are expected and will be resolved in Phase 3
 - Site ready for theme migration
+
+### Phase 3: Theme Migration (Completed 2025-01-24)
+
+#### Theme Files Migrated
+- Cloned archived repository (907-life-archive) temporarily to /tmp
+- Copied layouts, static files, and archetypes
+- Cleaned up temporary clone
+
+#### Templates Created/Updated
+
+**Layouts:**
+- `layouts/_default/baseof.html` - Base HTML structure (migrated)
+- `layouts/_default/single.html` - Updated to show tags instead of categories
+- `layouts/_default/list.html` - List pages with pagination (migrated)
+- `layouts/_default/archives.html` - NEW: Posts by year + tag list
+- `layouts/_default/taxonomy.html` - NEW: Tags list page
+- `layouts/_default/term.html` - NEW: Individual tag pages
+- `layouts/_default/index.json` - JSON feed output (migrated)
+- `layouts/index.html` - Simplified to show all posts (removed old filtering logic)
+
+**Partials:**
+- `layouts/partials/head.html` - Head section with meta tags, CSS, feeds (migrated)
+- `layouts/partials/header.html` - Site header with logo (migrated)
+- `layouts/partials/navigation.html` - UPDATED: New menu from hugo.toml with external Photos link support
+- `layouts/partials/footer.html` - UPDATED: New footer with Contact, GitHub, RSS links
+- `layouts/partials/post-date.html` - Date display helper (kept from archive)
+
+**Archetypes:**
+- `archetypes/posts.md` - NEW: YAML front matter template for posts
+- `archetypes/default.md` - Default TOML template (from Hugo init)
+
+**Static Assets:**
+- `static/css/styles.css` - 11KB CSS file (migrated from archive)
+
+#### Changes from Archived Theme
+- Removed old section-specific layouts (guides/, reviews/, also/)
+- Removed archive-intro.html partial (not needed)
+- Removed list.archivehtml.html (replaced with archives.html)
+- Updated navigation to use hugo.toml menu configuration
+- Updated footer with new link structure
+- Simplified index.html to show all posts (removed "also" tag filtering)
+- Changed single.html from categories to tags
+- Created new archives, taxonomy, and term layouts
+
+#### Navigation Menu
+- Home: `/`
+- Photos: `https://photos.907.life` (external, opens in new tab with ↗)
+- Archives: `/archives/`
+- About: `/about/`
+
+#### Footer Links
+- © 2025 Geoffrey L. Wright
+- Contact: `/about/#contact` (anchor to form)
+- GitHub: `https://github.com/glw907` (external, opens in new tab with ↗)
+- RSS: `/feed.xml`
+
+#### Tasks Completed
+- ✓ Theme files fetched from archived repo
+- ✓ Base templates adapted for new structure
+- ✓ Navigation updated with menu configuration
+- ✓ Partials updated (header, footer, navigation)
+- ✓ Archives layout created (posts by year + tag list)
+- ✓ Tag templates created (taxonomy.html, term.html)
+- ✓ Footer updated with new links
+- ✓ Hugo builds successfully with zero errors
+- ✓ Old section layouts cleaned up
+
+#### Notes
+- Hugo builds cleanly with no errors or warnings
+- All templates use semantic HTML and microformats (h-entry, p-name, etc.)
+- External links properly marked with target="_blank" rel="noopener" and ↗
+- Font Awesome 6.4.0 CDN used for icons
+- CSS is plain CSS with no build step required
+- Theme is custom and lives in layouts/, not a submodule
