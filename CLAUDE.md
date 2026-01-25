@@ -429,3 +429,67 @@ layouts/partials/       # Partial templates
 - Font Awesome 6.4.0 CDN used for icons
 - CSS is plain CSS with no build step required
 - Theme is custom and lives in layouts/, not a submodule
+
+### Phase 4: Content Pages (Completed 2025-01-24)
+
+#### Content Files Created
+
+**Static Pages:**
+- `content/_index.md` - Home page (displays recent posts via index.html template)
+- `content/archives.md` - Archives page with layout: "archives"
+- `content/about.md` - About page with bio and #contact anchor
+
+**Sample Blog Posts (5 posts across dates and tags):**
+1. `content/posts/2025-01-23-testing-the-new-site.md` - Tags: technology
+2. `content/posts/2025-01-10-winter-prior-lake.md` - Tags: alaska, photography
+3. `content/posts/2024-12-15-book-notes-example.md` - Tags: books
+4. `content/posts/2024-12-01-favorite-albums-2024.md` - Tags: music
+5. `content/posts/2024-11-20-quick-thoughts.md` - Tags: musings
+
+#### About Page Content
+- Real bio content (not placeholder)
+- Description of blog topics
+- #contact anchor for contact form link in footer
+- Placeholder text for contact form (to be implemented in Phase 5)
+
+#### Post Archetype
+- Already created in Phase 3: `archetypes/posts.md`
+- YAML front matter with title, date, draft, tags, description
+
+#### Generated Site Structure
+- Homepage: Displays all 5 posts with excerpts
+- Archives page: Posts grouped by year (2024, 2025) + tag list
+- About page: Bio with #contact anchor working
+- Individual post pages: All rendering correctly with tags
+- Tag pages: 6 tags generated (alaska, books, music, musings, photography, technology)
+- Feeds: RSS (feed.xml) and JSON (feed.json) generated
+- Sitemap: sitemap.xml generated
+
+#### Build Statistics
+- Total pages: 27 (up from 6)
+- Non-page files: 0
+- Static files: 1 (styles.css)
+- Aliases: 8
+- Build time: 39ms
+
+#### Tasks Completed
+- ✓ Home page created (content/_index.md)
+- ✓ Archives page created with correct layout
+- ✓ About page created with bio and #contact anchor
+- ✓ Post archetype already in place (from Phase 3)
+- ✓ 5 sample posts created across multiple tags and dates
+- ✓ All posts set to draft: false (published)
+- ✓ Site builds successfully
+- ✓ All pages render correctly
+- ✓ Tag pages generate automatically
+- ✓ RSS and JSON feeds working
+- ✓ #contact anchor verified in about page HTML
+
+#### Notes
+- No errors or warnings during build
+- All permalinks follow configured pattern: /year/month/day/slug/
+- Sample posts include variety of content (some with <!--more--> tags for excerpts)
+- One post demonstrates multi-tag usage (alaska + photography)
+- Footer "Contact" link correctly points to /about/#contact
+- Archives page displays both posts by year AND tag list as designed
+- Ready for Phase 5 (contact form backend implementation)
