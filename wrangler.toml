@@ -3,13 +3,11 @@
 
 name = "907-life"
 compatibility_date = "2025-01-25"
+main = "src/worker.js"
 
 # Build configuration - uses build.sh to ensure correct Hugo version
 [build]
 command = "chmod +x build.sh && ./build.sh"
-
-# Worker script for contact form handling
-main = "src/worker.js"
 
 # Static assets from Hugo output directory
 [assets]
