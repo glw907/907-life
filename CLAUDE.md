@@ -265,6 +265,46 @@ Set in Cloudflare Workers dashboard (Settings → Variables):
 - Check Worker logs: `npx wrangler tail` or dashboard → Logs
 - Ensure Turnstile site key matches domain
 
+### Turnstile "Invalid domain" error
+
+This error appears when the Turnstile widget is loaded on a domain not configured in the widget's hostname list.
+
+**Root cause**: Each Turnstile widget has a list of allowed hostnames. Production keys only work on those specific domains.
+
+**Solution for testing/staging (workers.dev domains)**:
+
+Use Cloudflare's official **testing keys** which work on ANY domain:
+
+| Type | Key | Behavior |
+|------|-----|----------|
+| Site key (visible, always passes) | `1x00000000000000000000AA` | Works on any domain |
+| Site key (visible, always fails) | `2x00000000000000000000AB` | For testing error states |
+| Site key (invisible, always passes) | `1x00000000000000000000BB` | Invisible widget |
+| Site key (forces challenge) | `3x00000000000000000000FF` | Interactive challenge |
+| Secret key (always passes) | `1x0000000000000000000000000000000AA` | Validates test tokens |
+| Secret key (always fails) | `2x0000000000000000000000000000000AA` | For testing failures |
+
+**Current implementation**:
+
+The worker (`src/worker.js`) auto-detects testing tokens (contain `DUMMY`) and uses the appropriate secret key:
+- Testing tokens: Uses testing secret key `1x0000000000000000000000000000000AA`
+- Production tokens: Uses `env.TURNSTILE_SECRET_KEY`
+
+**To switch between testing and production**:
+
+1. Edit `/layouts/_default/about.html` line 44
+2. Testing: `data-sitekey="1x00000000000000000000AA"`
+3. Production: `data-sitekey="0x4AAAAAACPc3bf8bl6ifC3c"`
+
+**Note**: Testing keys generate dummy tokens (`XXXX.DUMMY.TOKEN.XXXX`) that only work with testing secret keys. The worker handles this automatically.
+
+**For production deployment on 907.life**:
+1. Switch site key back to production key
+2. Ensure `TURNSTILE_SECRET_KEY` env var is set in Cloudflare dashboard
+3. Ensure `907.life` is in the Turnstile widget's hostname list
+
+**Important**: Hostname changes in Turnstile may have propagation delays. If you add a hostname and it doesn't work immediately, wait a few minutes and clear browser cache.
+
 ### CSS not updating
 - Hard refresh browser (`Ctrl+Shift+R`)
 - Check file is saved

@@ -60,13 +60,21 @@ async function handleContactForm(request, env) {
     }
 
     // Validate Turnstile token
+    // Use testing secret key if testing site key is in use, otherwise use production key
+    // Testing secret key (always passes): 1x0000000000000000000000000000000AA
+    // Testing tokens look like: XXXX.DUMMY.TOKEN.XXXX
+    const isTestingToken = turnstileToken.includes('DUMMY');
+    const secretKey = isTestingToken
+      ? '1x0000000000000000000000000000000AA'
+      : env.TURNSTILE_SECRET_KEY;
+
     const turnstileResponse = await fetch(
       'https://challenges.cloudflare.com/turnstile/v0/siteverify',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          secret: env.TURNSTILE_SECRET_KEY,
+          secret: secretKey,
           response: turnstileToken,
         }),
       }
@@ -75,6 +83,7 @@ async function handleContactForm(request, env) {
     const turnstileResult = await turnstileResponse.json();
 
     if (!turnstileResult.success) {
+      console.error('Turnstile validation failed:', turnstileResult);
       return new Response(
         JSON.stringify({ error: 'Turnstile validation failed. Please try again.' }),
         { status: 400, headers }
