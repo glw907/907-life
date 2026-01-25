@@ -28,8 +28,8 @@
   <meta name="author" content="{{ .Site.Params.author }}">
 
   {{- /* RSS/JSON Feed Discovery */ -}}
-  <link rel="alternate" type="application/rss+xml" title="{{ .Site.Title }} - RSS Feed" href="{{ "feed.xml" | absURL }}">
-  <link rel="alternate" type="application/json" title="{{ .Site.Title }} - JSON Feed" href="{{ "feed.json" | absURL }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ .Site.Title }} - RSS Feed" href="{{ "feed.xml" | relURL }}">
+  <link rel="alternate" type="application/json" title="{{ .Site.Title }} - JSON Feed" href="{{ "feed.json" | relURL }}">
 
   {{- /* Canonical URL */ -}}
   {{ if .Permalink }}
@@ -37,7 +37,7 @@
   {{ end }}
 
   {{- /* Site stylesheet */ -}}
-  <link rel="stylesheet" href="{{ "css/styles.css" | absURL }}">
+  <link rel="stylesheet" href="{{ "css/styles.css" | relURL }}">
 
   {{- /* Font Awesome for icons */ -}}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
