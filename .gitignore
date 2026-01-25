@@ -6,9 +6,13 @@ resources/
 # Environment and secrets
 .env
 .env.local
+.dev.vars
 
-# Node (for Wrangler if used)
+# Node (for Wrangler)
 node_modules/
+
+# Wrangler
+.wrangler/
 
 # OS files
 .DS_Store

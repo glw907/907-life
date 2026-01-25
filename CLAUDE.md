@@ -2,13 +2,15 @@
 
 ## Project Overview
 
-A personal blog built with Hugo and hosted on Cloudflare Pages. Topics include Alaska adventures, philosophical musings, technology, books, music, photography, and whatever else comes to mind.
+A personal blog built with Hugo and hosted on Cloudflare Workers (with Static Assets). Topics include Alaska adventures, philosophical musings, technology, books, music, photography, and whatever else comes to mind.
 
 - **Site URL**: https://907.life
-- **Hosting**: Cloudflare Pages
+- **Hosting**: Cloudflare Workers (Static Assets)
 - **Framework**: Hugo (static site generator)
 - **Repository**: github.com/glw907/907-life
 - **Author**: Geoffrey L. Wright
+
+**Note**: As of April 2025, Cloudflare deprecated Pages in favor of Workers with Static Assets. This project uses the new Workers-based deployment approach.
 
 ## Site Structure
 
@@ -152,23 +154,23 @@ Key settings in `hugo.toml`:
 | Component | Purpose |
 |-----------|---------|
 | Cloudflare Turnstile | Spam protection (managed mode) |
-| Pages Function | `functions/contact.js` handles POST |
-| Fastmail JMAP | Sends email via API |
+| Worker Script | `src/worker.js` handles POST to `/contact` |
+| MailChannels | Sends email via API (free for Cloudflare Workers) |
 
 ### Form Flow
 
 1. User fills form on About page
 2. Turnstile validates human
 3. Form POSTs to `/contact`
-4. Pages Function validates Turnstile token
-5. Function sends email via Fastmail JMAP
+4. Worker script validates Turnstile token
+5. Worker sends email via MailChannels API
 6. User sees success/error message (inline, no reload)
 
 ### Email Format
 
 | Field | Value |
 |-------|-------|
-| From | `907.life Contact <geoff@907.life>` |
+| From | `907.life Contact Form <noreply@907.life>` |
 | Reply-To | Sender's email (one click to reply) |
 | To | `geoff@907.life` |
 | Subject | `[907.life] {form subject}` |
@@ -176,13 +178,11 @@ Key settings in `hugo.toml`:
 
 ### Environment Variables
 
-Set in Cloudflare Pages dashboard (Production):
+Set in Cloudflare Workers dashboard (Settings → Variables):
 
 | Variable | Purpose |
 |----------|---------|
-| `TURNSTILE_SECRET_KEY` | Turnstile validation |
-| `FASTMAIL_API_TOKEN` | Fastmail App Password |
-| `FASTMAIL_ACCOUNT_ID` | Fastmail account |
+| `TURNSTILE_SECRET_KEY` | Turnstile validation (encrypted) |
 | `CONTACT_EMAIL` | Destination (`geoff@907.life`) |
 
 **Never commit secrets to git.** Use `.env.example` to document required vars.
@@ -206,11 +206,13 @@ Set in Cloudflare Pages dashboard (Production):
 | `git commit -m "..."` | Commit locally |
 | `git push` | Push → triggers Cloudflare deploy |
 
-### Wrangler (optional)
+### Wrangler
 
 | Command | Purpose |
 |---------|---------|
-| `npx wrangler pages dev ./public` | Test Pages Functions locally |
+| `npx wrangler dev` | Local dev server with Worker |
+| `npx wrangler deploy` | Deploy to Cloudflare Workers |
+| `npx wrangler tail` | View real-time logs |
 
 ## File Naming Conventions
 
@@ -229,9 +231,10 @@ Set in Cloudflare Pages dashboard (Production):
 
 | URL | Purpose |
 |-----|---------|
-| http://localhost:1313 | Local dev server |
+| http://localhost:1313 | Hugo dev server |
+| http://localhost:8787 | Wrangler dev server (with Worker) |
 | https://907.life | Production site |
-| https://907-life.pages.dev | Cloudflare Pages URL |
+| https://907-life.{account}.workers.dev | Cloudflare Workers URL |
 | https://dash.cloudflare.com | Cloudflare dashboard |
 | https://github.com/glw907/907-life | GitHub repo |
 
@@ -240,10 +243,11 @@ Set in Cloudflare Pages dashboard (Production):
 1. **Theme is custom** — layouts in `layouts/`, not a submodule
 2. **Plain CSS** — no SASS/build step, edit `static/css/styles.css` directly
 3. **Photos link is external** — not a local page, opens photos.907.life in new tab
-4. **Pages Functions** — live in `/functions/` at project root
-5. **Environment variables** — secrets in Cloudflare dashboard, never in git
-6. **Drafts** — use `draft: true` while working, remove to publish
-7. **Tags are organic** — just use new tags in front matter as needed
+4. **Worker script** — lives in `src/worker.js`, handles contact form POST
+5. **wrangler.toml** — configures build, static assets, and Worker
+6. **Environment variables** — secrets in Cloudflare dashboard, never in git
+7. **Drafts** — use `draft: true` while working, remove to publish
+8. **Tags are organic** — just use new tags in front matter as needed
 
 ## Troubleshooting
 
@@ -253,12 +257,12 @@ Set in Cloudflare Pages dashboard (Production):
 
 ### Changes not appearing on live site
 - Confirm `draft: true` is removed
-- Check Cloudflare Pages dashboard for build status
+- Check Cloudflare Workers dashboard → Deployments for build status
 - Build typically takes 1-2 minutes
 
 ### Contact form not working
-- Verify environment variables in Cloudflare dashboard
-- Check Pages Function logs in Cloudflare
+- Verify environment variables in Cloudflare Workers dashboard → Settings → Variables
+- Check Worker logs: `npx wrangler tail` or dashboard → Logs
 - Ensure Turnstile site key matches domain
 
 ### CSS not updating
@@ -268,9 +272,10 @@ Set in Cloudflare Pages dashboard (Production):
 ## Related Documentation
 
 - [Hugo Documentation](https://gohugo.io/documentation/)
-- [Cloudflare Pages](https://developers.cloudflare.com/pages/)
+- [Cloudflare Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
+- [Pages to Workers Migration Guide](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)
 - [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
-- [Fastmail JMAP API](https://www.fastmail.com/developer/)
+- [MailChannels for Workers](https://developers.cloudflare.com/pages/functions/plugins/mailchannels/)
 
 ---
 
@@ -494,15 +499,23 @@ layouts/partials/       # Partial templates
 - Archives page displays both posts by year AND tag list as designed
 - Ready for Phase 5 (contact form backend implementation)
 
-### Phase 5: Contact Form Backend (Completed 2025-01-24)
+### Phase 5: Contact Form Backend (Completed 2025-01-24, Updated 2025-01-25)
 
-#### Files Created
+**Important Update (2025-01-25):** Cloudflare deprecated Pages in April 2025. The contact form must now use Cloudflare Workers with Static Assets instead of Pages Functions. The architecture has been updated accordingly.
+
+#### Files Created/Updated
 
 **Layout:**
 - `layouts/_default/about.html` - About page layout with contact form
 
-**Cloudflare Pages Function:**
-- `functions/contact.js` - Handles form submissions, validates Turnstile, sends email via Fastmail JMAP
+**Worker Script (NEW - replaces Pages Function):**
+- `src/worker.js` - Handles POST to `/contact`, validates Turnstile, sends email via MailChannels
+
+**Configuration (NEW):**
+- `wrangler.toml` - Cloudflare Workers configuration with static assets
+
+**Legacy (to be removed):**
+- `functions/contact.js` - OLD Pages Function format (superseded by `src/worker.js`)
 
 **Environment Configuration:**
 - `.env.example` - Documents required environment variables (never commit actual .env)
@@ -531,18 +544,20 @@ layouts/partials/       # Partial templates
 - Widget embedded in form with data-sitekey attribute
 - Script loaded from Cloudflare CDN (async, defer)
 - Token automatically included in form submission
-- Placeholder sitekey: "YOUR_SITE_KEY_HERE" (replace in production)
+- Site key: `0x4AAAAAACPc3bf8bl6ifC3c` (configured)
 
-#### Cloudflare Pages Function (functions/contact.js)
+#### Worker Script (src/worker.js)
 
 **Functionality:**
-1. Validates all form fields are present
-2. Validates Turnstile token via Cloudflare API
-3. Sends email via Fastmail JMAP API
-4. Returns JSON response (success or error)
+1. Serves static assets from Hugo's `public/` directory
+2. Intercepts POST requests to `/contact`
+3. Validates all form fields
+4. Validates Turnstile token via Cloudflare API
+5. Sends email via MailChannels API
+6. Returns JSON response (success or error)
 
 **Email Format:**
-- From: `noreply@907.life` (via MailChannels)
+- From: `907.life Contact Form <noreply@907.life>` (via MailChannels)
 - To: `geoff@907.life` (configured via CONTACT_EMAIL env var)
 - Reply-To: Sender's email (enables one-click replies)
 - Subject: `[907.life] {form subject}`
@@ -558,42 +573,34 @@ layouts/partials/       # Partial templates
 #### MailChannels Email Implementation
 
 **Why MailChannels:**
-- Free email sending service for Cloudflare Workers/Pages
-- No additional credentials needed beyond what's configured
+- Free email sending service for Cloudflare Workers
+- No additional credentials needed
 - Reliable delivery with proper email headers
 - Simpler than SMTP (which Cloudflare Workers can't use directly)
 
 **How it works:**
-1. Contact function validates form and Turnstile
+1. Worker validates form and Turnstile
 2. Sends email via MailChannels API (`https://api.mailchannels.net/tx/v1/send`)
 3. MailChannels delivers email to geoff@907.life
 4. Reply-To header allows direct responses to sender
 
 #### Environment Variables Required
 
-**Cloudflare Pages Dashboard → Settings → Environment Variables:**
+**Cloudflare Workers Dashboard → Settings → Variables:**
 - `TURNSTILE_SECRET_KEY` - Cloudflare Turnstile secret key (encrypted)
 - `CONTACT_EMAIL` - Destination email: geoff@907.life (plain text)
 
 **Documentation:** See `.env.example` for details
 
-#### Credentials Configured (Phase 5 Update)
+#### Credentials Configured
 
-**✓ Turnstile:**
-- Site Key: `0x4AAAAAACPc3bf8bl6ifC3c` (already in about.html)
-- Secret Key: `0x4AAAAAACPc3X9Ux49F7FaTgulwsatcOZA` (ready for env vars)
+**Turnstile:**
+- Site Key: `0x4AAAAAACPc3bf8bl6ifC3c` (in about.html)
+- Secret Key: `0x4AAAAAACPc3X9Ux49F7FaTgulwsatcOZA` (set in Cloudflare dashboard)
 
-**✓ Email:**
+**Email:**
 - Destination: `geoff@907.life`
 - Service: MailChannels (free, no credentials needed)
-
-#### Setup Remaining for Production
-
-**Cloudflare Pages Environment Variables:**
-- Go to Cloudflare Pages → 907-life → Settings → Environment variables
-- Add to Production environment:
-  - `TURNSTILE_SECRET_KEY` = `0x4AAAAAACPc3X9Ux49F7FaTgulwsatcOZA` (encrypted)
-  - `CONTACT_EMAIL` = `geoff@907.life` (plain text)
 
 #### Tasks Completed
 - ✓ About page layout created with contact form
@@ -601,8 +608,9 @@ layouts/partials/       # Partial templates
 - ✓ Turnstile script loaded from CDN
 - ✓ JavaScript form handler implemented
 - ✓ Form feedback UI (success/error messages)
-- ✓ Cloudflare Pages Function created (functions/contact.js)
-- ✓ Fastmail JMAP integration implemented
+- ✓ Worker script created (src/worker.js)
+- ✓ wrangler.toml configuration created
+- ✓ MailChannels integration implemented
 - ✓ Email formatting configured (Reply-To, subject prefix)
 - ✓ Error handling for all failure scenarios
 - ✓ .env.example created with documentation
@@ -612,10 +620,8 @@ layouts/partials/       # Partial templates
 
 #### Notes
 - Form structure is complete and ready to use
-- Actual functionality requires Turnstile keys and Fastmail credentials
-- Site key in about.html is placeholder - must be replaced before deployment
-- Environment variables must be set in Cloudflare Pages dashboard
-- Form uses POST to /contact (handled by Pages Function)
+- Worker script handles both static assets AND contact form POST
+- Environment variables must be set in Cloudflare Workers dashboard
+- Form uses POST to /contact (handled by Worker script)
 - JavaScript is inline in template (no external file needed)
-- No build step or dependencies required
 - Ready for Phase 6 (deployment and configuration)

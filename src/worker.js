@@ -1,27 +1,42 @@
 /**
- * Cloudflare Pages Function: Contact Form Handler
+ * Cloudflare Worker: 907.life
  *
- * Handles POST requests to /contact
- * - Validates Cloudflare Turnstile token
- * - Sends email via MailChannels (Cloudflare's email API)
- * - Returns JSON response
+ * Serves static assets from Hugo build and handles POST /contact
+ * for contact form submissions.
  *
- * Environment variables required:
+ * Environment variables required (set in Cloudflare dashboard):
  * - TURNSTILE_SECRET_KEY: Cloudflare Turnstile secret key
  * - CONTACT_EMAIL: Destination email (geoff@907.life)
  */
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
 
-  // Set CORS headers for JSON response
+    // Handle contact form POST requests
+    if (url.pathname === '/contact' && request.method === 'POST') {
+      return handleContactForm(request, env);
+    }
+
+    // Serve static assets for all other requests
+    return env.ASSETS.fetch(request);
+  }
+};
+
+/**
+ * Handle contact form submissions
+ * @param {Request} request - Incoming request
+ * @param {Object} env - Environment bindings
+ * @returns {Response} JSON response
+ */
+async function handleContactForm(request, env) {
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
   };
 
   try {
-    // 1. Parse form data
+    // Parse form data
     const formData = await request.formData();
     const name = formData.get('name');
     const email = formData.get('email');
@@ -44,7 +59,7 @@ export async function onRequestPost(context) {
       );
     }
 
-    // 2. Validate Turnstile token
+    // Validate Turnstile token
     const turnstileResponse = await fetch(
       'https://challenges.cloudflare.com/turnstile/v0/siteverify',
       {
@@ -66,7 +81,7 @@ export async function onRequestPost(context) {
       );
     }
 
-    // 3. Send email via MailChannels
+    // Send email via MailChannels
     const emailSent = await sendEmailViaMailChannels({
       to: env.CONTACT_EMAIL,
       replyTo: email,
@@ -83,7 +98,7 @@ export async function onRequestPost(context) {
       );
     }
 
-    // 4. Return success
+    // Success
     return new Response(
       JSON.stringify({ success: true }),
       { status: 200, headers }
@@ -100,20 +115,13 @@ export async function onRequestPost(context) {
 
 /**
  * Send email via MailChannels API
- * MailChannels is free for Cloudflare Workers/Pages
+ * MailChannels is free for Cloudflare Workers
  *
  * @param {Object} params - Email parameters
- * @returns {Promise<boolean>} - Success status
+ * @returns {Promise<boolean>} Success status
  */
 async function sendEmailViaMailChannels(params) {
-  const {
-    to,
-    replyTo,
-    subject,
-    name,
-    senderEmail,
-    message,
-  } = params;
+  const { to, replyTo, subject, name, senderEmail, message } = params;
 
   try {
     const emailBody = `From: ${name} <${senderEmail}>
@@ -146,9 +154,7 @@ Sent via 907.life contact form`;
 
     const response = await fetch('https://api.mailchannels.net/tx/v1/send', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(emailRequest),
     });
 

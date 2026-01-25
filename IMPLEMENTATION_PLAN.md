@@ -1,6 +1,11 @@
 # 907.life Implementation Plan
 
-A phased approach to building a Hugo blog hosted on Cloudflare Pages.
+A phased approach to building a Hugo blog hosted on Cloudflare Workers (Static Assets).
+
+**Note (Updated January 2025)**: Cloudflare deprecated Pages in April 2025 in favor of Workers with Static Assets. This plan has been updated to reflect the new deployment approach. Key changes:
+- Phase 5: Uses MailChannels instead of Fastmail JMAP for email
+- Phase 6: Uses Cloudflare Workers with Static Assets instead of Pages
+- Worker script (`src/worker.js`) handles both static files and contact form
 
 ---
 
@@ -474,18 +479,19 @@ Create test posts to verify archives and tags:
 
 **Goal**: Implement spam-protected contact form with email delivery.
 
+**Note (Updated January 2025)**: The original plan used Cloudflare Pages Functions (`functions/contact.js`). Due to Pages deprecation in April 2025, the contact form now uses a Cloudflare Worker script (`src/worker.js`) that handles both static assets AND form submissions. The wrangler.toml configuration and Worker script are created in Phase 6.
+
 ### Tasks
 
 | Task | Details |
 |------|---------|
 | **5.1 Set Up Cloudflare Turnstile** | Create widget, get site key + secret key |
 | **5.2 Add Turnstile to Form** | Widget script + div on About page |
-| **5.3 Create Pages Function** | functions/contact.js — validate + send email |
-| **5.4 Configure Fastmail JMAP** | App Password, account ID |
+| **5.3 Create Form Handler Logic** | Contact form validation and email sending |
+| **5.4 Configure MailChannels** | Free email for Cloudflare Workers |
 | **5.5 Add Form Feedback UI** | JavaScript success/error messages |
 | **5.6 Document Environment Variables** | Create .env.example |
-| **5.7 Local Testing** | Test with Wrangler if possible |
-| **5.8 Update CLAUDE.md** | Document form flow, env vars |
+| **5.7 Update CLAUDE.md** | Document form flow, env vars |
 
 ### 5.1 Cloudflare Turnstile Setup
 
@@ -518,16 +524,148 @@ In About page / contact layout:
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 ```
 
-### 5.3 Pages Function
+### 5.3 Contact Form Handler Logic
 
-`functions/contact.js`:
+The contact form handler is implemented in the Worker script (`src/worker.js`, created in Phase 6). The logic includes:
+
+1. Parse form data from POST request
+2. Validate required fields (name, email, subject, message)
+3. Validate Turnstile token via Cloudflare API
+4. Send email via MailChannels API
+5. Return JSON response (success or error)
+
+See Phase 6.2 for the complete Worker script implementation.
+
+### 5.4 MailChannels Configuration
+
+MailChannels is a free email service for Cloudflare Workers. No additional credentials needed!
+
+Email format:
+- From: `907.life Contact Form <noreply@907.life>`
+- Reply-To: Sender's email
+- To: `geoff@907.life` (from CONTACT_EMAIL env var)
+- Subject: `[907.life] {form subject}`
+- Body: Plain text with sender info and message
+
+### 5.6 Environment Variables
+
+Create `.env.example`:
+
+```
+# Cloudflare Turnstile
+# Site Key (public): 0x4AAAAAACPc3bf8bl6ifC3c (in about.html)
+# Secret Key (private): Add to Cloudflare Workers environment variables
+TURNSTILE_SECRET_KEY=
+
+# Contact destination
+CONTACT_EMAIL=geoff@907.life
+
+# Note: Email is sent via MailChannels (free for Cloudflare Workers)
+# No additional email credentials needed!
+```
+
+**Note**: Actual values set in Cloudflare Workers dashboard (Settings → Variables), NOT in git.
+
+### Completion Checklist
+
+- [ ] Turnstile widget appears on form
+- [ ] Form handler logic defined (for Worker script)
+- [ ] MailChannels integration understood
+- [ ] Email format defined (subject prefix, Reply-To)
+- [ ] Success/error feedback displays
+- [ ] .env.example documents required vars
+- [ ] CLAUDE.md updated
+
+---
+
+## Phase 6: Cloudflare Workers Deployment
+
+**Goal**: Deploy site to Cloudflare Workers with Static Assets and custom domain.
+
+**Important Update (January 2025)**: Cloudflare deprecated Pages in April 2025 in favor of Workers with Static Assets. The deployment approach has been updated to use the new Workers-based system.
+
+### Tasks
+
+| Task | Details |
+|------|---------|
+| **6.1 Create wrangler.toml** | Configure Workers build and static assets |
+| **6.2 Create Worker Script** | Convert Pages Function to Worker format |
+| **6.3 Connect Repo to Cloudflare Workers** | Link GitHub, configure automatic builds |
+| **6.4 Initial Deployment** | Verify at 907-life.{account}.workers.dev |
+| **6.5 Configure Environment Variables** | Add secrets in dashboard |
+| **6.6 Transfer DNS to Cloudflare** | Move from ClouDNS |
+| **6.7 Add Custom Domain** | Connect 907.life to Worker |
+| **6.8 Configure www Redirect** | Redirect www → apex |
+| **6.9 Verify SSL/HTTPS** | Confirm certificate active |
+| **6.10 Test Production** | Full end-to-end test |
+| **6.11 Update CLAUDE.md** | Document deployment |
+
+### 6.1 Create wrangler.toml
+
+Create `wrangler.toml` in project root:
+
+```toml
+name = "907-life"
+compatibility_date = "2025-01-25"
+
+# Build configuration
+[build]
+command = "hugo --gc --minify"
+
+# Static assets from Hugo output
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "404-page"
+
+# Run worker first for /contact route only
+run_worker_first = ["/contact"]
+
+# Worker script for contact form handling
+main = "src/worker.js"
+
+# Environment variables (set in dashboard, not here)
+# TURNSTILE_SECRET_KEY - Encrypted
+# CONTACT_EMAIL - Plain text
+
+# Custom domain (after DNS setup)
+# [routes]
+# pattern = "907.life/*"
+# zone_name = "907.life"
+```
+
+### 6.2 Create Worker Script
+
+Create `src/worker.js`:
 
 ```javascript
-export async function onRequestPost(context) {
-  const { request, env } = context;
+/**
+ * Cloudflare Worker: 907.life
+ * - Serves static assets from Hugo build
+ * - Handles POST /contact for contact form
+ */
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    // Handle contact form POST
+    if (url.pathname === '/contact' && request.method === 'POST') {
+      return handleContactForm(request, env);
+    }
+
+    // Serve static assets for all other requests
+    return env.ASSETS.fetch(request);
+  }
+};
+
+async function handleContactForm(request, env) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  };
 
   try {
-    // 1. Parse form data
     const formData = await request.formData();
     const name = formData.get('name');
     const email = formData.get('email');
@@ -535,7 +673,22 @@ export async function onRequestPost(context) {
     const message = formData.get('message');
     const turnstileToken = formData.get('cf-turnstile-response');
 
-    // 2. Validate Turnstile token
+    // Validate required fields
+    if (!name || !email || !subject || !message) {
+      return new Response(
+        JSON.stringify({ error: 'All fields are required' }),
+        { status: 400, headers }
+      );
+    }
+
+    if (!turnstileToken) {
+      return new Response(
+        JSON.stringify({ error: 'Turnstile validation required' }),
+        { status: 400, headers }
+      );
+    }
+
+    // Validate Turnstile token
     const turnstileResponse = await fetch(
       'https://challenges.cloudflare.com/turnstile/v0/siteverify',
       {
@@ -550,142 +703,183 @@ export async function onRequestPost(context) {
 
     const turnstileResult = await turnstileResponse.json();
     if (!turnstileResult.success) {
-      return new Response(JSON.stringify({ error: 'Turnstile validation failed' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({ error: 'Turnstile validation failed. Please try again.' }),
+        { status: 400, headers }
+      );
     }
 
-    // 3. Send email via Fastmail JMAP
-    // [JMAP implementation here]
-
-    // 4. Return success
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
+    // Send email via MailChannels
+    const emailSent = await sendEmailViaMailChannels({
+      to: env.CONTACT_EMAIL,
+      replyTo: email,
+      subject: `[907.life] ${subject}`,
+      name: name,
+      senderEmail: email,
+      message: message,
     });
+
+    if (!emailSent) {
+      return new Response(
+        JSON.stringify({ error: 'Failed to send email. Please try again later.' }),
+        { status: 500, headers }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { status: 200, headers }
+    );
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Server error' }), {
-      status: 500,
+    console.error('Contact form error:', error);
+    return new Response(
+      JSON.stringify({ error: 'Server error. Please try again later.' }),
+      { status: 500, headers }
+    );
+  }
+}
+
+async function sendEmailViaMailChannels(params) {
+  const { to, replyTo, subject, name, senderEmail, message } = params;
+
+  try {
+    const emailBody = `From: ${name} <${senderEmail}>
+
+Message:
+${message}
+
+---
+Sent via 907.life contact form`;
+
+    const emailRequest = {
+      personalizations: [
+        {
+          to: [{ email: to }],
+          reply_to: { email: replyTo, name: name },
+        },
+      ],
+      from: {
+        email: 'noreply@907.life',
+        name: '907.life Contact Form',
+      },
+      subject: subject,
+      content: [
+        {
+          type: 'text/plain',
+          value: emailBody,
+        },
+      ],
+    };
+
+    const response = await fetch('https://api.mailchannels.net/tx/v1/send', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(emailRequest),
     });
+
+    if (!response.ok) {
+      console.error('MailChannels error:', response.status, await response.text());
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('MailChannels send error:', error);
+    return false;
   }
 }
 ```
 
-### 5.4 Fastmail Configuration
+### 6.3 Connect Repository to Cloudflare Workers
 
-1. Fastmail → Settings → Privacy & Security → App Passwords
-2. Create App Password with JMAP access
-3. Note Account ID (from JMAP session endpoint)
-
-Email format:
-- From: `907.life Contact <geoff@907.life>`
-- Reply-To: Sender's email
-- To: `geoff@907.life`
-- Subject: `[907.life] {form subject}`
-- Body: Plain text
-
-### 5.6 Environment Variables
-
-Create `.env.example`:
-
-```
-# Cloudflare Turnstile
-TURNSTILE_SECRET_KEY=
-
-# Fastmail JMAP
-FASTMAIL_API_TOKEN=
-FASTMAIL_ACCOUNT_ID=
-
-# Contact destination
-CONTACT_EMAIL=geoff@907.life
-```
-
-**Note**: Actual values set in Cloudflare Pages dashboard, NOT in git.
-
-### Completion Checklist
-
-- [ ] Turnstile widget appears on form
-- [ ] Pages Function created and handles POST
-- [ ] Fastmail JMAP integration working
-- [ ] Form submission sends email
-- [ ] Email format correct (subject prefix, Reply-To)
-- [ ] Success/error feedback displays
-- [ ] .env.example documents required vars
-- [ ] CLAUDE.md updated
-
----
-
-## Phase 6: Cloudflare Deployment
-
-**Goal**: Deploy site to Cloudflare Pages with custom domain.
-
-### Tasks
-
-| Task | Details |
-|------|---------|
-| **6.1 Connect Repo to Cloudflare Pages** | Link GitHub, configure build |
-| **6.2 Initial Deployment** | Verify at 907-life.pages.dev |
-| **6.3 Configure Environment Variables** | Add secrets in dashboard |
-| **6.4 Transfer DNS to Cloudflare** | Move from ClouDNS |
-| **6.5 Add Custom Domain** | Connect 907.life to Pages |
-| **6.6 Configure www Redirect** | Redirect www → apex |
-| **6.7 Verify SSL/HTTPS** | Confirm certificate active |
-| **6.8 Test Production** | Full end-to-end test |
-| **6.9 Update CLAUDE.md** | Document deployment |
-
-### 6.1 Connect Repository
-
-1. Cloudflare Dashboard → Pages → Create a project
-2. Connect to Git → Authorize GitHub → Select `glw907/907-life`
-3. Build settings:
+1. **Cloudflare Dashboard** → Compute (Workers) → Workers & Pages
+2. Click **"Get Started"** or **"Create"**
+3. Make sure the **"Workers"** tab is selected
+4. Click **"Import a repository"**
+5. **Connect to Git** → Authorize GitHub if prompted
+6. Select repository: `glw907/907-life`
+7. Configure build settings (most auto-detected from wrangler.toml):
 
 | Setting | Value |
 |---------|-------|
-| Project name | `907-life` |
+| Worker name | `907-life` |
 | Production branch | `main` |
-| Build command | `hugo` |
-| Build output directory | `public` |
-| Environment variable | `HUGO_VERSION` = `0.123.7` |
+| Build command | `hugo --gc --minify` (from wrangler.toml) |
+| Build output directory | `public` (from assets.directory) |
 
-### 6.3 Environment Variables
+8. Click **"Create and Deploy"**
 
-Cloudflare Pages → Settings → Environment variables → Production:
+**Environment Variable for Hugo Version (optional):**
+If build fails due to Hugo version, add:
+- `HUGO_VERSION` = `0.123.7`
 
-| Variable | Type |
-|----------|------|
-| `TURNSTILE_SECRET_KEY` | Encrypted |
-| `FASTMAIL_API_TOKEN` | Encrypted |
-| `FASTMAIL_ACCOUNT_ID` | Encrypted |
-| `CONTACT_EMAIL` | Plain text |
+### 6.4 Initial Deployment
 
-### 6.4 Transfer DNS to Cloudflare
+After connecting the repository:
+1. Cloudflare automatically builds and deploys
+2. Worker URL: `https://907-life.{your-subdomain}.workers.dev`
+3. Verify site loads correctly
+4. Check Deployments tab for build logs
 
-1. Cloudflare Dashboard → Add a site → `907.life` → Free plan
+### 6.5 Configure Environment Variables
+
+**Cloudflare Dashboard → Workers & Pages → 907-life → Settings → Variables:**
+
+| Variable | Value | Type |
+|----------|-------|------|
+| `TURNSTILE_SECRET_KEY` | `0x4AAAAAACPc3X9Ux49F7FaTgulwsatcOZA` | Encrypted |
+| `CONTACT_EMAIL` | `geoff@907.life` | Plain text |
+
+Click "Deploy" to apply changes.
+
+### 6.6 Transfer DNS to Cloudflare
+
+1. **Cloudflare Dashboard** → Add a site → `907.life` → Free plan
 2. Cloudflare provides nameservers (e.g., `anna.ns.cloudflare.com`, `bob.ns.cloudflare.com`)
 3. At ClouDNS: Update nameservers to Cloudflare's
 4. Wait for propagation (minutes to hours)
 5. Cloudflare dashboard shows domain as "Active"
 
-### 6.5 Add Custom Domain
+### 6.7 Add Custom Domain
 
-1. Pages → 907-life → Custom domains → Set up a custom domain
-2. Add `907.life`
-3. Cloudflare auto-configures DNS (since DNS is now on Cloudflare)
+1. **Workers & Pages** → 907-life → **Settings** → **Domains & Routes**
+2. Click **"Add"** → **"Custom domain"**
+3. Enter: `907.life`
+4. Cloudflare auto-configures DNS (since DNS is now on Cloudflare)
+5. SSL certificate provisioned automatically
 
-### 6.6 Configure www Redirect
+### 6.8 Configure www Redirect
 
-Cloudflare Dashboard → Rules → Redirect Rules:
+**Cloudflare Dashboard → Rules → Redirect Rules:**
 
-- If: Hostname equals `www.907.life`
-- Then: Redirect to `https://907.life` (301 Permanent)
+- **Rule name**: www to apex
+- **If**: Hostname equals `www.907.life`
+- **Then**: Redirect to `https://907.life${http.request.uri.path}` (301 Permanent)
+
+### 6.9 Verify SSL/HTTPS
+
+- Check https://907.life loads with valid certificate
+- Check HTTP automatically redirects to HTTPS
+- Check www.907.life redirects to 907.life
+
+### 6.10 Test Production
+
+| Test | Expected |
+|------|----------|
+| https://907.life | Home page loads |
+| Navigation | All links work |
+| /about/#contact | Scrolls to form |
+| Submit contact form | Success message, email received |
+| /nonexistent | 404 page shown |
 
 ### Completion Checklist
 
+- [ ] wrangler.toml created and committed
+- [ ] src/worker.js created and committed
+- [ ] Repository connected to Cloudflare Workers
 - [ ] Site deploys on push to main
-- [ ] https://907-life.pages.dev works
+- [ ] https://907-life.{subdomain}.workers.dev works
 - [ ] Environment variables configured
 - [ ] DNS transferred to Cloudflare
 - [ ] https://907.life works with valid SSL
@@ -693,6 +887,44 @@ Cloudflare Dashboard → Rules → Redirect Rules:
 - [ ] HTTP redirects to HTTPS
 - [ ] Contact form works in production
 - [ ] CLAUDE.md updated
+
+### Alternative: Using Wrangler CLI
+
+If you prefer command-line deployment instead of Git integration:
+
+```bash
+# Install wrangler (if not already)
+npm install -g wrangler
+
+# Login to Cloudflare
+wrangler login
+
+# Build Hugo site
+hugo --gc --minify
+
+# Deploy
+wrangler deploy
+```
+
+### Troubleshooting
+
+**Build fails with Hugo not found:**
+- Add environment variable: `HUGO_VERSION` = `0.123.7`
+- Or use a custom build script (build.sh) that downloads Hugo
+
+**Worker not serving static assets:**
+- Verify `assets.directory` in wrangler.toml points to `./public`
+- Ensure Hugo build creates files in `public/`
+
+**Contact form returns 404:**
+- Check `run_worker_first` includes `/contact`
+- Verify `main` points to correct worker script
+
+**Environment variables not available:**
+- Ensure variables are set in Production environment
+- Click "Deploy" after adding/changing variables
+
+---
 
 ---
 
@@ -1009,9 +1241,10 @@ Remove `draft: true` when ready to publish.
 
 | URL | Purpose |
 |-----|---------|
-| http://localhost:1313 | Local dev server |
+| http://localhost:1313 | Hugo dev server |
+| http://localhost:8787 | Wrangler dev server (with Worker) |
 | https://907.life | Production site |
-| https://907-life.pages.dev | Cloudflare Pages URL |
+| https://907-life.{subdomain}.workers.dev | Cloudflare Workers URL |
 | https://dash.cloudflare.com | Cloudflare dashboard |
 | https://github.com/glw907/907-life | GitHub repo |
 

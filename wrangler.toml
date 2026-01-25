@@ -1,0 +1,32 @@
+# 907.life - Cloudflare Workers Configuration
+# Hugo static site with contact form handler
+
+name = "907-life"
+compatibility_date = "2025-01-25"
+
+# Build configuration - Hugo builds the site
+[build]
+command = "hugo --gc --minify"
+
+# Static assets from Hugo output directory
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "404-page"
+
+# Run worker first for contact form route
+# This allows the worker to handle POST /contact while
+# static assets serve everything else
+run_worker_first = ["/contact"]
+
+# Worker script for contact form handling
+main = "src/worker.js"
+
+# Environment variables are set in Cloudflare dashboard:
+# - TURNSTILE_SECRET_KEY (encrypted)
+# - CONTACT_EMAIL (plain text)
+
+# Custom domain configuration (uncomment after DNS setup)
+# [[routes]]
+# pattern = "907.life/*"
+# zone_name = "907.life"
