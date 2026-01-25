@@ -1,8 +1,92 @@
-# CLAUDE.md — 907.life Hugo Project
+# CLAUDE.md — Hugo + Cloudflare Workers Template
+
+> **Last Updated**: January 2026
+> **Template Version**: 2.0 (Hugo + Workers with Static Assets + Resend)
+
+---
+
+## Using This as a Template
+
+This repository is a production-ready template for deploying a Hugo blog to Cloudflare Workers with a working contact form. Clone it and customize for your own site.
+
+### What's Included
+
+| Component | Description |
+|-----------|-------------|
+| Hugo static site | Blog with tags, archives, about page |
+| Contact form | Turnstile spam protection + email delivery |
+| Cloudflare Worker | Handles contact form POST requests |
+| Git deployment | Push to main = automatic deploy |
+| 2026-ready setup | Uses current APIs (Resend, not MailChannels) |
+
+### Quick Start (30-60 minutes)
+
+**Prerequisites:**
+- Node.js v20+ (`node --version` to check)
+- Cloudflare account (free)
+- Resend account (free, optional for testing)
+- GitHub account
+
+**Steps:**
+
+```bash
+# 1. Clone and rename
+git clone https://github.com/glw907/907-life.git my-site
+cd my-site
+rm -rf .git
+git init
+
+# 2. Update configuration
+# Edit hugo.toml: baseURL, title, author, description
+# Edit wrangler.toml: name = "my-site"
+# Edit content/about.md: your bio
+
+# 3. Create GitHub repository
+gh repo create my-site --public --source=. --push
+
+# 4. Connect to Cloudflare (see "Deployment" section below)
+```
+
+### What to Customize Per-Project
+
+| File | What to Change |
+|------|----------------|
+| `hugo.toml` | `baseURL`, `title`, `author`, menu items |
+| `wrangler.toml` | `name` (must match Cloudflare Worker name) |
+| `content/about.md` | Your bio and description |
+| `content/_index.md` | Home page title |
+| `layouts/_default/about.html` | Turnstile site key (line 44) |
+| `static/css/styles.css` | Colors, fonts, layout |
+| Footer in `layouts/partials/footer.html` | Copyright, links |
+
+### Accounts and API Keys Needed
+
+| Service | What You Need | Required For |
+|---------|--------------|--------------|
+| Cloudflare | Free account | Hosting |
+| Cloudflare Turnstile | Site key + secret key | Spam protection |
+| Resend | API key | Contact form email |
+| GitHub | Repository | Git deployment |
+
+**For testing only:** You can skip Resend setup initially. The form will work with Turnstile testing keys and show errors for email (which is fine for testing layout/flow).
+
+### Important: 2024-2025 Changes
+
+This template reflects several significant changes in the Cloudflare ecosystem:
+
+| What Changed | When | Impact |
+|-------------|------|--------|
+| **Cloudflare Pages deprecated** | April 2025 | Use Workers with Static Assets instead |
+| **MailChannels discontinued** | August 2024 | Use Resend for email (or similar service) |
+| **Node.js v20+ required** | 2024 | Wrangler requires modern Node.js |
+
+If you find tutorials referencing Cloudflare Pages, Pages Functions, or MailChannels, they are outdated.
+
+---
 
 ## Project Overview
 
-A personal blog built with Hugo and hosted on Cloudflare Workers (with Static Assets). Topics include Alaska adventures, philosophical musings, technology, books, music, photography, and whatever else comes to mind.
+A personal blog built with Hugo and hosted on Cloudflare Workers (with Static Assets).
 
 - **Site URL**: https://907.life
 - **Hosting**: Cloudflare Workers (Static Assets)
@@ -10,7 +94,162 @@ A personal blog built with Hugo and hosted on Cloudflare Workers (with Static As
 - **Repository**: github.com/glw907/907-life
 - **Author**: Geoffrey L. Wright
 
-**Note**: As of April 2025, Cloudflare deprecated Pages in favor of Workers with Static Assets. This project uses the new Workers-based deployment approach.
+---
+
+## Deployment (2026 Approach)
+
+### Project Structure
+
+```
+my-site/
+├── wrangler.toml      # Workers configuration (REQUIRED)
+├── build.sh           # Hugo build script (REQUIRED)
+├── src/
+│   └── worker.js      # Contact form handler
+├── hugo.toml          # Hugo configuration
+├── content/           # Blog content
+├── layouts/           # Hugo templates
+├── static/            # CSS, images
+└── public/            # Build output (gitignored)
+```
+
+### Cloudflare Workers Setup (Step-by-Step)
+
+1. **Go to Cloudflare Dashboard**
+   - Navigate to: Compute (Workers) > Workers & Pages
+   - Click **Create** > **Import a repository**
+
+2. **Connect GitHub**
+   - Authorize Cloudflare if needed
+   - Select your repository
+
+3. **Configure Build**
+   - **Worker name**: Must match `name` in wrangler.toml exactly
+   - **Production branch**: `main`
+   - Leave other fields as defaults (wrangler.toml handles build config)
+
+4. **Deploy**
+   - Click **Save and Deploy**
+   - Wait 2-3 minutes
+   - Site available at: `https://{worker-name}.{subdomain}.workers.dev`
+
+5. **Add Environment Variables**
+   - Go to: Worker > Settings > Variables
+   - Add (see table below)
+   - Click **Deploy** to apply
+
+### Environment Variables
+
+Set these in Cloudflare Workers dashboard after initial deploy:
+
+| Variable | Value | Type | Purpose |
+|----------|-------|------|---------|
+| `TURNSTILE_SECRET_KEY` | Your secret key | Encrypted | Spam protection |
+| `CONTACT_EMAIL` | `you@example.com` | Plain text | Form destination |
+| `RESEND_API_KEY` | `re_xxxxxxxx` | Encrypted | Email sending |
+
+**Alternative: Set via Wrangler CLI:**
+
+```bash
+# Requires wrangler login first
+npx wrangler secret put TURNSTILE_SECRET_KEY
+npx wrangler secret put RESEND_API_KEY
+# For plain text variables
+npx wrangler secret put CONTACT_EMAIL
+```
+
+### Custom Domain Setup
+
+1. **Add domain to Cloudflare**
+   - Cloudflare Dashboard > Add a site > your-domain.com
+   - Update nameservers at your registrar
+
+2. **Connect to Worker**
+   - Worker > Settings > Domains & Routes > Add > Custom domain
+   - Enter your domain
+   - SSL provisioned automatically
+
+3. **WWW redirect** (optional)
+   - Rules > Redirect Rules
+   - If hostname = www.your-domain.com
+   - Redirect to: https://your-domain.com${http.request.uri.path}
+
+---
+
+## Contact Form Setup
+
+### Architecture
+
+```
+User submits form
+    |
+    v
+Turnstile validates (spam protection)
+    |
+    v
+Worker validates Turnstile token
+    |
+    v
+Worker sends email via Resend API
+    |
+    v
+User sees success message
+```
+
+### Turnstile Setup
+
+1. **Create Widget**
+   - Cloudflare Dashboard > Turnstile > Add site
+   - Add your domain(s) to allowed hostnames
+   - Copy site key and secret key
+
+2. **Update Template**
+   - Edit `layouts/_default/about.html` line 44
+   - Replace site key: `data-sitekey="YOUR_SITE_KEY"`
+
+3. **Add Secret to Cloudflare**
+   - Worker > Settings > Variables
+   - Add `TURNSTILE_SECRET_KEY` (encrypted)
+
+**For Testing (workers.dev domains):**
+
+Use Cloudflare's testing keys (work on any domain):
+
+| Key Type | Value | Notes |
+|----------|-------|-------|
+| Site key (always passes) | `1x00000000000000000000AA` | Use in HTML |
+| Secret key (always passes) | `1x0000000000000000000000000000000AA` | Worker auto-detects |
+
+The worker script automatically detects testing tokens and uses the appropriate secret key.
+
+### Resend Setup
+
+1. **Create Account**
+   - Sign up at https://resend.com (free: 3,000 emails/month)
+
+2. **Generate API Key**
+   - Dashboard > API Keys > Create
+   - Copy the key (starts with `re_`)
+
+3. **Add to Cloudflare**
+   - Worker > Settings > Variables
+   - Add `RESEND_API_KEY` (encrypted)
+
+**For Testing Without Domain Verification:**
+
+The worker is pre-configured to use `onboarding@resend.dev` as the sender address. This works immediately without domain verification.
+
+**For Production (custom sender address):**
+
+1. Resend Dashboard > Domains > Add Domain
+2. Add DNS records (SPF, DKIM, DMARC) to Cloudflare DNS
+3. Wait for verification
+4. Update `src/worker.js` line 170:
+   ```javascript
+   from: 'Contact Form <contact@your-domain.com>',
+   ```
+
+---
 
 ## Site Structure
 
@@ -19,97 +258,53 @@ A personal blog built with Hugo and hosted on Cloudflare Workers (with Static As
 | Item | URL | Notes |
 |------|-----|-------|
 | Home | `/` | Recent posts |
-| Photos | `https://photos.907.life` | External ↗, opens in new tab |
+| Photos | `https://photos.907.life` | External, opens in new tab |
 | Archives | `/archives/` | Posts by year + tag list |
 | About | `/about/` | Bio + contact form |
-
-### Footer
-
-```
-© 2025 Geoffrey L. Wright · Contact · GitHub ↗ · RSS
-```
-
-| Link | URL |
-|------|-----|
-| Contact | `/about/#contact` (anchor to form) |
-| GitHub | `https://github.com/glw907` (external, new tab) |
-| RSS | `/feed.xml` |
 
 ### Content Organization
 
 ```
 content/
-├── _index.md          # Home page (recent posts, no intro text)
-├── posts/             # Blog posts
-│   └── YYYY-MM-DD-slug.md
-├── archives.md        # Archives page (by year + tags)
+├── _index.md          # Home page
+├── posts/             # Blog posts (YYYY-MM-DD-slug.md)
+├── archives.md        # Archives page
 └── about.md           # About + contact form
 ```
 
 ### Taxonomy
 
-**Tags only** (no categories). Tags are organic and multi-tag posts are encouraged.
+Tags only (no categories). Common tags: `alaska`, `musings`, `technology`, `books`, `music`, `photography`
 
-Common tags: `alaska`, `musings`, `technology`, `books`, `music`, `photography`
-
-New tags can be added anytime — just use them in front matter.
-
-### Theme Structure
-
-Custom theme (not a submodule). Plain CSS, no build step.
-
-```
-layouts/
-├── _default/
-│   ├── baseof.html      # Base wrapper
-│   ├── list.html        # List pages
-│   ├── single.html      # Individual posts
-│   ├── taxonomy.html    # Tag list page (/tags/)
-│   └── term.html        # Individual tag page (/tags/{tag}/)
-├── partials/
-│   ├── head.html        # <head> contents
-│   ├── header.html      # Site header
-│   ├── navigation.html  # Nav with external Photos link (↗)
-│   └── footer.html      # Footer with Contact, GitHub, RSS
-├── index.html           # Home page template
-└── _default/archives.html  # Archives layout
-
-static/
-└── css/
-    └── styles.css       # All styles (plain CSS)
-```
+---
 
 ## Development Workflow
 
-### Quick Reference
+### Prerequisites
 
-| Action | How |
-|--------|-----|
-| Open project | `codium ~/Projects/907-life` |
-| Start dev server | VSCodium: Run Task → "Hugo: Start Server" |
-| Create new post | Run Task → "New Post" → enter slug |
-| Preview | Browser: `http://localhost:1313` |
-| Publish | `Ctrl+Alt+P` or Run Task → "Publish" |
-| Quick publish | Run Task → "Quick Publish" (default commit message) |
+- Hugo installed locally (`apt install hugo` or download from https://gohugo.io)
+- Node.js v20+ (for Wrangler)
 
 ### Daily Workflow
 
-1. **Open project** in VSCodium
-2. **Start server**: Run Task → "Hugo: Start Server"
-3. **Create/edit** content in `content/posts/`
-4. **Preview** at localhost:1313 (live reload)
-5. **When ready**: Remove `draft: true` from front matter
-6. **Publish**: `Ctrl+Alt+P` → enter commit message
-7. **Verify**: Check https://907.life (~1-2 min deploy)
+```bash
+# Start local server
+hugo server -D
 
-### Creating Content
+# Preview at http://localhost:1313
+# Edit content, see live reload
+
+# When ready to publish:
+# 1. Remove draft: true from front matter
+# 2. Commit and push
+git add -A && git commit -m "Add new post" && git push
+
+# Cloudflare auto-deploys in ~2 minutes
+```
+
+### Creating Posts
 
 ```bash
-# Via VSCodium task (recommended)
-Run Task → "New Post" → enter slug (e.g., "winter-prior-lake")
-# Creates: content/posts/2025-01-23-winter-prior-lake.md
-
-# Or via terminal
 hugo new posts/$(date +%Y-%m-%d)-my-post-slug.md
 ```
 
@@ -118,90 +313,26 @@ hugo new posts/$(date +%Y-%m-%d)-my-post-slug.md
 ```yaml
 ---
 title: "Post Title"
-date: 2025-01-23
+date: 2026-01-25
 draft: true
-tags: ["alaska", "photography"]
-description: "Brief description for previews and SEO"
+tags: ["tag1", "tag2"]
+description: "Brief description for previews"
 ---
 ```
 
-### Shell Aliases
+### Local Testing with Wrangler
 
-Available in terminal (defined in `~/.bashrc`):
+```bash
+# Build Hugo
+hugo --gc --minify
 
-| Alias | What it does |
-|-------|--------------|
-| `blog` | Opens project in VSCodium + starts dev server |
-| `newpost` | Start creating a post (finish with slug + `.md`) |
-| `blogpush` | Quick publish from terminal |
+# Run local worker (contact form works)
+npx wrangler dev
 
-## Hugo Configuration
+# Preview at http://localhost:8787
+```
 
-Key settings in `hugo.toml`:
-
-| Setting | Value |
-|---------|-------|
-| baseURL | `https://907.life/` |
-| Pagination | 20 posts per page |
-| Permalinks | `/year/month/day/slug/` for posts |
-| Taxonomies | Tags only |
-| Output formats | HTML, RSS, JSON |
-
-## Contact Form
-
-### Architecture
-
-| Component | Purpose |
-|-----------|---------|
-| Cloudflare Turnstile | Spam protection (managed mode) |
-| Worker Script | `src/worker.js` handles POST to `/contact` |
-| Resend | Sends email via API (free tier: 3,000 emails/month) |
-
-**Note:** MailChannels discontinued their free Cloudflare Workers integration on August 31, 2024. Resend is the replacement.
-
-### Form Flow
-
-1. User fills form on About page
-2. Turnstile validates human
-3. Form POSTs to `/contact`
-4. Worker script validates Turnstile token
-5. Worker sends email via Resend API
-6. User sees success/error message (inline, no reload)
-
-### Email Format
-
-| Field | Value |
-|-------|-------|
-| From | `907.life Contact Form <noreply@907.life>` |
-| Reply-To | Sender's email (one click to reply) |
-| To | `geoff@907.life` |
-| Subject | `[907.life] {form subject}` |
-| Body | Plain text with sender info and message |
-
-### Environment Variables
-
-Set in Cloudflare Workers dashboard (Settings → Variables):
-
-| Variable | Purpose |
-|----------|---------|
-| `TURNSTILE_SECRET_KEY` | Turnstile validation (encrypted) |
-| `CONTACT_EMAIL` | Destination (`geoff@907.life`) |
-| `RESEND_API_KEY` | Resend email API key (encrypted) |
-
-**Never commit secrets to git.** Use `.env.example` to document required vars.
-
-### Resend Setup (Required)
-
-1. **Create account**: Sign up at https://resend.com (free tier: 3,000 emails/month, 100/day)
-2. **Create API key**: Dashboard → API Keys → Create
-3. **Verify domain** (for production):
-   - Dashboard → Domains → Add Domain
-   - Add 907.life
-   - Add DNS records (SPF, DKIM, DMARC) in Cloudflare DNS
-   - Wait for verification
-4. **Add to Cloudflare**: Workers → 907-life → Settings → Variables → Add `RESEND_API_KEY`
-
-**For testing without domain verification**: Change the `from` address in worker.js to `onboarding@resend.dev`
+---
 
 ## Commands Reference
 
@@ -212,297 +343,98 @@ Set in Cloudflare Workers dashboard (Settings → Variables):
 | `hugo server -D` | Dev server with drafts |
 | `hugo server` | Dev server, published only |
 | `hugo new posts/...` | Create new post |
-| `hugo` | Build site to `public/` |
-
-### Git
-
-| Command | Purpose |
-|---------|---------|
-| `git add <files>` | Stage changes |
-| `git commit -m "..."` | Commit locally |
-| `git push` | Push → triggers Cloudflare deploy |
+| `hugo --gc --minify` | Production build |
 
 ### Wrangler
 
 | Command | Purpose |
 |---------|---------|
-| `npx wrangler dev` | Local dev server with Worker |
-| `npx wrangler deploy` | Deploy to Cloudflare Workers |
-| `npx wrangler tail` | View real-time logs |
+| `npx wrangler dev` | Local dev with Worker |
+| `npx wrangler deploy` | Manual deploy |
+| `npx wrangler tail` | View live logs |
+| `npx wrangler secret put VAR_NAME` | Set secret |
+| `npx wrangler secret list` | List secrets |
 
-## File Naming Conventions
+---
 
-### Blog Posts
+## Troubleshooting
 
-- Format: `YYYY-MM-DD-slug-with-hyphens.md`
-- Example: `2025-01-23-winter-prior-lake.md`
-- Slug: lowercase, hyphens, descriptive
+### Build/Deployment Issues
 
-### Images
+| Issue | Solution |
+|-------|----------|
+| "Worker name mismatch" | `name` in wrangler.toml must exactly match Worker name in dashboard |
+| "Hugo command not found" | Verify build.sh is committed and executable |
+| Build timeout | Check build.sh for errors; Hugo builds should take seconds |
+| 404 on all pages | Verify `[assets] directory = "./public"` in wrangler.toml |
+| Contact form 404 | Check `run_worker_first = ["/contact"]` is inside `[assets]` section |
 
-- Store in: `static/images/`
-- Reference as: `/images/filename.jpg`
+### wrangler.toml Field Ordering (Important!)
+
+The order of fields in wrangler.toml matters:
+
+```toml
+# CORRECT ORDER
+name = "my-site"
+compatibility_date = "2025-01-25"
+main = "src/worker.js"           # Must be BEFORE [build]
+
+[build]
+command = "..."
+
+[assets]
+directory = "./public"
+run_worker_first = ["/contact"]  # Must be INSIDE [assets]
+```
+
+### Contact Form Issues
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| "Email service not configured" | Missing RESEND_API_KEY | Add to Worker variables, click Deploy |
+| "Email service authentication failed" | Invalid API key | Generate new key in Resend dashboard |
+| "Email domain not verified" | Using custom from address | Verify domain OR use onboarding@resend.dev |
+| "Too many requests" | Hit rate limit | Wait, or upgrade Resend plan |
+| Form works locally, fails in production | Missing env vars | Check Settings > Variables, click Deploy |
+
+### Turnstile Issues
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| "Invalid domain" on workers.dev | Hostname not in Turnstile allowlist | Use testing keys (see above) |
+| Widget doesn't appear | Site key wrong or JS blocked | Check browser console, verify site key |
+| Validation always fails | Secret key mismatch | Verify TURNSTILE_SECRET_KEY in Worker variables |
+
+### Node.js Issues
+
+```bash
+# Check version (must be 20+)
+node --version
+
+# If too old, use nvm:
+nvm install 20
+nvm use 20
+```
+
+---
 
 ## Key URLs
 
 | URL | Purpose |
 |-----|---------|
 | http://localhost:1313 | Hugo dev server |
-| http://localhost:8787 | Wrangler dev server (with Worker) |
+| http://localhost:8787 | Wrangler dev server |
 | https://907.life | Production site |
-| https://907-life.{account}.workers.dev | Cloudflare Workers URL |
 | https://dash.cloudflare.com | Cloudflare dashboard |
-| https://github.com/glw907/907-life | GitHub repo |
+| https://resend.com | Email service dashboard |
 
-## Important Notes
-
-1. **Theme is custom** — layouts in `layouts/`, not a submodule
-2. **Plain CSS** — no SASS/build step, edit `static/css/styles.css` directly
-3. **Photos link is external** — not a local page, opens photos.907.life in new tab
-4. **Worker script** — lives in `src/worker.js`, handles contact form POST
-5. **wrangler.toml** — configures build, static assets, and Worker
-6. **Environment variables** — secrets in Cloudflare dashboard, never in git
-7. **Drafts** — use `draft: true` while working, remove to publish
-8. **Tags are organic** — just use new tags in front matter as needed
-
-## Troubleshooting
-
-### Hugo server won't start
-- Check for syntax errors in templates
-- Run `hugo` alone to see detailed errors
-
-### Changes not appearing on live site
-- Confirm `draft: true` is removed
-- Check Cloudflare Workers dashboard → Deployments for build status
-- Build typically takes 1-2 minutes
-
-### Contact form not working
-- Verify environment variables in Cloudflare Workers dashboard → Settings → Variables
-- Check Worker logs: `npx wrangler tail` or dashboard → Logs
-- Ensure Turnstile site key matches domain
-- **"Email service not configured"**: RESEND_API_KEY is missing from environment variables
-- **"Email service authentication failed"**: RESEND_API_KEY is invalid
-- **"Email domain not verified"**: The `from` domain (907.life) needs to be verified in Resend dashboard
-  - For testing, change `from` in worker.js to `onboarding@resend.dev`
-- **"Too many requests"**: Hit Resend rate limit (100/day on free tier)
-
-### Resend domain verification
-To send from `contact@907.life`, you must verify the domain in Resend:
-1. Go to https://resend.com/domains
-2. Add `907.life`
-3. Add the DNS records in Cloudflare DNS:
-   - SPF record (TXT)
-   - DKIM records (CNAME or TXT)
-   - Optional: DMARC record (TXT)
-4. Click "Verify" in Resend
-5. Wait a few minutes for propagation
-
-### Turnstile "Invalid domain" error
-
-This error appears when the Turnstile widget is loaded on a domain not configured in the widget's hostname list.
-
-**Root cause**: Each Turnstile widget has a list of allowed hostnames. Production keys only work on those specific domains.
-
-**Solution for testing/staging (workers.dev domains)**:
-
-Use Cloudflare's official **testing keys** which work on ANY domain:
-
-| Type | Key | Behavior |
-|------|-----|----------|
-| Site key (visible, always passes) | `1x00000000000000000000AA` | Works on any domain |
-| Site key (visible, always fails) | `2x00000000000000000000AB` | For testing error states |
-| Site key (invisible, always passes) | `1x00000000000000000000BB` | Invisible widget |
-| Site key (forces challenge) | `3x00000000000000000000FF` | Interactive challenge |
-| Secret key (always passes) | `1x0000000000000000000000000000000AA` | Validates test tokens |
-| Secret key (always fails) | `2x0000000000000000000000000000000AA` | For testing failures |
-
-**Current implementation**:
-
-The worker (`src/worker.js`) auto-detects testing tokens (contain `DUMMY`) and uses the appropriate secret key:
-- Testing tokens: Uses testing secret key `1x0000000000000000000000000000000AA`
-- Production tokens: Uses `env.TURNSTILE_SECRET_KEY`
-
-**To switch between testing and production**:
-
-1. Edit `/layouts/_default/about.html` line 44
-2. Testing: `data-sitekey="1x00000000000000000000AA"`
-3. Production: `data-sitekey="0x4AAAAAACPc3bf8bl6ifC3c"`
-
-**Note**: Testing keys generate dummy tokens (`XXXX.DUMMY.TOKEN.XXXX`) that only work with testing secret keys. The worker handles this automatically.
-
-**For production deployment on 907.life**:
-1. Switch site key back to production key
-2. Ensure `TURNSTILE_SECRET_KEY` env var is set in Cloudflare dashboard
-3. Ensure `907.life` is in the Turnstile widget's hostname list
-
-**Important**: Hostname changes in Turnstile may have propagation delays. If you add a hostname and it doesn't work immediately, wait a few minutes and clear browser cache.
-
-### CSS not updating
-- Hard refresh browser (`Ctrl+Shift+R`)
-- Check file is saved
-
-## Cloudflare Workers Deployment (2026)
-
-This section documents the current (January 2026) process for deploying a Hugo site to Cloudflare Workers with Git integration.
-
-### Project Structure for Workers
-
-```
-907-life/
-├── wrangler.toml      # Workers configuration (required)
-├── build.sh           # Build script for Hugo (required for version control)
-├── src/
-│   └── worker.js      # Worker script (handles contact form)
-├── content/           # Hugo content
-├── layouts/           # Hugo layouts
-├── static/            # Static assets
-└── public/            # Build output (generated, gitignored)
-```
-
-### Key Configuration Files
-
-**wrangler.toml** - Defines the Worker name, build command, and static assets:
-
-```toml
-name = "907-life"
-compatibility_date = "2025-01-25"
-
-[build]
-command = "chmod +x build.sh && ./build.sh"
-
-[assets]
-directory = "./public"
-binding = "ASSETS"
-not_found_handling = "404-page"
-
-run_worker_first = ["/contact"]
-
-main = "src/worker.js"
-```
-
-**build.sh** - Downloads and installs specific Hugo version:
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-HUGO_VERSION="${HUGO_VERSION:-0.123.7}"
-# Downloads Hugo, extracts, and runs hugo --gc --minify
-```
-
-### Git Integration Setup (Step-by-Step)
-
-**Important**: The Worker name in the dashboard must match the `name` in wrangler.toml or the build will fail.
-
-1. **Navigate to Workers & Pages**
-   - Cloudflare Dashboard → Compute (Workers) → Workers & Pages
-
-2. **Import Repository**
-   - Click **Create** (or **Create application**)
-   - Select **Import a repository** under "Get started"
-   - Connect your GitHub account if not already connected
-   - Select the repository: `glw907/907-life`
-
-3. **Configure Build Settings**
-
-   The dashboard shows a simplified configuration screen. Most settings are auto-detected from wrangler.toml:
-
-   | Field | Value | Notes |
-   |-------|-------|-------|
-   | Worker name | `907-life` | Must match `name` in wrangler.toml |
-   | Production branch | `main` | Branch that triggers production deploys |
-   | Root directory | `/` | Leave as default (or specify for monorepos) |
-
-   **Note**: You will NOT see a "Build output directory" field. This is configured in wrangler.toml under `[assets] directory = "./public"`.
-
-4. **Click Save and Deploy**
-   - Cloudflare clones the repo
-   - Runs the build command from wrangler.toml (`./build.sh`)
-   - Uploads static assets from `public/`
-   - Deploys the Worker
-
-5. **Initial Deployment**
-   - Wait 2-3 minutes for first build
-   - Worker available at: `https://907-life.{subdomain}.workers.dev`
-   - Check **Deployments** tab for build logs
-
-### Environment Variables
-
-After initial deployment, add environment variables:
-
-1. Go to **Workers & Pages** → **907-life** → **Settings** → **Variables**
-2. Add variables:
-
-   | Variable | Value | Type |
-   |----------|-------|------|
-   | `TURNSTILE_SECRET_KEY` | (your secret key) | Encrypted |
-   | `CONTACT_EMAIL` | `geoff@907.life` | Plain text |
-
-3. Click **Deploy** to apply changes
-
-**Note**: `HUGO_VERSION` can optionally be set as a Build Variable to override the version in build.sh.
-
-### Custom Domain Setup
-
-1. **Add Domain to Cloudflare**
-   - Cloudflare Dashboard → Add a site → `907.life`
-   - Update nameservers at your registrar to Cloudflare's
-
-2. **Connect Domain to Worker**
-   - Workers & Pages → 907-life → Settings → Domains & Routes
-   - Click **Add** → **Custom domain**
-   - Enter: `907.life`
-   - SSL certificate provisions automatically
-
-3. **Configure www Redirect**
-   - Cloudflare Dashboard → Rules → Redirect Rules
-   - Create rule: `www.907.life` → `https://907.life${http.request.uri.path}` (301)
-
-### Automatic Deployments
-
-Once connected, every push to `main` triggers:
-1. Cloudflare receives webhook from GitHub
-2. Clones repository and runs build.sh
-3. Hugo builds site to `public/`
-4. Static assets uploaded to Cloudflare's CDN
-5. Worker deployed globally
-
-Build time: ~2-3 minutes
-
-### Troubleshooting Deployment
-
-| Issue | Solution |
-|-------|----------|
-| "Worker name mismatch" | Ensure `name` in wrangler.toml matches Worker name in dashboard |
-| "Hugo command not found" | Check build.sh is executable and HUGO_VERSION is valid |
-| Build timeout | Hugo builds should complete in seconds; check for infinite loops |
-| 404 on all pages | Verify `[assets] directory = "./public"` and Hugo outputs to public/ |
-| Contact form 404 | Check `run_worker_first = ["/contact"]` in wrangler.toml |
-| Environment variables not working | Add to Settings → Variables, then click Deploy |
-
-### Alternative: CLI Deployment
-
-For manual deployment without Git integration:
-
-```bash
-# Install wrangler
-npm install -g wrangler
-
-# Login to Cloudflare
-wrangler login
-
-# Build Hugo locally
-hugo --gc --minify
-
-# Deploy
-wrangler deploy
-```
+---
 
 ## Related Documentation
 
 - [Hugo Documentation](https://gohugo.io/documentation/)
 - [Cloudflare Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
 - [Cloudflare Workers Git Integration](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/)
-- [Cloudflare Workers Builds Configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)
 - [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
 - [Resend API Documentation](https://resend.com/docs/api-reference/emails/send-email)
 - [Send Emails with Resend (Cloudflare Tutorial)](https://developers.cloudflare.com/workers/tutorials/send-emails-with-resend/)
@@ -511,355 +443,44 @@ wrangler deploy
 
 ## Implementation Notes
 
-### Phase 1: Environment Setup (Completed 2025-01-24)
+Implementation details and phase notes are in [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md).
 
-#### Hugo Installation
-- **Version**: v0.123.7+extended linux/amd64 (Ubuntu ESM package)
-- **Installation method**: `apt install hugo`
-- **Build info**: BuildDate=2025-07-18T03:45:53Z VendorInfo=ubuntu:0.123.7-1ubuntu0.3+esm1
+---
 
-#### Repository Setup
-- Old repository renamed to `907-life-archive` on GitHub
-- New repository created at `github.com/glw907/907-life`
-- Initial commit includes: CLAUDE.md, IMPLEMENTATION_PLAN.md, GETTING_STARTED.md
-- Branch: main (renamed from default master)
+## Configuration Reference
 
-#### Environment
-- OS: Ubuntu 24.04 (Noble)
-- Platform: Linux 6.14.0-37-generic
-- VSCodium: User's preferred editor (extensions to be installed manually)
+### hugo.toml Key Settings
 
-#### Tasks Completed
-- ✓ Hugo installed via apt
-- ✓ Old repository archived
-- ✓ New git repository initialized
-- ✓ Initial commit and push to GitHub
-- ⏳ Cloudflare account setup (manual task for user)
-- ⏳ VSCodium extensions installation (manual task for user)
-- ⏳ VSCodium workspace configuration (deferred to Phase 7)
+| Setting | Value |
+|---------|-------|
+| baseURL | `https://907.life/` |
+| Pagination | 20 posts per page |
+| Permalinks | `/:year/:month/:day/:slug/` |
+| Taxonomies | Tags only |
+| Output formats | HTML, RSS, JSON |
 
-#### Notes
-- No issues encountered during installation
-- Hugo extended version includes SCSS/SASS support (not needed for this project but available)
-- The `hugo` package pulled in golang and gcc as dependencies (expected for extended version)
+### wrangler.toml Structure
 
-### Phase 2: Hugo Project Foundation (Completed 2025-01-24)
+```toml
+name = "907-life"
+compatibility_date = "2025-01-25"
+main = "src/worker.js"
 
-#### Hugo Site Initialization
-- Initialized Hugo site with `hugo new site . --force`
-- Default directories created: archetypes/, assets/, content/, data/, i18n/, layouts/, static/, themes/
+[build]
+command = "chmod +x build.sh && ./build.sh"
 
-#### Configuration
-- **hugo.toml** configured with:
-  - Base URL: https://907.life/
-  - Title: 907.life
-  - Author: Geoffrey L. Wright
-  - Pagination: 20 posts per page
-  - Permalinks: `/:year/:month/:day/:slug/` for posts
-  - Taxonomies: Tags only (no categories)
-  - Menu: Home, Photos (external), Archives, About
-  - Output formats: HTML, RSS (as feed.xml), JSON (as feed.json)
-  - Privacy: All third-party tracking disabled
-  - Markup: Goldmark with unsafe HTML enabled, Monokai syntax highlighting
-
-#### Directory Structure Created
-```
-content/posts/          # Blog posts
-static/css/             # Stylesheets
-static/images/          # Image assets
-functions/              # Cloudflare Pages Functions
-layouts/_default/       # Default layouts
-layouts/partials/       # Partial templates
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "404-page"
+run_worker_first = ["/contact"]
 ```
 
-#### .gitignore
-- Excludes: public/, resources/, .hugo_build.lock
-- Excludes: .env files, node_modules/
-- Excludes: OS files (.DS_Store, Thumbs.db)
-- Excludes: Editor temp files
+### Environment Variables Summary
 
-#### Tasks Completed
-- ✓ Hugo site initialized
-- ✓ hugo.toml fully configured
-- ✓ Directory structure created
-- ✓ .gitignore created
-- ✓ Hugo builds successfully (empty site, warnings about missing layouts expected)
-
-#### Notes
-- Configuration validated with `hugo` build command
-- No errors encountered
-- Layout warnings are expected and will be resolved in Phase 3
-- Site ready for theme migration
-
-### Phase 3: Theme Migration (Completed 2025-01-24)
-
-#### Theme Files Migrated
-- Cloned archived repository (907-life-archive) temporarily to /tmp
-- Copied layouts, static files, and archetypes
-- Cleaned up temporary clone
-
-#### Templates Created/Updated
-
-**Layouts:**
-- `layouts/_default/baseof.html` - Base HTML structure (migrated)
-- `layouts/_default/single.html` - Updated to show tags instead of categories
-- `layouts/_default/list.html` - List pages with pagination (migrated)
-- `layouts/_default/archives.html` - NEW: Posts by year + tag list
-- `layouts/_default/taxonomy.html` - NEW: Tags list page
-- `layouts/_default/term.html` - NEW: Individual tag pages
-- `layouts/_default/index.json` - JSON feed output (migrated)
-- `layouts/index.html` - Simplified to show all posts (removed old filtering logic)
-
-**Partials:**
-- `layouts/partials/head.html` - Head section with meta tags, CSS, feeds (migrated)
-- `layouts/partials/header.html` - Site header with logo (migrated)
-- `layouts/partials/navigation.html` - UPDATED: New menu from hugo.toml with external Photos link support
-- `layouts/partials/footer.html` - UPDATED: New footer with Contact, GitHub, RSS links
-- `layouts/partials/post-date.html` - Date display helper (kept from archive)
-
-**Archetypes:**
-- `archetypes/posts.md` - NEW: YAML front matter template for posts
-- `archetypes/default.md` - Default TOML template (from Hugo init)
-
-**Static Assets:**
-- `static/css/styles.css` - 11KB CSS file (migrated from archive)
-
-#### Changes from Archived Theme
-- Removed old section-specific layouts (guides/, reviews/, also/)
-- Removed archive-intro.html partial (not needed)
-- Removed list.archivehtml.html (replaced with archives.html)
-- Updated navigation to use hugo.toml menu configuration
-- Updated footer with new link structure
-- Simplified index.html to show all posts (removed "also" tag filtering)
-- Changed single.html from categories to tags
-- Created new archives, taxonomy, and term layouts
-
-#### Navigation Menu
-- Home: `/`
-- Photos: `https://photos.907.life` (external, opens in new tab with ↗)
-- Archives: `/archives/`
-- About: `/about/`
-
-#### Footer Links
-- © 2025 Geoffrey L. Wright
-- Contact: `/about/#contact` (anchor to form)
-- GitHub: `https://github.com/glw907` (external, opens in new tab with ↗)
-- RSS: `/feed.xml`
-
-#### Tasks Completed
-- ✓ Theme files fetched from archived repo
-- ✓ Base templates adapted for new structure
-- ✓ Navigation updated with menu configuration
-- ✓ Partials updated (header, footer, navigation)
-- ✓ Archives layout created (posts by year + tag list)
-- ✓ Tag templates created (taxonomy.html, term.html)
-- ✓ Footer updated with new links
-- ✓ Hugo builds successfully with zero errors
-- ✓ Old section layouts cleaned up
-
-#### Notes
-- Hugo builds cleanly with no errors or warnings
-- All templates use semantic HTML and microformats (h-entry, p-name, etc.)
-- External links properly marked with target="_blank" rel="noopener" and ↗
-- Font Awesome 6.4.0 CDN used for icons
-- CSS is plain CSS with no build step required
-- Theme is custom and lives in layouts/, not a submodule
-
-### Phase 4: Content Pages (Completed 2025-01-24)
-
-#### Content Files Created
-
-**Static Pages:**
-- `content/_index.md` - Home page (displays recent posts via index.html template)
-- `content/archives.md` - Archives page with layout: "archives"
-- `content/about.md` - About page with bio and #contact anchor
-
-**Sample Blog Posts (5 posts across dates and tags):**
-1. `content/posts/2025-01-23-testing-the-new-site.md` - Tags: technology
-2. `content/posts/2025-01-10-winter-prior-lake.md` - Tags: alaska, photography
-3. `content/posts/2024-12-15-book-notes-example.md` - Tags: books
-4. `content/posts/2024-12-01-favorite-albums-2024.md` - Tags: music
-5. `content/posts/2024-11-20-quick-thoughts.md` - Tags: musings
-
-#### About Page Content
-- Real bio content (not placeholder)
-- Description of blog topics
-- #contact anchor for contact form link in footer
-- Placeholder text for contact form (to be implemented in Phase 5)
-
-#### Post Archetype
-- Already created in Phase 3: `archetypes/posts.md`
-- YAML front matter with title, date, draft, tags, description
-
-#### Generated Site Structure
-- Homepage: Displays all 5 posts with excerpts
-- Archives page: Posts grouped by year (2024, 2025) + tag list
-- About page: Bio with #contact anchor working
-- Individual post pages: All rendering correctly with tags
-- Tag pages: 6 tags generated (alaska, books, music, musings, photography, technology)
-- Feeds: RSS (feed.xml) and JSON (feed.json) generated
-- Sitemap: sitemap.xml generated
-
-#### Build Statistics
-- Total pages: 27 (up from 6)
-- Non-page files: 0
-- Static files: 1 (styles.css)
-- Aliases: 8
-- Build time: 39ms
-
-#### Tasks Completed
-- ✓ Home page created (content/_index.md)
-- ✓ Archives page created with correct layout
-- ✓ About page created with bio and #contact anchor
-- ✓ Post archetype already in place (from Phase 3)
-- ✓ 5 sample posts created across multiple tags and dates
-- ✓ All posts set to draft: false (published)
-- ✓ Site builds successfully
-- ✓ All pages render correctly
-- ✓ Tag pages generate automatically
-- ✓ RSS and JSON feeds working
-- ✓ #contact anchor verified in about page HTML
-
-#### Notes
-- No errors or warnings during build
-- All permalinks follow configured pattern: /year/month/day/slug/
-- Sample posts include variety of content (some with <!--more--> tags for excerpts)
-- One post demonstrates multi-tag usage (alaska + photography)
-- Footer "Contact" link correctly points to /about/#contact
-- Archives page displays both posts by year AND tag list as designed
-- Ready for Phase 5 (contact form backend implementation)
-
-### Phase 5: Contact Form Backend (Completed 2025-01-24, Updated 2025-01-25)
-
-**Important Update (2025-01-25):** Cloudflare deprecated Pages in April 2025. The contact form must now use Cloudflare Workers with Static Assets instead of Pages Functions. The architecture has been updated accordingly.
-
-#### Files Created/Updated
-
-**Layout:**
-- `layouts/_default/about.html` - About page layout with contact form
-
-**Worker Script (NEW - replaces Pages Function):**
-- `src/worker.js` - Handles POST to `/contact`, validates Turnstile, sends email via MailChannels
-
-**Configuration (NEW):**
-- `wrangler.toml` - Cloudflare Workers configuration with static assets
-
-**Legacy (to be removed):**
-- `functions/contact.js` - OLD Pages Function format (superseded by `src/worker.js`)
-
-**Environment Configuration:**
-- `.env.example` - Documents required environment variables (never commit actual .env)
-
-**Updated Content:**
-- `content/about.md` - Updated to use "about" layout, removed placeholder text
-
-#### Contact Form Features
-
-**HTML Form:**
-- Fields: Name, Email, Subject, Message (all required)
-- Cloudflare Turnstile widget for spam protection
-- Submit button with loading state
-- Status message area for feedback
-
-**JavaScript Handler:**
-- Async form submission (no page reload)
-- Disables submit button during submission
-- Shows loading state ("Sending...")
-- Displays success/error messages inline
-- Resets form on success
-- Resets Turnstile widget after submission
-- Handles network errors gracefully
-
-**Turnstile Integration:**
-- Widget embedded in form with data-sitekey attribute
-- Script loaded from Cloudflare CDN (async, defer)
-- Token automatically included in form submission
-- Site key: `0x4AAAAAACPc3bf8bl6ifC3c` (configured)
-
-#### Worker Script (src/worker.js)
-
-**Functionality:**
-1. Serves static assets from Hugo's `public/` directory
-2. Intercepts POST requests to `/contact`
-3. Validates all form fields
-4. Validates Turnstile token via Cloudflare API
-5. Sends email via MailChannels API
-6. Returns JSON response (success or error)
-
-**Email Format:**
-- From: `907.life Contact Form <noreply@907.life>` (via MailChannels)
-- To: `geoff@907.life` (configured via CONTACT_EMAIL env var)
-- Reply-To: Sender's email (enables one-click replies)
-- Subject: `[907.life] {form subject}`
-- Body: Plain text with sender info and message
-
-**Error Handling:**
-- Required field validation
-- Turnstile token validation
-- MailChannels API error handling
-- Network error handling
-- All errors return user-friendly JSON messages
-
-#### Email Service: Resend (Updated 2026-01-25)
-
-**Why Resend:**
-- MailChannels discontinued free Cloudflare Workers integration on August 31, 2024
-- Resend offers free tier: 3,000 emails/month (100/day)
-- Modern REST API with good documentation
-- Cloudflare officially recommends Resend as alternative
-
-**How it works:**
-1. Worker validates form and Turnstile
-2. Sends email via Resend API (`https://api.resend.com/emails`)
-3. Resend delivers email to geoff@907.life
-4. Reply-To header allows direct responses to sender
-
-**Required setup:**
-1. Create Resend account at https://resend.com
-2. Generate API key
-3. Verify 907.life domain in Resend (add DNS records)
-4. Add RESEND_API_KEY to Cloudflare Workers environment variables
-
-#### Environment Variables Required
-
-**Cloudflare Workers Dashboard → Settings → Variables:**
-- `TURNSTILE_SECRET_KEY` - Cloudflare Turnstile secret key (encrypted)
-- `CONTACT_EMAIL` - Destination email: geoff@907.life (plain text)
-- `RESEND_API_KEY` - Resend API key (encrypted)
-
-**Documentation:** See `.env.example` for details
-
-#### Credentials Configured
-
-**Turnstile:**
-- Site Key: `0x4AAAAAACPc3bf8bl6ifC3c` (in about.html)
-- Secret Key: `0x4AAAAAACPc3X9Ux49F7FaTgulwsatcOZA` (set in Cloudflare dashboard)
-
-**Email (Resend):**
-- Destination: `geoff@907.life`
-- From address: `contact@907.life` (requires domain verification)
-- Service: Resend (free tier, requires API key and domain verification)
-
-#### Tasks Completed
-- ✓ About page layout created with contact form
-- ✓ Turnstile widget added to form
-- ✓ Turnstile script loaded from CDN
-- ✓ JavaScript form handler implemented
-- ✓ Form feedback UI (success/error messages)
-- ✓ Worker script created (src/worker.js)
-- ✓ wrangler.toml configuration created
-- ✓ MailChannels integration implemented
-- ✓ Email formatting configured (Reply-To, subject prefix)
-- ✓ Error handling for all failure scenarios
-- ✓ .env.example created with documentation
-- ✓ content/about.md updated to use about layout
-- ✓ Site builds successfully
-- ✓ Form renders correctly in HTML
-
-#### Notes
-- Form structure is complete and ready to use
-- Worker script handles both static assets AND contact form POST
-- Environment variables must be set in Cloudflare Workers dashboard
-- Form uses POST to /contact (handled by Worker script)
-- JavaScript is inline in template (no external file needed)
-- Ready for Phase 6 (deployment and configuration)
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| TURNSTILE_SECRET_KEY | Yes (for form) | Spam protection |
+| CONTACT_EMAIL | Yes (for form) | Where emails go |
+| RESEND_API_KEY | Yes (for email) | Resend authentication |
+| HUGO_VERSION | No | Override build.sh version |
