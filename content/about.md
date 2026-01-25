@@ -1,5 +1,6 @@
 ---
 title: "About"
+layout: "about"
 ---
 
 ## About Geoffrey
@@ -15,5 +16,3 @@ This site is a place for me to share stories, thoughts, and discoveries from lif
 ## Contact {#contact}
 
 I'd love to hear from you. Drop me a message below.
-
-[Contact form will be added in Phase 5]

@@ -493,3 +493,133 @@ layouts/partials/       # Partial templates
 - Footer "Contact" link correctly points to /about/#contact
 - Archives page displays both posts by year AND tag list as designed
 - Ready for Phase 5 (contact form backend implementation)
+
+### Phase 5: Contact Form Backend (Completed 2025-01-24)
+
+#### Files Created
+
+**Layout:**
+- `layouts/_default/about.html` - About page layout with contact form
+
+**Cloudflare Pages Function:**
+- `functions/contact.js` - Handles form submissions, validates Turnstile, sends email via Fastmail JMAP
+
+**Environment Configuration:**
+- `.env.example` - Documents required environment variables (never commit actual .env)
+
+**Updated Content:**
+- `content/about.md` - Updated to use "about" layout, removed placeholder text
+
+#### Contact Form Features
+
+**HTML Form:**
+- Fields: Name, Email, Subject, Message (all required)
+- Cloudflare Turnstile widget for spam protection
+- Submit button with loading state
+- Status message area for feedback
+
+**JavaScript Handler:**
+- Async form submission (no page reload)
+- Disables submit button during submission
+- Shows loading state ("Sending...")
+- Displays success/error messages inline
+- Resets form on success
+- Resets Turnstile widget after submission
+- Handles network errors gracefully
+
+**Turnstile Integration:**
+- Widget embedded in form with data-sitekey attribute
+- Script loaded from Cloudflare CDN (async, defer)
+- Token automatically included in form submission
+- Placeholder sitekey: "YOUR_SITE_KEY_HERE" (replace in production)
+
+#### Cloudflare Pages Function (functions/contact.js)
+
+**Functionality:**
+1. Validates all form fields are present
+2. Validates Turnstile token via Cloudflare API
+3. Sends email via Fastmail JMAP API
+4. Returns JSON response (success or error)
+
+**Email Format:**
+- From: `geoff@907.life` (configured via CONTACT_EMAIL env var)
+- To: `geoff@907.life`
+- Reply-To: Sender's email (enables one-click replies)
+- Subject: `[907.life] {form subject}`
+- Body: Plain text with sender info and message
+
+**Error Handling:**
+- Required field validation
+- Turnstile token validation
+- JMAP API error handling
+- Network error handling
+- All errors return user-friendly JSON messages
+
+#### Fastmail JMAP Implementation
+
+**Two-step process:**
+1. Get JMAP session from `https://api.fastmail.com/jmap/session`
+2. Create email and submit via JMAP methodCalls:
+   - `Email/set` - Creates draft email
+   - `EmailSubmission/set` - Sends the email
+
+**Authentication:**
+- Uses Fastmail App Password (not main account password)
+- Passed as Bearer token in Authorization header
+
+#### Environment Variables Required
+
+**Cloudflare Pages Dashboard → Settings → Environment Variables:**
+- `TURNSTILE_SECRET_KEY` - Cloudflare Turnstile secret key (encrypted)
+- `FASTMAIL_API_TOKEN` - Fastmail App Password (encrypted)
+- `FASTMAIL_ACCOUNT_ID` - Fastmail account ID (encrypted)
+- `CONTACT_EMAIL` - Destination email: geoff@907.life (plain text)
+
+**Documentation:** See `.env.example` for details and setup URLs
+
+#### Setup Instructions (To Be Completed in Production)
+
+**1. Cloudflare Turnstile Setup:**
+- Go to https://dash.cloudflare.com → Turnstile
+- Add site: 907.life
+- Domain: 907.life
+- Widget mode: Managed
+- Copy Site Key → Replace "YOUR_SITE_KEY_HERE" in layouts/_default/about.html
+- Copy Secret Key → Add to Cloudflare Pages environment variables
+
+**2. Fastmail JMAP Setup:**
+- Go to https://www.fastmail.com/settings/security/devicekeys
+- Create App Password with JMAP access
+- Note the API token
+- Get Account ID from https://api.fastmail.com/jmap/session (requires authentication)
+- Add both to Cloudflare Pages environment variables
+
+**3. Cloudflare Pages Environment Variables:**
+- Go to Cloudflare Pages → 907-life → Settings → Environment variables
+- Add all 4 variables to Production environment
+- Mark sensitive values as Encrypted
+
+#### Tasks Completed
+- ✓ About page layout created with contact form
+- ✓ Turnstile widget added to form
+- ✓ Turnstile script loaded from CDN
+- ✓ JavaScript form handler implemented
+- ✓ Form feedback UI (success/error messages)
+- ✓ Cloudflare Pages Function created (functions/contact.js)
+- ✓ Fastmail JMAP integration implemented
+- ✓ Email formatting configured (Reply-To, subject prefix)
+- ✓ Error handling for all failure scenarios
+- ✓ .env.example created with documentation
+- ✓ content/about.md updated to use about layout
+- ✓ Site builds successfully
+- ✓ Form renders correctly in HTML
+
+#### Notes
+- Form structure is complete and ready to use
+- Actual functionality requires Turnstile keys and Fastmail credentials
+- Site key in about.html is placeholder - must be replaced before deployment
+- Environment variables must be set in Cloudflare Pages dashboard
+- Form uses POST to /contact (handled by Pages Function)
+- JavaScript is inline in template (no external file needed)
+- No build step or dependencies required
+- Ready for Phase 6 (deployment and configuration)
