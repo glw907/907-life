@@ -165,10 +165,9 @@ Sent via 907.life contact form`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        // Note: "from" address must use a verified domain in Resend
-        // For testing, you can use: onboarding@resend.dev
-        // For production with 907.life, you need to verify the domain in Resend
-        from: '907.life Contact Form <contact@907.life>',
+        // Note: Using Resend test sender since 907.life domain not verified yet
+        // To use contact@907.life, verify domain in Resend dashboard
+        from: 'Onboarding <onboarding@resend.dev>',
         to: [to],
         reply_to: replyTo,
         subject: subject,
