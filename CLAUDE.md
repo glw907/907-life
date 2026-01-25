@@ -542,8 +542,8 @@ layouts/partials/       # Partial templates
 4. Returns JSON response (success or error)
 
 **Email Format:**
-- From: `geoff@907.life` (configured via CONTACT_EMAIL env var)
-- To: `geoff@907.life`
+- From: `noreply@907.life` (via MailChannels)
+- To: `geoff@907.life` (configured via CONTACT_EMAIL env var)
 - Reply-To: Sender's email (enables one-click replies)
 - Subject: `[907.life] {form subject}`
 - Body: Plain text with sender info and message
@@ -551,53 +551,49 @@ layouts/partials/       # Partial templates
 **Error Handling:**
 - Required field validation
 - Turnstile token validation
-- JMAP API error handling
+- MailChannels API error handling
 - Network error handling
 - All errors return user-friendly JSON messages
 
-#### Fastmail JMAP Implementation
+#### MailChannels Email Implementation
 
-**Two-step process:**
-1. Get JMAP session from `https://api.fastmail.com/jmap/session`
-2. Create email and submit via JMAP methodCalls:
-   - `Email/set` - Creates draft email
-   - `EmailSubmission/set` - Sends the email
+**Why MailChannels:**
+- Free email sending service for Cloudflare Workers/Pages
+- No additional credentials needed beyond what's configured
+- Reliable delivery with proper email headers
+- Simpler than SMTP (which Cloudflare Workers can't use directly)
 
-**Authentication:**
-- Uses Fastmail App Password (not main account password)
-- Passed as Bearer token in Authorization header
+**How it works:**
+1. Contact function validates form and Turnstile
+2. Sends email via MailChannels API (`https://api.mailchannels.net/tx/v1/send`)
+3. MailChannels delivers email to geoff@907.life
+4. Reply-To header allows direct responses to sender
 
 #### Environment Variables Required
 
 **Cloudflare Pages Dashboard → Settings → Environment Variables:**
 - `TURNSTILE_SECRET_KEY` - Cloudflare Turnstile secret key (encrypted)
-- `FASTMAIL_API_TOKEN` - Fastmail App Password (encrypted)
-- `FASTMAIL_ACCOUNT_ID` - Fastmail account ID (encrypted)
 - `CONTACT_EMAIL` - Destination email: geoff@907.life (plain text)
 
-**Documentation:** See `.env.example` for details and setup URLs
+**Documentation:** See `.env.example` for details
 
-#### Setup Instructions (To Be Completed in Production)
+#### Credentials Configured (Phase 5 Update)
 
-**1. Cloudflare Turnstile Setup:**
-- Go to https://dash.cloudflare.com → Turnstile
-- Add site: 907.life
-- Domain: 907.life
-- Widget mode: Managed
-- Copy Site Key → Replace "YOUR_SITE_KEY_HERE" in layouts/_default/about.html
-- Copy Secret Key → Add to Cloudflare Pages environment variables
+**✓ Turnstile:**
+- Site Key: `0x4AAAAAACPc3bf8bl6ifC3c` (already in about.html)
+- Secret Key: `0x4AAAAAACPc3X9Ux49F7FaTgulwsatcOZA` (ready for env vars)
 
-**2. Fastmail JMAP Setup:**
-- Go to https://www.fastmail.com/settings/security/devicekeys
-- Create App Password with JMAP access
-- Note the API token
-- Get Account ID from https://api.fastmail.com/jmap/session (requires authentication)
-- Add both to Cloudflare Pages environment variables
+**✓ Email:**
+- Destination: `geoff@907.life`
+- Service: MailChannels (free, no credentials needed)
 
-**3. Cloudflare Pages Environment Variables:**
+#### Setup Remaining for Production
+
+**Cloudflare Pages Environment Variables:**
 - Go to Cloudflare Pages → 907-life → Settings → Environment variables
-- Add all 4 variables to Production environment
-- Mark sensitive values as Encrypted
+- Add to Production environment:
+  - `TURNSTILE_SECRET_KEY` = `0x4AAAAAACPc3X9Ux49F7FaTgulwsatcOZA` (encrypted)
+  - `CONTACT_EMAIL` = `geoff@907.life` (plain text)
 
 #### Tasks Completed
 - ✓ About page layout created with contact form

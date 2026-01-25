@@ -3,13 +3,11 @@
  *
  * Handles POST requests to /contact
  * - Validates Cloudflare Turnstile token
- * - Sends email via Fastmail JMAP API
+ * - Sends email via MailChannels (Cloudflare's email API)
  * - Returns JSON response
  *
  * Environment variables required:
  * - TURNSTILE_SECRET_KEY: Cloudflare Turnstile secret key
- * - FASTMAIL_API_TOKEN: Fastmail App Password
- * - FASTMAIL_ACCOUNT_ID: Fastmail account ID
  * - CONTACT_EMAIL: Destination email (geoff@907.life)
  */
 
@@ -68,17 +66,14 @@ export async function onRequestPost(context) {
       );
     }
 
-    // 3. Send email via Fastmail JMAP
-    const emailSent = await sendEmailViaFastmail({
-      from: env.CONTACT_EMAIL,
+    // 3. Send email via MailChannels
+    const emailSent = await sendEmailViaMailChannels({
       to: env.CONTACT_EMAIL,
       replyTo: email,
       subject: `[907.life] ${subject}`,
       name: name,
       senderEmail: email,
       message: message,
-      apiToken: env.FASTMAIL_API_TOKEN,
-      accountId: env.FASTMAIL_ACCOUNT_ID,
     });
 
     if (!emailSent) {
@@ -104,42 +99,23 @@ export async function onRequestPost(context) {
 }
 
 /**
- * Send email via Fastmail JMAP API
+ * Send email via MailChannels API
+ * MailChannels is free for Cloudflare Workers/Pages
  *
  * @param {Object} params - Email parameters
  * @returns {Promise<boolean>} - Success status
  */
-async function sendEmailViaFastmail(params) {
+async function sendEmailViaMailChannels(params) {
   const {
-    from,
     to,
     replyTo,
     subject,
     name,
     senderEmail,
     message,
-    apiToken,
-    accountId,
   } = params;
 
   try {
-    // Step 1: Get JMAP session
-    const sessionResponse = await fetch('https://api.fastmail.com/jmap/session', {
-      headers: {
-        'Authorization': `Bearer ${apiToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!sessionResponse.ok) {
-      console.error('Failed to get JMAP session');
-      return false;
-    }
-
-    const session = await sessionResponse.json();
-    const apiUrl = session.apiUrl;
-
-    // Step 2: Create email
     const emailBody = `From: ${name} <${senderEmail}>
 
 Message:
@@ -148,79 +124,43 @@ ${message}
 ---
 Sent via 907.life contact form`;
 
-    const jmapRequest = {
-      using: ['urn:ietf:params:jmap:core', 'urn:ietf:params:jmap:mail', 'urn:ietf:params:jmap:submission'],
-      methodCalls: [
-        [
-          'Email/set',
-          {
-            accountId: accountId,
-            create: {
-              draft: {
-                mailboxIds: {
-                  // This will be the Drafts folder - JMAP will handle it
-                },
-                from: [{ email: from }],
-                to: [{ email: to }],
-                replyTo: [{ email: replyTo }],
-                subject: subject,
-                textBody: [
-                  {
-                    partId: 'body',
-                    type: 'text/plain',
-                  },
-                ],
-                bodyValues: {
-                  body: {
-                    value: emailBody,
-                  },
-                },
-              },
-            },
-          },
-          'a',
-        ],
-        [
-          'EmailSubmission/set',
-          {
-            accountId: accountId,
-            create: {
-              submission: {
-                emailId: '#draft',
-                identityId: accountId,
-              },
-            },
-          },
-          'b',
-        ],
+    const emailRequest = {
+      personalizations: [
+        {
+          to: [{ email: to }],
+          reply_to: { email: replyTo, name: name },
+        },
+      ],
+      from: {
+        email: 'noreply@907.life',
+        name: '907.life Contact Form',
+      },
+      subject: subject,
+      content: [
+        {
+          type: 'text/plain',
+          value: emailBody,
+        },
       ],
     };
 
-    // Step 3: Send via JMAP
-    const jmapResponse = await fetch(apiUrl, {
+    const response = await fetch('https://api.mailchannels.net/tx/v1/send', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(jmapRequest),
+      body: JSON.stringify(emailRequest),
     });
 
-    if (!jmapResponse.ok) {
-      console.error('JMAP request failed:', await jmapResponse.text());
+    if (!response.ok) {
+      console.error('MailChannels error:', response.status, await response.text());
       return false;
     }
 
-    const jmapResult = await jmapResponse.json();
-
-    // Check if email was created and sent successfully
-    const emailCreated = jmapResult.methodResponses[0][1].created;
-    const submissionCreated = jmapResult.methodResponses[1][1].created;
-
-    return !!(emailCreated && submissionCreated);
+    return true;
 
   } catch (error) {
-    console.error('Fastmail JMAP error:', error);
+    console.error('MailChannels send error:', error);
     return false;
   }
 }
