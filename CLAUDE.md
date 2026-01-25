@@ -155,7 +155,9 @@ Key settings in `hugo.toml`:
 |-----------|---------|
 | Cloudflare Turnstile | Spam protection (managed mode) |
 | Worker Script | `src/worker.js` handles POST to `/contact` |
-| MailChannels | Sends email via API (free for Cloudflare Workers) |
+| Resend | Sends email via API (free tier: 3,000 emails/month) |
+
+**Note:** MailChannels discontinued their free Cloudflare Workers integration on August 31, 2024. Resend is the replacement.
 
 ### Form Flow
 
@@ -163,7 +165,7 @@ Key settings in `hugo.toml`:
 2. Turnstile validates human
 3. Form POSTs to `/contact`
 4. Worker script validates Turnstile token
-5. Worker sends email via MailChannels API
+5. Worker sends email via Resend API
 6. User sees success/error message (inline, no reload)
 
 ### Email Format
@@ -184,8 +186,22 @@ Set in Cloudflare Workers dashboard (Settings → Variables):
 |----------|---------|
 | `TURNSTILE_SECRET_KEY` | Turnstile validation (encrypted) |
 | `CONTACT_EMAIL` | Destination (`geoff@907.life`) |
+| `RESEND_API_KEY` | Resend email API key (encrypted) |
 
 **Never commit secrets to git.** Use `.env.example` to document required vars.
+
+### Resend Setup (Required)
+
+1. **Create account**: Sign up at https://resend.com (free tier: 3,000 emails/month, 100/day)
+2. **Create API key**: Dashboard → API Keys → Create
+3. **Verify domain** (for production):
+   - Dashboard → Domains → Add Domain
+   - Add 907.life
+   - Add DNS records (SPF, DKIM, DMARC) in Cloudflare DNS
+   - Wait for verification
+4. **Add to Cloudflare**: Workers → 907-life → Settings → Variables → Add `RESEND_API_KEY`
+
+**For testing without domain verification**: Change the `from` address in worker.js to `onboarding@resend.dev`
 
 ## Commands Reference
 
@@ -264,6 +280,22 @@ Set in Cloudflare Workers dashboard (Settings → Variables):
 - Verify environment variables in Cloudflare Workers dashboard → Settings → Variables
 - Check Worker logs: `npx wrangler tail` or dashboard → Logs
 - Ensure Turnstile site key matches domain
+- **"Email service not configured"**: RESEND_API_KEY is missing from environment variables
+- **"Email service authentication failed"**: RESEND_API_KEY is invalid
+- **"Email domain not verified"**: The `from` domain (907.life) needs to be verified in Resend dashboard
+  - For testing, change `from` in worker.js to `onboarding@resend.dev`
+- **"Too many requests"**: Hit Resend rate limit (100/day on free tier)
+
+### Resend domain verification
+To send from `contact@907.life`, you must verify the domain in Resend:
+1. Go to https://resend.com/domains
+2. Add `907.life`
+3. Add the DNS records in Cloudflare DNS:
+   - SPF record (TXT)
+   - DKIM records (CNAME or TXT)
+   - Optional: DMARC record (TXT)
+4. Click "Verify" in Resend
+5. Wait a few minutes for propagation
 
 ### Turnstile "Invalid domain" error
 
@@ -472,6 +504,8 @@ wrangler deploy
 - [Cloudflare Workers Git Integration](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/)
 - [Cloudflare Workers Builds Configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)
 - [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
+- [Resend API Documentation](https://resend.com/docs/api-reference/emails/send-email)
+- [Send Emails with Resend (Cloudflare Tutorial)](https://developers.cloudflare.com/workers/tutorials/send-emails-with-resend/)
 
 ---
 
@@ -766,25 +800,32 @@ layouts/partials/       # Partial templates
 - Network error handling
 - All errors return user-friendly JSON messages
 
-#### MailChannels Email Implementation
+#### Email Service: Resend (Updated 2026-01-25)
 
-**Why MailChannels:**
-- Free email sending service for Cloudflare Workers
-- No additional credentials needed
-- Reliable delivery with proper email headers
-- Simpler than SMTP (which Cloudflare Workers can't use directly)
+**Why Resend:**
+- MailChannels discontinued free Cloudflare Workers integration on August 31, 2024
+- Resend offers free tier: 3,000 emails/month (100/day)
+- Modern REST API with good documentation
+- Cloudflare officially recommends Resend as alternative
 
 **How it works:**
 1. Worker validates form and Turnstile
-2. Sends email via MailChannels API (`https://api.mailchannels.net/tx/v1/send`)
-3. MailChannels delivers email to geoff@907.life
+2. Sends email via Resend API (`https://api.resend.com/emails`)
+3. Resend delivers email to geoff@907.life
 4. Reply-To header allows direct responses to sender
+
+**Required setup:**
+1. Create Resend account at https://resend.com
+2. Generate API key
+3. Verify 907.life domain in Resend (add DNS records)
+4. Add RESEND_API_KEY to Cloudflare Workers environment variables
 
 #### Environment Variables Required
 
 **Cloudflare Workers Dashboard → Settings → Variables:**
 - `TURNSTILE_SECRET_KEY` - Cloudflare Turnstile secret key (encrypted)
 - `CONTACT_EMAIL` - Destination email: geoff@907.life (plain text)
+- `RESEND_API_KEY` - Resend API key (encrypted)
 
 **Documentation:** See `.env.example` for details
 
@@ -794,9 +835,10 @@ layouts/partials/       # Partial templates
 - Site Key: `0x4AAAAAACPc3bf8bl6ifC3c` (in about.html)
 - Secret Key: `0x4AAAAAACPc3X9Ux49F7FaTgulwsatcOZA` (set in Cloudflare dashboard)
 
-**Email:**
+**Email (Resend):**
 - Destination: `geoff@907.life`
-- Service: MailChannels (free, no credentials needed)
+- From address: `contact@907.life` (requires domain verification)
+- Service: Resend (free tier, requires API key and domain verification)
 
 #### Tasks Completed
 - ✓ About page layout created with contact form

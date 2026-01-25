@@ -7,6 +7,7 @@
  * Environment variables required (set in Cloudflare dashboard):
  * - TURNSTILE_SECRET_KEY: Cloudflare Turnstile secret key
  * - CONTACT_EMAIL: Destination email (geoff@907.life)
+ * - RESEND_API_KEY: Resend API key for sending emails
  */
 
 export default {
@@ -90,8 +91,9 @@ async function handleContactForm(request, env) {
       );
     }
 
-    // Send email via MailChannels
-    const emailSent = await sendEmailViaMailChannels({
+    // Send email via Resend API
+    const emailResult = await sendEmailViaResend({
+      apiKey: env.RESEND_API_KEY,
       to: env.CONTACT_EMAIL,
       replyTo: email,
       subject: `[907.life] ${subject}`,
@@ -100,14 +102,16 @@ async function handleContactForm(request, env) {
       message: message,
     });
 
-    if (!emailSent) {
+    if (!emailResult.success) {
+      console.error('Email send failed:', emailResult.error);
       return new Response(
-        JSON.stringify({ error: 'Failed to send email. Please try again later.' }),
+        JSON.stringify({ error: emailResult.error || 'Failed to send email. Please try again later.' }),
         { status: 500, headers }
       );
     }
 
     // Success
+    console.log('Email sent successfully:', emailResult.id);
     return new Response(
       JSON.stringify({ success: true }),
       { status: 200, headers }
@@ -123,14 +127,27 @@ async function handleContactForm(request, env) {
 }
 
 /**
- * Send email via MailChannels API
- * MailChannels is free for Cloudflare Workers
+ * Send email via Resend API
+ *
+ * Resend is a modern email API that replaced MailChannels for Cloudflare Workers.
+ * MailChannels discontinued their free Cloudflare Workers integration on August 31, 2024.
+ *
+ * Resend free tier: 3,000 emails/month (100/day)
+ * Docs: https://resend.com/docs/api-reference/emails/send-email
  *
  * @param {Object} params - Email parameters
- * @returns {Promise<boolean>} Success status
+ * @returns {Promise<{success: boolean, id?: string, error?: string}>}
  */
-async function sendEmailViaMailChannels(params) {
-  const { to, replyTo, subject, name, senderEmail, message } = params;
+async function sendEmailViaResend(params) {
+  const { apiKey, to, replyTo, subject, name, senderEmail, message } = params;
+
+  // Check for API key
+  if (!apiKey) {
+    return {
+      success: false,
+      error: 'Email service not configured. RESEND_API_KEY environment variable is missing.'
+    };
+  }
 
   try {
     const emailBody = `From: ${name} <${senderEmail}>
@@ -141,41 +158,50 @@ ${message}
 ---
 Sent via 907.life contact form`;
 
-    const emailRequest = {
-      personalizations: [
-        {
-          to: [{ email: to }],
-          reply_to: { email: replyTo, name: name },
-        },
-      ],
-      from: {
-        email: 'noreply@907.life',
-        name: '907.life Contact Form',
-      },
-      subject: subject,
-      content: [
-        {
-          type: 'text/plain',
-          value: emailBody,
-        },
-      ],
-    };
-
-    const response = await fetch('https://api.mailchannels.net/tx/v1/send', {
+    const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(emailRequest),
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        // Note: "from" address must use a verified domain in Resend
+        // For testing, you can use: onboarding@resend.dev
+        // For production with 907.life, you need to verify the domain in Resend
+        from: '907.life Contact Form <contact@907.life>',
+        to: [to],
+        reply_to: replyTo,
+        subject: subject,
+        text: emailBody,
+      }),
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-      console.error('MailChannels error:', response.status, await response.text());
-      return false;
+      console.error('Resend API error:', response.status, JSON.stringify(result));
+
+      // Provide more specific error messages
+      if (response.status === 401) {
+        return { success: false, error: 'Email service authentication failed. Please contact site administrator.' };
+      }
+      if (response.status === 403) {
+        return { success: false, error: 'Email domain not verified. Please contact site administrator.' };
+      }
+      if (response.status === 422) {
+        return { success: false, error: `Email validation error: ${result.message || 'Invalid request'}` };
+      }
+      if (response.status === 429) {
+        return { success: false, error: 'Too many requests. Please try again in a few minutes.' };
+      }
+
+      return { success: false, error: result.message || 'Failed to send email' };
     }
 
-    return true;
+    return { success: true, id: result.id };
 
   } catch (error) {
-    console.error('MailChannels send error:', error);
-    return false;
+    console.error('Resend send error:', error);
+    return { success: false, error: 'Network error while sending email' };
   }
 }
