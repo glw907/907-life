@@ -17,7 +17,7 @@
       <div class="post-preview h-entry">
         {{- /* Post date */ -}}
         <p class="post-date">
-          <a href="{{ .Permalink }}" class="u-url">
+          <a href="{{ .RelPermalink }}" class="u-url">
             <i class="fa-regular fa-calendar"></i>
             <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
               {{ .Date.Format "January 2, 2006" }}
@@ -35,7 +35,7 @@
             {{- else if in .Params.tags "also" -}}
               <i class="fa-solid fa-asterisk"></i>
             {{- end -}}
-            <a href="{{ .Permalink }}">{{ .Title }}</a>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
           </h4>
 
           {{- /* Summary/excerpt if available */ -}}

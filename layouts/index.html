@@ -19,7 +19,7 @@
       <div class="post-preview h-entry">
         {{/* Display post date */}}
         <p class="post-date">
-          <a href="{{ .Permalink }}" class="u-url">
+          <a href="{{ .RelPermalink }}" class="u-url">
             <i class="fa-regular fa-calendar"></i>
             <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
               {{ .Date.Format "January 2, 2006" }}
@@ -29,7 +29,7 @@
 
         {{/* Display logic: titled posts show title + summary, untitled show full content */}}
         {{ if .Title }}
-          <h2 class="post-title p-name"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+          <h2 class="post-title p-name"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
           {{/* Check for <!--more--> tag to show excerpt with "Read More" link */}}
           {{ if in .RawContent "<!--more-->" }}
             <div class="p-summary">

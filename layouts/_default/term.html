@@ -20,7 +20,7 @@
         <div class="post-preview h-entry">
           {{/* Post date */}}
           <p class="post-date">
-            <a href="{{ .Permalink }}" class="u-url">
+            <a href="{{ .RelPermalink }}" class="u-url">
               <i class="fa-regular fa-calendar"></i>
               <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
                 {{ .Date.Format "January 2, 2006" }}
@@ -31,7 +31,7 @@
           {{/* Post title */}}
           {{ if .Title }}
             <h3 class="post-title p-name">
-              <a href="{{ .Permalink }}">{{ .Title }}</a>
+              <a href="{{ .RelPermalink }}">{{ .Title }}</a>
             </h3>
           {{ end }}
 
