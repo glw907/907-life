@@ -1,61 +1,57 @@
 /* ===================================================
    907.life Stylesheet
-   Clean, focused design for smartphone-free living
+   Styled to match the original Micro.blog Tiny Theme
    =================================================== */
 
 /* ===================================================
-   CSS VARIABLES
+   CSS VARIABLES - Light Mode
    =================================================== */
 
 :root {
-  /* Site colors */
-  --color-link: #134d85;
-  --color-link-hover: #123765;
-  --color-text: #3a3a3a;
-  --color-text-light: #666;
-  --color-bg: #fdfcf9;
-  --color-heading-dark: #050505;
-  --color-heading-medium: #0a0a0a;
-  --color-heading-light: #0f0f0f;
-  --color-heading-h4: #1a1a1a;
-  --border-opacity: 0.12;
-
-  /* Tiny theme compatibility (for contact form) */
   --text: #000000;
   --link: #1565C0;
+  --link_visited: #1565C0;
+  --accent1: #333333;
   --accent2: #666666;
   --background: #ffffff;
+  --code: #e3e3e3;
   --button-text: #ffffff;
+  --blockquote: #fffee0;
+  --blockquote-border: #e5d600;
+  --aside: #e0f7fa;
+  --aside-border: #0097a7;
   --note: #e8f5e9;
   --note-border: #d5e1d6;
   --alert: #ffebee;
   --alert-border: #d32f2f;
+  --field: #fffee0;
+  --mark: #FFFF99;
 }
+
+/* ===================================================
+   CSS VARIABLES - Dark Mode (Dracula-inspired)
+   =================================================== */
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Site colors */
-    --color-link: #8ac1ff;
-    --color-link-hover: #a8d1ff;
-    --color-text: #e6e6e6;
-    --color-text-light: #999;
-    --color-bg: #181818;
-    --color-heading-dark: #f5f5f5;
-    --color-heading-medium: #efefef;
-    --color-heading-light: #e9e9e9;
-    --color-heading-h4: #ccc;
-    --border-opacity: 0.15;
-
-    /* Tiny theme compatibility (for contact form) */
     --text: #f8f8f2;
     --link: #8be9fd;
+    --link_visited: #8be9fd;
+    --accent1: #f8f8f2;
     --accent2: #f8f8f2;
     --background: #282a36;
+    --code: #44475a;
     --button-text: #282a36;
+    --blockquote: #44475a;
+    --blockquote-border: #6272a4;
+    --aside: #6272a4;
+    --aside-border: #7797b7;
     --note: #3f444a;
     --note-border: #4f545a;
     --alert: #ff5555;
     --alert-border: #ff6e6e;
+    --field: #44475a;
+    --mark: #FFFF99;
   }
 }
 
@@ -64,8 +60,7 @@
    =================================================== */
 
 :root {
-  --font_classical_humanist: Optima, Candara, 'Noto Sans', source-sans-pro, sans-serif;
-  --font_neo-grotesque: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+  --font_system_ui: system-ui, sans-serif;
   --font_monospace_code: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 }
 
@@ -73,235 +68,83 @@
    BASE LAYOUT & TYPOGRAPHY
    =================================================== */
 
-html {
-  font-size: 16px;
-}
-
-@media (min-width: 48rem) {
-  html {
-    font-size: 17px;
-  }
-}
-
 body {
   max-width: 40em;
   margin: 2em auto;
+  font-family: var(--font_system_ui);
+  font-size: 18px;
   padding: 0 1em;
-  font-family: var(--font_classical_humanist);
-  font-size: 1rem;
   line-height: 1.6;
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background-color: var(--background);
+  color: var(--text);
 }
 
 header {
   margin-bottom: 2em;
 }
 
-p {
-  margin: 0 0 1.1em;
+.post-header {
+  margin-bottom: 0;
 }
 
-strong, b {
-  font-weight: 550;
+p {
+  margin: 0 0 1em;
 }
 
 /* ===================================================
-   HEADING HIERARCHY
+   HEADINGS
    =================================================== */
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font_neo-grotesque);
-}
-
-h1 {
-  font-size: 2rem;
-  line-height: 1.2;
-  margin: 2rem 0 0.8rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-  color: var(--color-heading-dark);
+h1, h2, h3 {
+  line-height: 1.2em;
 }
 
 h2 {
-  font-size: 1.6rem;
-  line-height: 1.25;
-  margin: 1.8rem 0 0.7rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--color-heading-medium);
+  margin-top: 0;
 }
 
-h3 {
-  font-size: 1.3rem;
-  line-height: 1.4;
-  margin: 2rem 0 0.6rem;
-  font-weight: 550;
-  letter-spacing: 0;
-  color: var(--color-heading-light);
+header h1 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
 }
 
-h4 {
-  font-size: 1.06rem;
-  font-weight: 575;
-  line-height: 1.4;
-  letter-spacing: 0.02em;
-  font-variant: small-caps;
-  margin: 1.5rem 0 0;
-  padding-bottom: 0.15rem;
-  border-bottom: 1px solid rgba(0, 0, 0, var(--border-opacity));
-  color: var(--color-heading-h4);
+header h1 a,
+header h1 a:visited {
+  text-decoration: none;
+  color: var(--text);
 }
 
-h4 a {
-  color: var(--color-link);
+header h1 a:hover {
+  color: var(--accent1);
   text-decoration: none;
 }
 
-h4 a:hover {
-  color: var(--color-link-hover);
-  text-decoration: underline;
-}
-
-/* Post titles */
-.page h2.p-name,
-.post h2.p-name,
-.archive h2.p-name {
-  font-size: 1.85rem;
-  line-height: 1.2;
-  margin: 2rem 0 1rem;
-  font-weight: 650;
-  letter-spacing: -0.015em;
-  color: var(--color-heading-dark);
-}
-
-/* Site header */
+/* Site header title styling */
 .site-header h1 {
-  font-size: 2.2rem;
-  letter-spacing: 0.03em;
-  margin: 0.5rem 0;
-  line-height: 1.1;
+  font-size: 1.5em;
+  margin: 0.2em 0;
 }
 
-.site-header .site-title {
-  color: var(--color-heading-medium);
+.site-title {
   text-decoration: none;
+  color: var(--text);
 }
 
-.site-header .site-title:hover {
-  color: var(--color-link);
-  text-decoration: none;
+.site-title:hover {
+  color: var(--accent1);
 }
 
 .site-number {
   font-weight: 600;
-  font-size: 1em;
 }
 
 .site-domain {
   font-weight: 400;
-  font-size: 0.85em;
 }
 
-/* Post date styling */
-.post-date {
-  display: inline-block;
-  margin-bottom: 0.3rem;
-  line-height: 1;
-  vertical-align: baseline;
-}
-
-.h-entry h1.p-name,
-.h-entry h2.p-name,
-.h-entry h3.p-name {
-  margin-top: 0.3rem;
-}
-
-/* ===================================================
-   LISTS
-   =================================================== */
-
-ul {
-  list-style-type: none;
-  padding-left: 1.5em;
-}
-
-ul li {
-  position: relative;
-  line-height: 1.5;
-}
-
-ul li::before {
-  content: "–";
-  position: absolute;
-  margin-left: -1.5em;
-  color: var(--color-text-light);
-}
-
-ol li {
-  line-height: 1.5;
-}
-
-/* Remove bullets from navigation */
-nav ul li::before {
-  content: none;
-}
-
-/* Archive category lists */
-.archive-categories ul {
-  padding-left: 0;
-}
-
-.archive-categories ul li::before {
-  content: none;
-}
-
-/* ===================================================
-   CATEGORY/TAG LISTS
-   =================================================== */
-
-.post-tags {
-  padding-left: 0;
-}
-
-.post-tags li::before {
-  content: none;
-}
-
-.post-tags::before {
-  content: "Categories: ";
-  font-size: 0.9rem;
-  color: var(--color-text-light);
-  font-style: italic;
-  margin-right: 0.3em;
-}
-
-.post-tags li {
-  display: inline;
-}
-
-.post-tags li:not(:last-child)::after {
-  content: " | ";
-  color: var(--color-text-light);
-  margin: 0 0.2em;
-}
-
-.post-tags a {
-  text-decoration-color: rgba(19, 77, 133, 0.5);
-}
-
-.post-tags a:hover {
-  text-decoration-color: rgba(18, 55, 101, 0.8);
-}
-
-@media (prefers-color-scheme: dark) {
-  .post-tags a {
-    text-decoration-color: rgba(138, 193, 255, 0.5);
-  }
-
-  .post-tags a:hover {
-    text-decoration-color: rgba(168, 209, 255, 0.8);
-  }
+/* Post title styling */
+.p-name {
+  text-wrap: balance;
 }
 
 /* ===================================================
@@ -309,85 +152,252 @@ nav ul li::before {
    =================================================== */
 
 a {
-  color: var(--color-link);
-  text-decoration: underline;
-  text-underline-offset: 0.12em;
-}
-
-a:visited {
-  color: var(--color-link);
+  color: var(--link);
 }
 
 a:hover {
-  color: var(--color-link-hover);
-  text-decoration: underline;
-  text-underline-offset: 0.12em;
+  text-decoration: none;
 }
 
-a:focus,
-h4 a:focus {
-  outline: 2px solid var(--color-link);
-  outline-offset: 2px;
+a:visited {
+  color: var(--link_visited);
 }
 
 /* ===================================================
-   MEDIA ELEMENTS
+   NAVIGATION
+   Pill-style buttons with border and hover fill
    =================================================== */
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 0.2em;
+  line-height: 2.15em;
+  white-space: nowrap;
+}
+
+nav a,
+nav a:visited,
+nav a:hover {
+  text-decoration: none;
+  padding: 5px 10px;
+  border: 1px solid var(--link);
+  color: var(--link);
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+nav a:hover {
+  background: var(--link);
+  color: var(--button-text);
+}
+
+/* ===================================================
+   POST CONTENT
+   =================================================== */
+
+.e-content {
+  margin-bottom: 2em;
+  overflow-wrap: anywhere;
+}
+
+.e-content p:first-of-type,
+article p:first-of-type {
+  margin-top: 0;
+}
+
+/* ===================================================
+   POST DATE
+   =================================================== */
+
+a.post-date {
+  font-size: 0.8em;
+  color: var(--link);
+  text-decoration: none;
+}
+
+span.post-date {
+  font-size: 0.8em;
+}
+
+a.post-date:hover {
+  text-decoration: none;
+}
+
+.post-meta {
+  color: var(--accent2);
+}
+
+/* ===================================================
+   POST LISTS
+   =================================================== */
+
+ul.post-tags li {
+  display: inline;
+  font-size: 0.8em;
+}
+
+ul.post-tags,
+ul.post-list {
+  padding-left: 0;
+}
+
+ul.post-list {
+  list-style-type: none;
+}
+
+ul.post-list a.u-url {
+  text-decoration: none;
+}
+
+/* Archive styles */
+.full-archives {
+  overflow-wrap: anywhere;
+}
+
+/* ===================================================
+   POST NAVIGATION
+   =================================================== */
+
+.post-nav {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+  text-align: center;
+}
+
+.post-nav span {
+  padding: 0 5px;
+}
+
+.post-nav a:visited {
+  color: var(--link);
+}
+
+/* Read more link */
+a.read-more {
+  text-decoration: none;
+  padding: 5px 10px;
+  border: 1px solid var(--link);
+  color: var(--link);
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+a.read-more:hover {
+  background: var(--link);
+  color: var(--button-text);
+}
+
+/* ===================================================
+   IMAGES
+   =================================================== */
+
+article img,
+.e-content img,
+.p-summary img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
 
 img {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: 5px;
 }
 
-figure {
-  margin: 1.25rem 0;
+/* ===================================================
+   BLOCKQUOTES & CALLOUTS
+   =================================================== */
+
+blockquote, aside, .aside, .note, .alert, .blockquote {
+  padding: 1em;
+  border-left: 4px solid;
+  border-radius: 0 5px 5px 0;
+  font-size: 0.9em;
+  margin: 1em;
 }
 
-figcaption {
-  font-size: 0.9rem;
-  opacity: 0.85;
+blockquote, .blockquote {
+  background: var(--blockquote);
+  border-left: 4px solid var(--blockquote-border);
 }
 
-blockquote {
-  border-left: 3px solid currentColor;
-  padding: 0.6rem 1rem;
-  margin: 1.2rem 0;
+blockquote p:last-of-type, .blockquote p:last-of-type,
+aside p:last-of-type, .aside p:last-of-type,
+.alert p:last-of-type, .note p:last-of-type {
+  margin-bottom: 0;
+}
+
+blockquote p:first-of-type, .blockquote p:first-of-type,
+aside p:first-of-type, .aside p:first-of-type,
+.alert p:first-of-type, .note p:first-of-type {
+  margin-top: 0;
+}
+
+blockquote cite, aside cite, .aside cite {
+  display: block;
+  text-align: right;
+  margin-top: 1em;
+}
+
+aside, .aside {
+  background: var(--aside);
+  border-left: 4px solid var(--aside-border);
+}
+
+.note {
+  background: var(--note);
+  border-left: 4px solid var(--note-border);
+  font-style: italic;
+}
+
+.alert {
+  background: var(--alert);
+  border-left: 4px solid var(--alert-border);
+  font-weight: bold;
+}
+
+.callout {
+  background: var(--code);
+  padding: 1em;
+  border-radius: 5px;
+  margin-bottom: 2em;
 }
 
 /* ===================================================
    CODE
    =================================================== */
 
-code {
-  font-family: var(--font_monospace_code);
-}
-
 p > code,
 li > code {
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--code);
   padding: 2px 4px;
   font-size: 0.9em;
   border-radius: 5px;
+  font-family: var(--font_monospace_code);
+}
+
+.highlight {
+  font-size: 0.9em;
+  line-height: 1em;
+}
+
+.highlight div {
+  border-radius: 5px;
+}
+
+pre {
+  overflow: auto;
+  padding: 1em;
 }
 
 pre code {
-  display: block;
-  padding: 0.8rem;
-  overflow-x: auto;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.04);
-}
-
-@media (prefers-color-scheme: dark) {
-  p > code,
-  li > code {
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  pre code {
-    background: rgba(255, 255, 255, 0.06);
-  }
+  font-family: var(--font_monospace_code);
 }
 
 /* ===================================================
@@ -401,147 +411,308 @@ table {
 }
 
 th, td {
-  border: 1px solid rgba(0, 0, 0, var(--border-opacity));
+  border: 1px solid var(--code);
   padding: 0.5rem 0.6rem;
   text-align: left;
 }
 
 thead th {
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--code);
 }
 
-@media (prefers-color-scheme: dark) {
-  thead th {
-    background: rgba(255, 255, 255, 0.07);
-  }
+/* ===================================================
+   HORIZONTAL RULES
+   =================================================== */
+
+hr {
+  margin: 2em 0;
+  border: none;
+  text-align: center;
+}
+
+hr::before {
+  content: "•••••";
+  display: block;
+  color: var(--link);
 }
 
 /* ===================================================
    FOOTER
    =================================================== */
 
+footer {
+  margin-top: 2em;
+  text-align: center;
+}
+
+footer .custom_footer {
+  font-size: 0.75em;
+  color: var(--accent2);
+}
+
 .page-footer {
-  margin-top: 3rem;
-  padding-top: 2rem;
+  margin-top: 2em;
   text-align: center;
-  font-size: 0.85rem;
-  font-style: italic;
-  color: rgba(26, 26, 26, 0.6);
+  font-size: 0.85em;
+  color: var(--accent2);
 }
 
-.page-footer.is-post {
-  border-top: 1px solid rgba(0, 0, 0, var(--border-opacity));
+.page-footer p {
+  margin: 0;
 }
 
-.footer-links {
-  text-align: center;
-  font-size: 0.9rem;
-  opacity: 0.8;
-  margin-top: 1.25rem;
+.page-footer a {
+  color: var(--link);
 }
 
-.footer-links a {
+.page-footer a:hover {
   text-decoration: none;
-  color: inherit;
-  padding: 0.25em 0.4em;
-}
-
-.footer-links a:hover,
-.footer-links a:active {
-  color: var(--color-link);
-  text-decoration: underline;
-}
-
-.footer-links i {
-  margin-right: 0.15em;
-  vertical-align: -0.05em;
-  opacity: 0.75;
-}
-
-.footer-links a + a {
-  margin-left: 0.8em;
-}
-
-@media (prefers-color-scheme: dark) {
-  .page-footer {
-    color: rgba(230, 230, 230, 0.55);
-  }
-
-  .footer-links {
-    opacity: 0.75;
-  }
 }
 
 /* ===================================================
-   FONT AWESOME ICONS
+   FORMS
    =================================================== */
 
-.fa-solid, .fa-regular {
-  margin-right: 0.4em;
-  color: inherit;
-  opacity: 0.7;
-  vertical-align: middle;
-}
-
-h2 .fa-solid {
-  font-size: 0.75em;
-  margin-right: 0.5em;
-  opacity: 0.7;
-}
-
-h4 .fa-solid {
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=url],
+input[type=tel],
+input[type=search],
+input[type=number],
+textarea {
+  padding: 10px;
   font-size: 0.9em;
-  margin-right: 0.4em;
-  opacity: 0.7;
+  border: 1px solid var(--link) !important;
+  border-radius: 5px !important;
+  color: var(--text);
+  display: block;
+  height: auto;
+  background: var(--field);
+  margin: 5px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-nav .fa-solid,
-nav .fa-regular {
-  font-size: 0.75em;
-  margin-right: 0.4em;
-  opacity: 0.55;
-  vertical-align: 0.05em;
-}
-
-.post-date .fa-regular {
+input[type=submit],
+button {
+  vertical-align: baseline;
+  padding: 5px 10px;
   font-size: 0.9em;
-  margin-right: 0.3em;
-  opacity: 0.7;
+  border-radius: 5px;
+  border: 1px solid var(--link);
+  background: none;
+  color: var(--link);
+  -webkit-appearance: none;
+  margin-top: 5px;
+  font-weight: normal;
+  cursor: pointer;
 }
 
-.full-archives .fa-asterisk,
-.full-archives .fa-phone-slash {
-  font-size: 0.75em;
-  margin-right: 0.3em;
-  opacity: 0.7;
-  color: inherit;
+input[type=submit]:hover,
+button:hover {
+  background: var(--link);
+  color: var(--button-text);
 }
 
-@media (prefers-color-scheme: dark) {
-  .fa-solid, .fa-regular {
-    opacity: 0.6;
+label {
+  font-weight: bold;
+}
+
+form p {
+  margin-bottom: 0;
+}
+
+/* Contact form specifics */
+.contact-form {
+  margin-top: 2em;
+}
+
+.contact-form .form-group {
+  margin-bottom: 1em;
+}
+
+.contact-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+#form-status {
+  margin-top: 1em;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+}
+
+#form-status.success {
+  background: var(--note);
+  border: 1px solid var(--note-border);
+  color: var(--text);
+}
+
+#form-status.error {
+  background: var(--alert);
+  border: 1px solid var(--alert-border);
+  color: var(--text);
+}
+
+/* ===================================================
+   MISCELLANEOUS
+   =================================================== */
+
+sup a {
+  text-decoration: none;
+}
+
+.footnote-backref {
+  text-decoration: none;
+}
+
+mark {
+  background: var(--mark);
+}
+
+/* Iframe fix */
+iframe {
+  max-width: 100%;
+}
+
+/* Video responsive */
+video {
+  width: 100% !important;
+  height: auto !important;
+  background: var(--code);
+  border-radius: 5px;
+}
+
+/* ===================================================
+   ARCHIVE PAGE STYLES
+   =================================================== */
+
+.archive-year {
+  margin-top: 2em;
+}
+
+.archive-year h2 {
+  margin-bottom: 0.5em;
+  font-size: 1.3em;
+}
+
+.archive-posts {
+  list-style: none;
+  padding-left: 0;
+}
+
+.archive-posts li {
+  margin-bottom: 0.5em;
+  line-height: 1.4;
+}
+
+.archive-posts .post-date {
+  display: inline-block;
+  min-width: 5em;
+  color: var(--accent2);
+  font-size: 0.85em;
+}
+
+.archive-posts a {
+  text-decoration: none;
+}
+
+.archive-posts a:hover {
+  text-decoration: underline;
+}
+
+/* Tag list on archives page */
+.archive-tags {
+  margin-top: 2em;
+  padding-top: 1em;
+  border-top: 1px solid var(--code);
+}
+
+.archive-tags h2 {
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.tag-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.tag-list li {
+  margin: 0;
+}
+
+.tag-list a {
+  display: inline-block;
+  padding: 3px 8px;
+  border: 1px solid var(--link);
+  border-radius: 3px;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+
+.tag-list a:hover {
+  background: var(--link);
+  color: var(--button-text);
+}
+
+/* ===================================================
+   TAXONOMY PAGES (Tag lists)
+   =================================================== */
+
+.taxonomy-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.taxonomy-list li {
+  margin-bottom: 0.5em;
+}
+
+.taxonomy-list a {
+  text-decoration: none;
+}
+
+.taxonomy-list a:hover {
+  text-decoration: underline;
+}
+
+.taxonomy-list .count {
+  color: var(--accent2);
+  font-size: 0.85em;
+  margin-left: 0.3em;
+}
+
+/* ===================================================
+   SUMMARY/EXCERPT STYLES
+   =================================================== */
+
+.p-summary {
+  margin-bottom: 2em;
+}
+
+/* ===================================================
+   RESPONSIVE ADJUSTMENTS
+   =================================================== */
+
+@media (max-width: 600px) {
+  body {
+    font-size: 16px;
+    padding: 0 0.75em;
   }
 
-  h2 .fa-solid {
-    opacity: 0.6;
+  nav ul li {
+    margin-right: 0.1em;
+    margin-bottom: 0.3em;
   }
 
-  h4 .fa-solid {
-    opacity: 0.6;
-  }
-
-  nav .fa-solid,
-  nav .fa-regular {
-    opacity: 0.45;
-  }
-
-  .post-date .fa-regular {
-    opacity: 0.6;
-  }
-
-  .full-archives .fa-asterisk,
-  .full-archives .fa-phone-slash {
-    opacity: 0.5;
+  nav a {
+    padding: 4px 8px;
+    font-size: 0.85em;
   }
 }
 
@@ -554,6 +725,9 @@ nav .fa-regular {
     background-color: white;
     color: black;
     font-size: 12pt;
+    max-width: none;
+    margin: 0;
+    padding: 0;
   }
 
   a {
@@ -561,9 +735,8 @@ nav .fa-regular {
     text-decoration: underline;
   }
 
-  .site-header,
-  .page-footer,
-  nav {
+  nav,
+  .page-footer {
     display: none;
   }
 
