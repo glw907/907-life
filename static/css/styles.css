@@ -1192,3 +1192,109 @@ video {
     page-break-inside: avoid;
   }
 }
+
+/* ===================================================
+   CONTACT FORM
+   Matches old Micro.blog site form styling
+   =================================================== */
+
+#contact-form {
+  max-width: 40em;
+}
+
+#contact-form label {
+  font-variant: small-caps;
+  font-weight: 600;
+}
+
+#contact-form p {
+  margin: 0 0 0.5em 0;
+}
+
+#contact-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1em;
+}
+
+@media (max-width: 36em) {
+  #contact-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+#contact-form input[type="text"],
+#contact-form input[type="email"],
+#contact-form textarea {
+  width: 100%;
+  max-width: 40em;
+  padding: 0.5em;
+  font-family: inherit;
+  font-size: inherit;
+  border: 1px solid var(--accent2);
+  border-radius: 3px;
+  background: var(--background);
+  color: var(--text);
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+#contact-form input.invalid,
+#contact-form textarea.invalid {
+  border-color: var(--alert-border);
+}
+
+#contact-form textarea {
+  resize: vertical;
+}
+
+#contact-form input:focus,
+#contact-form textarea:focus {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+#contact-form button {
+  background: var(--color-link);
+  color: var(--button-text);
+  border: none;
+  padding: 0.5em 1.5em;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: opacity 0.2s;
+}
+
+#contact-form button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+#contact-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#form-result {
+  padding: 1em;
+  margin-top: 1em;
+  border-radius: 3px;
+  position: relative;
+}
+
+#form-result.success {
+  background: var(--note);
+  border: 1px solid var(--note-border);
+  color: var(--text);
+}
+
+#form-result.error {
+  background: var(--alert);
+  border: 1px solid var(--alert-border);
+  color: var(--text);
+}
+
+/* Turnstile widget spacing */
+.cf-turnstile {
+  margin: 1em 0;
+}

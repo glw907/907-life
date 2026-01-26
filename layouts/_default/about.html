@@ -15,40 +15,40 @@
     {{ .Content }}
   </article>
 
-  {{- /* Contact Form */ -}}
-  <div class="contact-form-container">
-    <form id="contact-form" action="/contact" method="POST">
-      <div class="form-row">
-        <div class="form-field">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required>
-        </div>
-        <div class="form-field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
-        </div>
-      </div>
+  {{- /* Contact Form - structure matches old Micro.blog site */ -}}
+  <form id="contact-form" action="/contact" method="POST" novalidate>
+    <div class="form-row">
+      <p>
+        <label for="name">Name</label><br>
+        <input type="text" id="name" name="name" required>
+      </p>
+      <p>
+        <label for="email">Email</label><br>
+        <input type="email" id="email" name="email" required placeholder="you@example.com">
+      </p>
+    </div>
 
-      <div class="form-field">
-        <label for="subject">Subject</label>
-        <input type="text" id="subject" name="subject" required>
-      </div>
+    <p>
+      <label for="subject">Subject</label><br>
+      <input type="text" id="subject" name="subject" required>
+    </p>
 
-      <div class="form-field">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="6" required></textarea>
-      </div>
+    <p>
+      <label for="message">Message</label><br>
+      <textarea name="message" id="message" rows="6" required></textarea>
+    </p>
 
-      <!-- Cloudflare Turnstile widget -->
-      <!-- Production key: 0x4AAAAAACPc3bf8bl6ifC3c -->
-      <!-- Testing key (always passes, works on any domain): 1x00000000000000000000AA -->
-      <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
+    <!-- Cloudflare Turnstile widget -->
+    <!-- Production key: 0x4AAAAAACPc3bf8bl6ifC3c -->
+    <!-- Testing key (always passes, works on any domain): 1x00000000000000000000AA -->
+    <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
 
-      <button type="submit" class="submit-button">Send Message</button>
+    <p>
+      <button type="submit" id="submit-btn">Send Message</button>
+    </p>
 
-      <div id="form-status" class="form-status"></div>
-    </form>
-  </div>
+    <div id="form-result" role="status" aria-live="polite"></div>
+  </form>
 
   {{- /* Turnstile script */ -}}
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -59,14 +59,14 @@
       e.preventDefault();
 
       const form = e.target;
-      const statusDiv = document.getElementById('form-status');
-      const submitButton = form.querySelector('button[type="submit"]');
+      const resultDiv = document.getElementById('form-result');
+      const submitButton = document.getElementById('submit-btn');
 
       // Disable submit button
       submitButton.disabled = true;
       submitButton.textContent = 'Sending...';
-      statusDiv.textContent = '';
-      statusDiv.className = 'form-status';
+      resultDiv.textContent = '';
+      resultDiv.className = '';
 
       try {
         const formData = new FormData(form);
@@ -79,20 +79,20 @@
         const result = await response.json();
 
         if (response.ok && result.success) {
-          statusDiv.textContent = 'Message sent successfully! I\'ll get back to you soon.';
-          statusDiv.className = 'form-status success';
+          resultDiv.textContent = 'Message sent successfully! I\'ll get back to you soon.';
+          resultDiv.className = 'success';
           form.reset();
           // Reset Turnstile widget
           if (window.turnstile) {
             window.turnstile.reset();
           }
         } else {
-          statusDiv.textContent = result.error || 'Something went wrong. Please try again.';
-          statusDiv.className = 'form-status error';
+          resultDiv.textContent = result.error || 'Something went wrong. Please try again.';
+          resultDiv.className = 'error';
         }
       } catch (error) {
-        statusDiv.textContent = 'Network error. Please check your connection and try again.';
-        statusDiv.className = 'form-status error';
+        resultDiv.textContent = 'Network error. Please check your connection and try again.';
+        resultDiv.className = 'error';
       } finally {
         // Re-enable submit button
         submitButton.disabled = false;
