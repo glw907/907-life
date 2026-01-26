@@ -1298,3 +1298,12 @@ video {
 .cf-turnstile {
   margin: 1em 0;
 }
+
+/* Homepage/list post titles should be normal h2 size, not enlarged */
+.posts h2.p-name,
+.h-feed h2.p-name,
+.post_list h2.p-name {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.7rem;
+}
