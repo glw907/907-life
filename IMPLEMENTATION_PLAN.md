@@ -1,7 +1,8 @@
-# Hugo + Cloudflare Workers Implementation Plan
+# 907.life Implementation Plan
 
 > **Last Updated**: January 2026
 > **Status**: Complete (907.life deployed)
+> **Project**: 907.life - Personal blog for Geoffrey L. Wright
 
 A phased approach to building a Hugo blog hosted on Cloudflare Workers with Static Assets.
 
@@ -19,23 +20,20 @@ This approach maximizes automation and makes the setup process scriptable and re
 
 ---
 
-## Template Usage
+## Project Information
 
-This implementation plan documents how 907.life was built and serves as a guide for future projects using this template.
+| Field | Value |
+|-------|-------|
+| Site URL | https://907.life |
+| Workers.dev URL | https://907-life.glw907.workers.dev |
+| Repository | github.com/glw907/907-life |
+| Author | Geoffrey L. Wright |
+| Email | geoff@907.life |
+| Worker Name | 907-life |
 
-### One-Time vs Per-Project Tasks
+---
 
-| Phase | One-Time Setup | Per-Project |
-|-------|----------------|-------------|
-| Phase 1 | Node.js, Wrangler, Hugo, Cloudflare account | New repo, wrangler login |
-| Phase 2 | - | hugo.toml customization |
-| Phase 3 | - | Theme customization |
-| Phase 4 | - | Content creation |
-| Phase 5 | Resend account | Turnstile widget, API keys via wrangler |
-| Phase 6 | DNS nameservers | wrangler deploy, domain setup |
-| Phase 7-9 | - | Workflow, testing, content |
-
-### What Changed in 2024-2025
+## What Changed in 2024-2025
 
 This plan reflects the current (January 2026) Cloudflare ecosystem:
 
@@ -47,7 +45,9 @@ This plan reflects the current (January 2026) Cloudflare ecosystem:
 
 **If you find tutorials using Pages, Pages Functions, or MailChannels, they are outdated.**
 
-### Prerequisites Checklist
+---
+
+## Prerequisites Checklist
 
 Before starting, ensure you have:
 
@@ -163,16 +163,14 @@ hugo version  # Should be 0.123.7 or similar
 ### 1.6 Initialize Repository
 
 ```bash
-# If using template
-git clone https://github.com/glw907/907-life.git my-site
-cd my-site
-rm -rf .git
+# Create new repository for 907-life
+mkdir 907-life && cd 907-life
 git init
 git add .
-git commit -m "Initial commit from template"
+git commit -m "Initial commit"
 
 # Create GitHub repo
-gh repo create my-site --public --source=. --push
+gh repo create 907-life --public --source=. --push
 ```
 
 ### Completion Checklist
@@ -195,32 +193,43 @@ gh repo create my-site --public --source=. --push
 
 | Task | Details |
 |------|---------|
-| **2.1 Initialize Hugo Site** | `hugo new site . --force` (skip if using template) |
+| **2.1 Initialize Hugo Site** | `hugo new site . --force` |
 | **2.2 Configure hugo.toml** | Base URL, title, author, pagination, permalinks, menu |
 | **2.3 Create Directory Structure** | content/, static/, src/ |
 | **2.4 Create .gitignore** | Exclude build artifacts, secrets |
 | **2.5 Update CLAUDE.md** | Document config decisions |
 
-### 2.2 hugo.toml Configuration
-
-Key settings to customize per-project:
+### 2.2 hugo.toml Configuration (907.life)
 
 ```toml
-baseURL = "https://your-domain.com/"
-title = "Your Site Name"
+baseURL = "https://907.life/"
+title = "907.life"
 
 [params]
-  author = "Your Name"
-  description = "Your site description"
-  email = "you@example.com"
+  author = "Geoffrey L. Wright"
+  description = "Alaska adventures, philosophical musings, technology, books, music, photography"
+  email = "geoff@907.life"
 
-# Menu customization
+# Menu
 [menu]
   [[menu.main]]
     name = "Home"
     url = "/"
     weight = 1
-  # Add more menu items...
+  [[menu.main]]
+    name = "Photos"
+    url = "https://photos.907.life"
+    weight = 2
+    [menu.main.params]
+      external = true
+  [[menu.main]]
+    name = "Archives"
+    url = "/archives/"
+    weight = 3
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 4
 ```
 
 See the full `hugo.toml` in the repository for all settings.
@@ -246,7 +255,7 @@ node_modules/
 ### Completion Checklist
 
 - [ ] `hugo server` runs without errors
-- [ ] hugo.toml configured with your settings
+- [ ] hugo.toml configured for 907.life
 - [ ] Directory structure in place
 - [ ] .gitignore created
 - [ ] Pushed to GitHub
@@ -263,8 +272,8 @@ node_modules/
 | Task | Details |
 |------|---------|
 | **3.1 Review Layouts** | Understand baseof.html, list.html, single.html |
-| **3.2 Customize Navigation** | Update menu items in hugo.toml |
-| **3.3 Customize Footer** | Update copyright, links |
+| **3.2 Customize Navigation** | Home, Photos (external), Archives, About |
+| **3.3 Customize Footer** | Copyright (Geoffrey L. Wright), Contact, GitHub, RSS |
 | **3.4 Customize CSS** | Edit static/css/styles.css |
 | **3.5 Test Theme** | Verify all pages render correctly |
 | **3.6 Update CLAUDE.md** | Document customizations |
@@ -289,12 +298,29 @@ layouts/
 └── index.html           # Home page
 ```
 
+### 907.life Navigation
+
+| Item | URL | Notes |
+|------|-----|-------|
+| Home | `/` | Recent posts |
+| Photos | `https://photos.907.life` | External link |
+| Archives | `/archives/` | Posts by year + tag list |
+| About | `/about/` | Bio + contact form |
+
+### 907.life Footer
+
+| Link | URL |
+|------|-----|
+| Contact | `/about/#contact` |
+| GitHub | `https://github.com/glw907` |
+| RSS | `/feed.xml` |
+
 ### Completion Checklist
 
 - [ ] All layouts rendering correctly
-- [ ] CSS customized to your preferences
-- [ ] Navigation shows your menu items
-- [ ] Footer shows your copyright and links
+- [ ] CSS customized
+- [ ] Navigation shows 907.life menu items
+- [ ] Footer shows copyright and links
 - [ ] CLAUDE.md updated
 
 ---
@@ -327,18 +353,22 @@ hugo new posts/$(date +%Y-%m-%d)-my-post-slug.md
 title: "Post Title"
 date: 2026-01-25
 draft: true
-tags: ["tag1", "tag2"]
+tags: ["alaska", "photography"]
 description: "Brief description"
 ---
 
 Your content here...
 ```
 
+### 907.life Tags
+
+Common tags: `alaska`, `musings`, `technology`, `books`, `music`, `photography`
+
 ### Completion Checklist
 
 - [ ] Home page displays posts
 - [ ] Archives page shows posts by year
-- [ ] About page with your bio
+- [ ] About page with Geoffrey's bio
 - [ ] Test posts created
 - [ ] CLAUDE.md updated
 
@@ -380,13 +410,17 @@ For production with custom sender address:
 3. Wait for verification
 4. Update `src/worker.js` to use your domain
 
-### 5.3 Turnstile Setup
+### 5.3 Turnstile Setup (907.life)
 
 1. Cloudflare Dashboard > Turnstile > Add site
-2. Site name: Your site name
-3. Domain: Your domain (and workers.dev for testing)
+2. Site name: 907.life Contact Form
+3. Domains: 907.life, www.907.life, 907-life.glw907.workers.dev
 4. Widget mode: **Managed**
 5. Copy Site Key and Secret Key
+
+**907.life Turnstile Keys:**
+- Site key: `0x4AAAAAACPc3bf8bl6ifC3c`
+- Secret key: (stored as TURNSTILE_SECRET_KEY)
 
 **Testing Keys** (work on any domain):
 
@@ -399,22 +433,23 @@ The worker script automatically detects testing tokens and uses appropriate keys
 
 ### 5.4 Update About Template
 
-Edit `layouts/_default/about.html`, find the Turnstile div (around line 44):
+Edit `layouts/_default/about.html`, find the Turnstile div (around line 45):
 
 ```html
-<div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY_HERE"></div>
+<div class="cf-turnstile" data-sitekey="0x4AAAAAACPc3bf8bl6ifC3c"></div>
 ```
 
-Replace with your site key or testing key.
+For testing on workers.dev, use:
+```html
+<div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
+```
 
-### 5.5 Configure Secrets via Wrangler
-
-**This is the recommended approach.** Provide your API keys to Claude Code, which will configure them:
+### 5.5 Configure Secrets via Wrangler (907.life)
 
 ```bash
 # Set Turnstile secret key
 wrangler secret put TURNSTILE_SECRET_KEY
-# Enter value when prompted: (your Turnstile secret key)
+# Enter value when prompted
 
 # Set Resend API key
 wrangler secret put RESEND_API_KEY
@@ -422,7 +457,7 @@ wrangler secret put RESEND_API_KEY
 
 # Set contact email
 wrangler secret put CONTACT_EMAIL
-# Enter value when prompted: you@example.com
+# Enter value when prompted: geoff@907.life
 
 # Verify secrets are configured
 wrangler secret list
@@ -434,17 +469,15 @@ wrangler secret list
 # .env (gitignored - safe to store locally)
 TURNSTILE_SECRET_KEY=your_secret_key_here
 RESEND_API_KEY=re_xxxxxxxx
-CONTACT_EMAIL=you@example.com
+CONTACT_EMAIL=geoff@907.life
 ```
-
-**Dashboard Alternative:** Worker > Settings > Variables > Add each variable (then click Deploy)
 
 ### Completion Checklist
 
 - [ ] Resend account created
 - [ ] API key generated
-- [ ] Turnstile widget created
-- [ ] Site key added to about.html
+- [ ] Turnstile widget created for 907.life
+- [ ] Site key `0x4AAAAAACPc3bf8bl6ifC3c` added to about.html
 - [ ] Secrets configured via `wrangler secret put`
 - [ ] `wrangler secret list` shows all three secrets
 - [ ] CLAUDE.md updated
@@ -465,19 +498,19 @@ CONTACT_EMAIL=you@example.com
 | **6.2 Review build.sh** | Verify Hugo version |
 | **6.3 Review Worker Script** | Verify src/worker.js |
 | **6.4 Deploy via Wrangler** | `wrangler deploy` |
-| **6.5 Verify Deployment** | Check workers.dev URL |
+| **6.5 Verify Deployment** | Check https://907-life.glw907.workers.dev |
 | **6.6 Set Up Git Integration** | Enable auto-deploy on push |
-| **6.7 Add Custom Domain** | Connect your domain |
+| **6.7 Add Custom Domain** | Connect 907.life |
 | **6.8 Test Production** | Full end-to-end test |
 | **6.9 Update CLAUDE.md** | Document deployment |
 
-### 6.1 wrangler.toml Configuration
+### 6.1 wrangler.toml Configuration (907.life)
 
 **Critical**: Field order matters!
 
 ```toml
 # Top-level fields FIRST
-name = "your-site-name"
+name = "907-life"
 compatibility_date = "2025-01-25"
 main = "src/worker.js"           # MUST be before [build]
 
@@ -497,7 +530,7 @@ run_worker_first = ["/contact"]  # MUST be inside [assets]
 - `main` after `[build]` = Worker won't load
 - `run_worker_first` outside `[assets]` = Contact form 404
 
-### 6.4 Deploy via Wrangler (Recommended)
+### 6.4 Deploy via Wrangler
 
 ```bash
 # Verify you're authenticated
@@ -507,28 +540,20 @@ wrangler whoami
 wrangler deploy
 
 # Output shows deployment URL:
-# Published your-site-name (x.xx sec)
-# https://your-site-name.your-subdomain.workers.dev
+# Published 907-life (x.xx sec)
+# https://907-life.glw907.workers.dev
 ```
 
-**Verify Secrets (if set in Phase 5):**
+**Verify Secrets:**
 
 ```bash
 wrangler secret list
 # Should show: TURNSTILE_SECRET_KEY, RESEND_API_KEY, CONTACT_EMAIL
 ```
 
-**If secrets not yet configured:**
-
-```bash
-wrangler secret put TURNSTILE_SECRET_KEY
-wrangler secret put RESEND_API_KEY
-wrangler secret put CONTACT_EMAIL
-```
-
 ### 6.6 Set Up Git Integration (Auto-Deploy)
 
-For automatic deployments when you `git push`, connect your GitHub repository:
+For automatic deployments when you `git push`:
 
 1. **Dashboard Navigation**
    - Cloudflare Dashboard > Compute (Workers) > Workers & Pages
@@ -536,62 +561,48 @@ For automatic deployments when you `git push`, connect your GitHub repository:
 
 2. **Connect GitHub**
    - Authorize Cloudflare if needed
-   - Select your repository
+   - Select repository: 907-life
 
 3. **Configure Build**
-   - **Worker name**: MUST match `name` in wrangler.toml exactly
+   - **Worker name**: `907-life` (MUST match wrangler.toml exactly)
    - **Production branch**: `main`
-   - Leave other fields as defaults (wrangler.toml handles build config)
+   - Leave other fields as defaults
 
 4. **Save**
    - Click **Save and Deploy**
    - Future `git push` commands trigger automatic deploys
 
-**Note:** This is the only step that requires the dashboard. All other configuration can be done via Wrangler CLI.
+**Note:** This is the only step that requires the dashboard.
 
-### 6.7 Custom Domain Setup
+### 6.7 Custom Domain Setup (907.life)
 
-**Via Wrangler CLI:**
+**Prerequisites:**
+1. 907.life domain added to Cloudflare
+2. Nameservers updated at registrar
+3. Domain activated in Cloudflare
 
-```bash
-# Add custom domain route
-wrangler deploy --route your-domain.com/*
+**Connect to Worker:**
+1. Workers & Pages > 907-life > Settings > Domains & Routes
+2. Add > Custom domain
+3. Enter: 907.life
+4. SSL provisions automatically
 
-# Or add to wrangler.toml for persistence:
-# [[routes]]
-# pattern = "your-domain.com/*"
-# zone_name = "your-domain.com"
-```
-
-**Domain Prerequisites:**
-
-1. **Add domain to Cloudflare** (if not already)
-   - Dashboard > Add a site > your-domain.com
-   - Update nameservers at registrar
-   - Wait for activation
-
-2. **Connect to Worker** (Dashboard Alternative)
-   - Workers & Pages > Your Worker > Settings > Domains & Routes
-   - Add > Custom domain
-   - Enter your domain
-   - SSL provisions automatically
-
-3. **WWW Redirect** (optional)
-   - Rules > Redirect Rules
-   - Create rule: www.your-domain.com > https://your-domain.com${http.request.uri.path}
+**WWW Redirect:**
+- Rules > Redirect Rules
+- Create rule: www.907.life > https://907.life${http.request.uri.path}
 
 ### Troubleshooting Deployment
 
 | Issue | Solution |
 |-------|----------|
-| "Worker name mismatch" | `name` in wrangler.toml must exactly match dashboard |
+| "Worker name mismatch" | `name` in wrangler.toml must be `907-life` |
 | "Hugo command not found" | Verify build.sh is committed and executable |
 | Build fails with npm errors | Check Node.js version (v20+ required) |
 | 404 on all pages | Check `[assets] directory = "./public"` |
 | Contact form 404 | Check `run_worker_first` is inside `[assets]` section |
-| Env vars not working | Run `wrangler secret list` to verify, redeploy if needed |
+| Env vars not working | Run `wrangler secret list` to verify |
 
-**Viewing Logs via Wrangler:**
+**Viewing Logs:**
 
 ```bash
 # Stream live logs
@@ -601,18 +612,16 @@ wrangler tail
 wrangler tail --status error
 ```
 
-**Dashboard Alternative:** Workers & Pages > Your Worker > Deployments > View logs
-
 ### Completion Checklist
 
-- [ ] wrangler.toml verified (field order correct)
+- [ ] wrangler.toml verified (name = "907-life")
 - [ ] `wrangler deploy` successful
-- [ ] Site loads at workers.dev URL
+- [ ] Site loads at https://907-life.glw907.workers.dev
 - [ ] `wrangler secret list` shows all secrets
-- [ ] Git integration configured (for auto-deploy)
-- [ ] Custom domain connected (if applicable)
+- [ ] Git integration configured
+- [ ] Custom domain 907.life connected
 - [ ] SSL working
-- [ ] Contact form working
+- [ ] Contact form sends to geoff@907.life
 - [ ] CLAUDE.md updated
 
 ---
@@ -639,7 +648,7 @@ hugo server -D
 
 # 2. Create/edit content
 hugo new posts/$(date +%Y-%m-%d)-my-post.md
-# Edit in your editor
+# Edit in VSCodium
 
 # 3. Preview at http://localhost:1313
 
@@ -650,7 +659,7 @@ git add -A
 git commit -m "Add new post"
 git push
 
-# 6. Verify at your domain (~2 min deploy)
+# 6. Verify at https://907.life (~2 min deploy)
 ```
 
 ### Local Testing with Worker
@@ -688,9 +697,10 @@ npx wrangler dev
 - [ ] Live reload works
 - [ ] New post creation works
 
-**Production Site:**
+**Production Site (https://907.life):**
 - [ ] Home page loads
 - [ ] All navigation links work
+- [ ] Photos link opens https://photos.907.life
 - [ ] Archives page displays correctly
 - [ ] Tag pages work
 - [ ] About page renders
@@ -700,13 +710,13 @@ npx wrangler dev
 - [ ] Turnstile widget appears
 - [ ] Form validation works
 - [ ] Submission succeeds
-- [ ] Email received
+- [ ] Email received at geoff@907.life
 - [ ] Reply-to works correctly
 
 **SSL/HTTPS:**
 - [ ] HTTPS working
 - [ ] HTTP redirects to HTTPS
-- [ ] www redirects to apex (if configured)
+- [ ] www.907.life redirects to 907.life
 
 **Feeds:**
 - [ ] /feed.xml is valid RSS
@@ -728,7 +738,7 @@ npx wrangler dev
 
 | Task | Details |
 |------|---------|
-| **9.1 About Page** | Write real bio |
+| **9.1 About Page** | Write real bio for Geoffrey |
 | **9.2 Remove Sample Posts** | Delete or convert to drafts |
 | **9.3 First Real Post** | Create and publish |
 | **9.4 Verify Live Site** | Confirm real content displays |
@@ -745,17 +755,102 @@ npx wrangler dev
 
 ---
 
+## Phase 10: Create Template Versions
+
+**Goal**: Create generic template versions of the documentation for future Hugo + Cloudflare Workers projects.
+
+**Note**: This phase is completed once for the 907.life project. When using this repository as a template for a new project, you'll use the template files as your starting point and customize the placeholders.
+
+### Tasks
+
+| Task | Details |
+|------|---------|
+| **10.1 Create CLAUDE-TEMPLATE.md** | Generic version with placeholders |
+| **10.2 Create IMPLEMENTATION-PLAN-TEMPLATE.md** | Generic implementation guide |
+| **10.3 Verify Templates** | Ensure all project-specific values are replaced |
+
+### Placeholder Mapping
+
+| 907.life Value | Template Placeholder |
+|----------------|---------------------|
+| 907.life | {PROJECT_NAME} |
+| 907-life | {PROJECT_SLUG} |
+| glw907 | {GITHUB_USERNAME} |
+| Geoffrey L. Wright | {AUTHOR_NAME} |
+| geoff@907.life | {CONTACT_EMAIL} |
+| https://907.life | https://{PROJECT_NAME} |
+| https://907-life.glw907.workers.dev | https://{PROJECT_SLUG}.{GITHUB_USERNAME}.workers.dev |
+| https://photos.907.life | {PHOTOS_URL} (or remove if not applicable) |
+| https://github.com/glw907 | https://github.com/{GITHUB_USERNAME} |
+| 0x4AAAAAACPc3bf8bl6ifC3c | {TURNSTILE_SITE_KEY} |
+
+### Template Header
+
+Each template file should include this header:
+
+```markdown
+# TEMPLATE USAGE INSTRUCTIONS
+
+This is a template file. To use it for a new project:
+
+1. Copy this file to CLAUDE.md (or IMPLEMENTATION_PLAN.md)
+2. Replace all placeholders with your project-specific values:
+   - {PROJECT_NAME} - Your site name (e.g., mysite.com)
+   - {PROJECT_SLUG} - URL-safe version (e.g., mysite)
+   - {GITHUB_USERNAME} - Your GitHub username
+   - {AUTHOR_NAME} - Your name
+   - {CONTACT_EMAIL} - Your email address
+   - {TURNSTILE_SITE_KEY} - Your Turnstile site key (or use testing key)
+3. Remove this instructions section
+4. Update any project-specific navigation, links, or descriptions
+
+---
+```
+
+### What to Genericize
+
+**CLAUDE-TEMPLATE.md:**
+- Project Overview section (all URLs, names, emails)
+- Navigation items (Photos link is 907.life-specific)
+- Footer links
+- Turnstile configuration
+- Environment variable examples
+- wrangler.toml examples
+- Key URLs table
+
+**IMPLEMENTATION-PLAN-TEMPLATE.md:**
+- Project Information table
+- hugo.toml examples
+- Turnstile keys
+- wrangler.toml examples
+- Repository commands
+- Domain setup examples
+
+### Completion Checklist
+
+- [ ] CLAUDE-TEMPLATE.md created with all placeholders
+- [ ] IMPLEMENTATION-PLAN-TEMPLATE.md created with all placeholders
+- [ ] Templates include usage instructions header
+- [ ] No 907.life-specific values remain in templates
+- [ ] Templates committed to repository
+- [ ] CLAUDE.md documents template files exist
+
+---
+
 ## Quick Reference
 
-### Key URLs
+### Key URLs (907.life)
 
 | URL | Purpose |
 |-----|---------|
 | http://localhost:1313 | Hugo dev server |
 | http://localhost:8787 | Wrangler dev server |
-| https://your-domain.com | Production site |
-| https://dash.cloudflare.com | Cloudflare dashboard (optional) |
+| https://907.life | Production site |
+| https://907-life.glw907.workers.dev | Workers.dev URL |
+| https://photos.907.life | Photos site |
+| https://dash.cloudflare.com | Cloudflare dashboard |
 | https://resend.com | Email service |
+| https://github.com/glw907/907-life | GitHub repository |
 
 ### Common Commands
 
@@ -775,18 +870,18 @@ hugo server -D          # Dev server with drafts
 hugo --gc --minify      # Production build
 hugo new posts/...      # Create post
 
-# Git (triggers auto-deploy if git integration enabled)
+# Git (triggers auto-deploy)
 git add -A && git commit -m "..." && git push
 ```
 
-### Environment Variables
+### Environment Variables (907.life)
 
-| Variable | Required | Type | Purpose |
-|----------|----------|------|---------|
-| TURNSTILE_SECRET_KEY | Yes | Encrypted | Spam protection |
-| CONTACT_EMAIL | Yes | Plain text | Email destination |
-| RESEND_API_KEY | Yes | Encrypted | Email sending |
-| HUGO_VERSION | No | Plain text | Override build version |
+| Variable | Value/Purpose |
+|----------|---------------|
+| TURNSTILE_SECRET_KEY | Spam protection (encrypted) |
+| CONTACT_EMAIL | geoff@907.life |
+| RESEND_API_KEY | Resend authentication (encrypted) |
+| HUGO_VERSION | Optional: override build version |
 
 ---
 
