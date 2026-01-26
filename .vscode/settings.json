@@ -1,0 +1,36 @@
+{
+  // File associations
+  "files.associations": {
+    "*.html": "html"
+  },
+
+  // Editor settings
+  "editor.wordWrap": "on",
+  "editor.formatOnSave": true,
+  "editor.rulers": [80],
+
+  // Markdown settings
+  "[markdown]": {
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.wordWrap": "on"
+  },
+
+  // HTML settings
+  "[html]": {
+    "editor.tabSize": 2
+  },
+
+  // Hide build output from explorer
+  "files.exclude": {
+    "public/": true,
+    "resources/": true,
+    ".hugo_build.lock": true
+  },
+
+  // Markdown preview settings
+  "markdown.preview.breaks": true
+}

@@ -1,0 +1,95 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Hugo: Start Server",
+      "type": "shell",
+      "command": "hugo server -D",
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Hugo: Build",
+      "type": "shell",
+      "command": "hugo --gc --minify",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "New Post",
+      "type": "shell",
+      "command": "hugo new posts/$(date +%Y-%m-%d)-${input:postSlug}.md",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Publish",
+      "type": "shell",
+      "command": "git add -A && git commit -m \"${input:commitMessage}\" && git push",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Quick Publish",
+      "type": "shell",
+      "command": "git add -A && git commit -m \"Update site content\" && git push",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Wrangler: Dev Server",
+      "type": "shell",
+      "command": "hugo --gc --minify && npx wrangler dev",
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Wrangler: Deploy",
+      "type": "shell",
+      "command": "npx wrangler deploy",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Wrangler: Tail Logs",
+      "type": "shell",
+      "command": "npx wrangler tail 907-life",
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "postSlug",
+      "description": "Post slug (lowercase, hyphens)",
+      "type": "promptString",
+      "default": "new-post"
+    },
+    {
+      "id": "commitMessage",
+      "description": "Commit message",
+      "type": "promptString",
+      "default": "Update site content"
+    }
+  ]
+}
