@@ -339,11 +339,13 @@ nav a,
 nav a:visited,
 nav a:hover {
   text-decoration: none;
-  padding: 5px 10px;
+  padding: 3px 8px;
   border: 1px solid var(--color-link);
   color: var(--color-link);
   border-radius: 5px;
   font-size: 0.9em;
+  font-family: inherit;
+  font-weight: normal;
 }
 
 nav a:hover {
