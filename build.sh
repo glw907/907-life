@@ -20,9 +20,15 @@ echo "Extracting Hugo..."
 tar -xf "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
 
 # Move to a directory in PATH
-mkdir -p /opt/buildhome
-cp hugo /opt/buildhome/
-export PATH="/opt/buildhome:$PATH"
+# Use /opt/buildhome in Cloudflare environment, local .bin directory otherwise
+if mkdir -p /opt/buildhome 2>/dev/null; then
+  cp hugo /opt/buildhome/
+  export PATH="/opt/buildhome:$PATH"
+else
+  mkdir -p .bin
+  cp hugo .bin/
+  export PATH="$(pwd)/.bin:$PATH"
+fi
 
 # Clean up downloaded files
 rm -f LICENSE README.md "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"

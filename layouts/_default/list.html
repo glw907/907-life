@@ -15,13 +15,14 @@
     {{ $paginator := .Paginate (where .Pages "Type" "post") }}
     {{ range .Paginator.Pages }}
       <div class="post-preview h-entry">
-        {{- /* Post date */ -}}
+        {{- /* Post date with infinity symbol */ -}}
         <p class="post-date">
-          <a href="{{ .RelPermalink }}" class="u-url">
+          <a href="{{ .RelPermalink }}" class="u-url post-date">
             <i class="fa-regular fa-calendar"></i>
             <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
-              {{ .Date.Format "January 2, 2006" }}
+              {{ .Date.Format "Jan 2, 2006" }}
             </time>
+            <span class="post-date-infinity">∞</span>
           </a>
         </p>
 
