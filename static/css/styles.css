@@ -1,6 +1,7 @@
 /* ===================================================
    907.life Stylesheet
-   Styled to match the original Micro.blog Tiny Theme
+   Complete styling combining Tiny Theme base + custom overrides
+   Adapted for Hugo structure
    =================================================== */
 
 /* ===================================================
@@ -8,6 +9,7 @@
    =================================================== */
 
 :root {
+  /* Tiny Theme base colors */
   --text: #000000;
   --link: #1565C0;
   --link_visited: #1565C0;
@@ -26,6 +28,19 @@
   --alert-border: #d32f2f;
   --field: #fffee0;
   --mark: #FFFF99;
+  --audio-link: #d32f2f;
+
+  /* Custom color overrides */
+  --color-link: #134d85;
+  --color-link-hover: #123765;
+  --color-text: #3a3a3a;
+  --color-text-light: #666;
+  --color-bg: #fdfcf9;
+  --color-heading-dark: #050505;
+  --color-heading-medium: #0a0a0a;
+  --color-heading-light: #0f0f0f;
+  --color-heading-h4: #1a1a1a;
+  --border-opacity: 0.12;
 }
 
 /* ===================================================
@@ -34,6 +49,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Tiny Theme dark colors */
     --text: #f8f8f2;
     --link: #8be9fd;
     --link_visited: #8be9fd;
@@ -52,31 +68,69 @@
     --alert-border: #ff6e6e;
     --field: #44475a;
     --mark: #FFFF99;
+    --audio-link: #ff6e6e;
+
+    /* Custom dark mode overrides */
+    --color-link: #8ac1ff;
+    --color-link-hover: #a8d1ff;
+    --color-text: #e6e6e6;
+    --color-text-light: #999;
+    --color-bg: #181818;
+    --color-heading-dark: #f5f5f5;
+    --color-heading-medium: #efefef;
+    --color-heading-light: #e9e9e9;
+    --color-heading-h4: #ccc;
+    --border-opacity: 0.15;
   }
 }
 
 /* ===================================================
    FONT STACKS
+   Complete set from Tiny Theme
    =================================================== */
 
 :root {
   --font_system_ui: system-ui, sans-serif;
+  --font_transitional: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
+  --font_old_style: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;
+  --font_humanist: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
+  --font_geometric_humanist: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+  --font_classical_humanist: Optima, Candara, 'Noto Sans', source-sans-pro, sans-serif;
+  --font_neo_grotesque: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+  --font_monospace_slab_serif: 'Nimbus Mono PS', 'Courier New', monospace;
   --font_monospace_code: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+  --font_industrial: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
+  --font_rounded_sans: ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari, 'Arial Rounded MT', 'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif;
+  --font_slab_serif: Rockwell, 'Rockwell Nova', 'Roboto Slab', 'DejaVu Serif', 'Sitka Small', serif;
+  --font_antique: Superclarendon, 'Bookman Old Style', 'URW Bookman', 'URW Bookman L', 'Georgia Pro', Georgia, serif;
+  --font_didone: Didot, 'Bodoni MT', 'Noto Serif Display', 'URW Palladio L', P052, Sylfaen, serif;
+  --font_handwritten: 'Segoe Print', 'Bradley Hand', Chilanka, TSCu_Comic, casual, cursive;
 }
 
 /* ===================================================
+   BASE SIZE + VERTICAL RHYTHM
+   Root font size: 16px, 17px on wider screens
+   Body line-height for reading comfort
+   =================================================== */
+
+html { font-size: 16px; }
+@media (min-width: 48rem) { html { font-size: 17px; } }
+
+/* ===================================================
    BASE LAYOUT & TYPOGRAPHY
+   Body uses classical humanist for long reads
+   Headings use neo-grotesque for contrast
+   Warm cream background with dark text
    =================================================== */
 
 body {
   max-width: 40em;
   margin: 2em auto;
-  font-family: var(--font_system_ui);
-  font-size: 18px;
+  font-family: var(--font_classical_humanist);
   padding: 0 1em;
   line-height: 1.6;
-  background-color: var(--background);
-  color: var(--text);
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 header {
@@ -88,21 +142,97 @@ header {
 }
 
 p {
-  margin: 0 0 1em;
+  margin: 0 0 1.1em;
 }
 
 /* ===================================================
-   HEADINGS
+   HEADING HIERARCHY
+   H1-H4 sizing and spacing for posts and pages
    =================================================== */
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font_neo_grotesque);
+}
+
 h1, h2, h3 {
-  line-height: 1.2em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 2rem 0 0.8rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--color-heading-dark);
 }
 
 h2 {
-  margin-top: 0;
+  font-size: 1.6rem;
+  line-height: 1.25;
+  margin: 1.8rem 0 0.7rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-heading-medium);
 }
 
+h3 {
+  font-size: 1.3rem;
+  line-height: 1.4;
+  margin: 2rem 0 0.6rem;
+  font-weight: 550;
+  letter-spacing: 0;
+  color: var(--color-heading-light);
+}
+
+h4 {
+  font-size: 1.06rem;
+  font-weight: 575;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  font-variant: small-caps;
+  margin: 1.5rem 0 0;
+  padding-bottom: 0.15rem;
+  border-bottom: 1px solid rgba(0, 0, 0, var(--border-opacity));
+  color: var(--color-heading-h4);
+}
+
+h4 a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+h4 a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+/* Post title styling (h2.p-name) - enlarged and bolded */
+.page h2.p-name,
+.post h2.p-name,
+.archive h2.p-name,
+article h2.p-name,
+.h-entry h2.p-name {
+  font-size: 1.85rem;
+  line-height: 1.2;
+  margin: 2rem 0 1rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--color-heading-dark);
+}
+
+/* Reduced spacing between post date and title */
+.h-entry h1.p-name,
+.h-entry h2.p-name,
+.h-entry h3.p-name {
+  margin-top: 0.3rem;
+}
+
+.p-name {
+  text-wrap: balance;
+}
+
+/* Header title tuned for compact branding */
 header h1 {
   margin-top: 0.2em;
   margin-bottom: 0.2em;
@@ -111,56 +241,76 @@ header h1 {
 header h1 a,
 header h1 a:visited {
   text-decoration: none;
-  color: var(--text);
+  color: var(--color-text);
 }
 
 header h1 a:hover {
-  color: var(--accent1);
+  color: var(--color-link);
   text-decoration: none;
 }
 
-/* Site header title styling */
+/* Site header styling */
 .site-header h1 {
-  font-size: 1.5em;
-  margin: 0.2em 0;
+  font-size: 2.2rem;
+  letter-spacing: 0.03em;
+  margin: 0.5rem 0;
+  line-height: 1.1;
 }
 
-.site-title {
+.site-header .site-title {
+  color: var(--color-heading-medium);
   text-decoration: none;
-  color: var(--text);
 }
 
-.site-title:hover {
-  color: var(--accent1);
+.site-header .site-title:hover {
+  color: var(--color-link);
+  text-decoration: none;
 }
 
 .site-number {
   font-weight: 600;
+  font-size: 1em;
 }
 
 .site-domain {
   font-weight: 400;
-}
-
-/* Post title styling */
-.p-name {
-  text-wrap: balance;
+  font-size: 0.85em;
 }
 
 /* ===================================================
+   INLINE TEXT STYLES
+   Strong and b elements use a mid-heavy weight
+   =================================================== */
+
+strong, b { font-weight: 550; }
+
+/* ===================================================
    LINKS
+   Underlines offset for readability
+   Hover darkens color but keeps underline
+   Focus states for keyboard accessibility
    =================================================== */
 
 a {
-  color: var(--link);
-}
-
-a:hover {
-  text-decoration: none;
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
 }
 
 a:visited {
-  color: var(--link_visited);
+  color: var(--color-link);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+a:focus,
+h4 a:focus {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
 }
 
 /* ===================================================
@@ -180,20 +330,50 @@ nav ul li {
   white-space: nowrap;
 }
 
+/* Remove en-dash bullets from nav lists */
+nav ul li::before {
+  content: none;
+}
+
 nav a,
 nav a:visited,
 nav a:hover {
   text-decoration: none;
   padding: 5px 10px;
-  border: 1px solid var(--link);
-  color: var(--link);
+  border: 1px solid var(--color-link);
+  color: var(--color-link);
   border-radius: 5px;
   font-size: 0.9em;
 }
 
 nav a:hover {
-  background: var(--link);
+  background: var(--color-link);
   color: var(--button-text);
+}
+
+/* ===================================================
+   LISTS
+   Unordered lists use en dash bullets
+   Nav and archive lists remove custom bullets
+   =================================================== */
+
+ul {
+  list-style-type: none;
+  padding-left: 1.5em;
+}
+
+ul li {
+  position: relative;
+  line-height: 1.5;
+}
+
+ol li { line-height: 1.5; }
+
+ul li::before {
+  content: "\2013"; /* en dash */
+  position: absolute;
+  margin-left: -1.5em;
+  color: var(--color-text-light);
 }
 
 /* ===================================================
@@ -214,9 +394,16 @@ article p:first-of-type {
    POST DATE
    =================================================== */
 
+.post-date {
+  display: inline-block;
+  margin-bottom: 0.3rem;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
 a.post-date {
   font-size: 0.8em;
-  color: var(--link);
+  color: var(--color-link);
   text-decoration: none;
 }
 
@@ -229,25 +416,71 @@ a.post-date:hover {
 }
 
 .post-meta {
-  color: var(--accent2);
+  color: var(--color-text-light);
 }
 
 /* ===================================================
-   POST LISTS
+   POST TAGS / CATEGORIES
+   Inline list with pipe separators
+   Prefix label added via ::before
    =================================================== */
+
+ul.post-tags {
+  padding-left: 0;
+}
 
 ul.post-tags li {
   display: inline;
   font-size: 0.8em;
 }
 
-ul.post-tags,
-ul.post-list {
-  padding-left: 0;
+ul.post-tags li::before {
+  content: none;
 }
+
+.post-tags::before {
+  content: "Tags: ";
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  font-style: italic;
+  margin-right: 0.3em;
+}
+
+.post-tags li:not(:last-child)::after {
+  content: " | ";
+  color: var(--color-text-light);
+  margin: 0 0.2em;
+}
+
+.post-tags a {
+  text-decoration-color: rgba(19, 77, 133, 0.5);
+}
+
+.post-tags a:hover {
+  text-decoration-color: rgba(18, 55, 101, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  .post-tags a {
+    text-decoration-color: rgba(138, 193, 255, 0.5);
+  }
+
+  .post-tags a:hover {
+    text-decoration-color: rgba(168, 209, 255, 0.8);
+  }
+}
+
+/* ===================================================
+   POST LISTS
+   =================================================== */
 
 ul.post-list {
   list-style-type: none;
+  padding-left: 0;
+}
+
+ul.post-list li::before {
+  content: none;
 }
 
 ul.post-list a.u-url {
@@ -274,27 +507,34 @@ ul.post-list a.u-url {
 }
 
 .post-nav a:visited {
-  color: var(--link);
+  color: var(--color-link);
 }
 
 /* Read more link */
 a.read-more {
   text-decoration: none;
   padding: 5px 10px;
-  border: 1px solid var(--link);
-  color: var(--link);
+  border: 1px solid var(--color-link);
+  color: var(--color-link);
   border-radius: 5px;
   font-size: 0.9em;
 }
 
 a.read-more:hover {
-  background: var(--link);
+  background: var(--color-link);
   color: var(--button-text);
 }
 
 /* ===================================================
    IMAGES
+   Images are fluid with soft corners
    =================================================== */
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
 
 article img,
 .e-content img,
@@ -304,10 +544,15 @@ article img,
   border-radius: 5px;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 5px;
+img.profile_photo {
+  border-radius: 80px;
+}
+
+figure { margin: 1.25rem 0; }
+
+figcaption {
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
 
 /* ===================================================
@@ -356,10 +601,16 @@ aside, .aside {
   font-style: italic;
 }
 
+@keyframes blinkBorder {
+  0%, 100% { border-color: var(--alert-border); }
+  50% { border-color: var(--alert); }
+}
+
 .alert {
   background: var(--alert);
   border-left: 4px solid var(--alert-border);
   font-weight: bold;
+  animation: blinkBorder 2s infinite ease-in-out;
 }
 
 .callout {
@@ -370,11 +621,20 @@ aside, .aside {
 }
 
 /* ===================================================
-   CODE
+   CODE AND TABLES
+   Code uses system monospace fallbacks
+   Pre blocks scroll horizontally when needed
+   Tables are compact and full width
    =================================================== */
 
+code {
+  font-family: var(--font_monospace_code);
+}
+
 p > code,
-li > code {
+li > code,
+span.tinylytics_hits,
+span.tinylytics_uptime {
   background: var(--code);
   padding: 2px 4px;
   font-size: 0.9em;
@@ -382,12 +642,21 @@ li > code {
   font-family: var(--font_monospace_code);
 }
 
+pre code {
+  display: block;
+  padding: 0.8rem;
+  overflow-x: auto;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
 .highlight {
   font-size: 0.9em;
   line-height: 1em;
 }
 
-.highlight div {
+.highlight div,
+div.highlight div {
   border-radius: 5px;
 }
 
@@ -396,14 +665,6 @@ pre {
   padding: 1em;
 }
 
-pre code {
-  font-family: var(--font_monospace_code);
-}
-
-/* ===================================================
-   TABLES
-   =================================================== */
-
 table {
   border-collapse: collapse;
   width: 100%;
@@ -411,13 +672,23 @@ table {
 }
 
 th, td {
-  border: 1px solid var(--code);
+  border: 1px solid rgba(0, 0, 0, var(--border-opacity));
   padding: 0.5rem 0.6rem;
   text-align: left;
 }
 
 thead th {
-  background: var(--code);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  pre code {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  thead th {
+    background: rgba(255, 255, 255, 0.07);
+  }
 }
 
 /* ===================================================
@@ -431,13 +702,15 @@ hr {
 }
 
 hr::before {
-  content: "•••••";
+  content: "\2022\2022\2022\2022\2022"; /* five bullets */
   display: block;
-  color: var(--link);
+  color: var(--color-link);
 }
 
 /* ===================================================
    FOOTER
+   Unified footer: post text + Contact/RSS/JSON links
+   Small italic type with muted color
    =================================================== */
 
 footer {
@@ -447,14 +720,33 @@ footer {
 
 footer .custom_footer {
   font-size: 0.75em;
-  color: var(--accent2);
+  color: var(--color-text-light);
+}
+
+footer .attribution {
+  display: none;
+}
+
+footer i {
+  font-size: 1.5em;
+  padding: 0 5px;
+}
+
+footer a i:hover {
+  color: var(--color-text);
 }
 
 .page-footer {
-  margin-top: 2em;
+  margin-top: 3rem;
+  padding-top: 2rem;
   text-align: center;
-  font-size: 0.85em;
-  color: var(--accent2);
+  font-size: 0.85rem;
+  font-style: italic;
+  color: rgba(26, 26, 26, 0.6);
+}
+
+.page-footer.is-post {
+  border-top: 1px solid rgba(0, 0, 0, var(--border-opacity));
 }
 
 .page-footer p {
@@ -462,11 +754,124 @@ footer .custom_footer {
 }
 
 .page-footer a {
-  color: var(--link);
+  color: var(--color-link);
 }
 
 .page-footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-links {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 1.25rem;
+}
+
+.footer-links a {
   text-decoration: none;
+  color: inherit;
+  padding: 0.25em 0.4em;
+}
+
+.footer-links a:hover,
+.footer-links a:active {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.footer-links i {
+  margin-right: 0.15em;
+  vertical-align: -0.05em;
+  opacity: 0.75;
+}
+
+.footer-links a + a {
+  margin-left: 0.8em;
+}
+
+@media (prefers-color-scheme: dark) {
+  .page-footer {
+    color: rgba(230, 230, 230, 0.55);
+  }
+
+  .footer-links {
+    opacity: 0.75;
+  }
+}
+
+/* ===================================================
+   FONT AWESOME ICONS
+   Icons inherit color and use modest opacity
+   Nav icons intentionally lighter
+   =================================================== */
+
+.fa-solid, .fa-regular {
+  margin-right: 0.4em;
+  color: inherit;
+  opacity: 0.7;
+  vertical-align: middle;
+}
+
+h2 .fa-solid {
+  font-size: 0.75em;
+  margin-right: 0.5em;
+  opacity: 0.7;
+}
+
+h4 .fa-solid {
+  font-size: 0.9em;
+  margin-right: 0.4em;
+  opacity: 0.7;
+}
+
+nav .fa-solid,
+nav .fa-regular {
+  font-size: 0.75em;
+  margin-right: 0.4em;
+  opacity: 0.55; /* Intentionally lighter */
+}
+
+.post-date .fa-regular {
+  font-size: 0.9em;
+  margin-right: 0.3em;
+  opacity: 0.7;
+}
+
+.full-archives .fa-asterisk,
+.full-archives .fa-phone-slash {
+  font-size: 0.75em;
+  margin-right: 0.3em;
+  opacity: 0.7;
+  color: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .fa-solid, .fa-regular {
+    opacity: 0.6;
+  }
+
+  h2 .fa-solid {
+    opacity: 0.6;
+  }
+
+  h4 .fa-solid {
+    opacity: 0.6;
+  }
+
+  nav .fa-solid,
+  nav .fa-regular {
+    opacity: 0.45; /* Intentionally lighter */
+  }
+
+  .post-date .fa-regular {
+    opacity: 0.6;
+  }
+
+  .full-archives .fa-asterisk,
+  .full-archives .fa-phone-slash {
+    opacity: 0.5;
+  }
 }
 
 /* ===================================================
@@ -483,9 +888,9 @@ input[type=number],
 textarea {
   padding: 10px;
   font-size: 0.9em;
-  border: 1px solid var(--link) !important;
+  border: 1px solid var(--color-link) !important;
   border-radius: 5px !important;
-  color: var(--text);
+  color: var(--color-text);
   display: block;
   height: auto;
   background: var(--field);
@@ -500,9 +905,9 @@ button {
   padding: 5px 10px;
   font-size: 0.9em;
   border-radius: 5px;
-  border: 1px solid var(--link);
+  border: 1px solid var(--color-link);
   background: none;
-  color: var(--link);
+  color: var(--color-link);
   -webkit-appearance: none;
   margin-top: 5px;
   font-weight: normal;
@@ -511,7 +916,7 @@ button {
 
 input[type=submit]:hover,
 button:hover {
-  background: var(--link);
+  background: var(--color-link);
   color: var(--button-text);
 }
 
@@ -546,42 +951,13 @@ form p {
 #form-status.success {
   background: var(--note);
   border: 1px solid var(--note-border);
-  color: var(--text);
+  color: var(--color-text);
 }
 
 #form-status.error {
   background: var(--alert);
   border: 1px solid var(--alert-border);
-  color: var(--text);
-}
-
-/* ===================================================
-   MISCELLANEOUS
-   =================================================== */
-
-sup a {
-  text-decoration: none;
-}
-
-.footnote-backref {
-  text-decoration: none;
-}
-
-mark {
-  background: var(--mark);
-}
-
-/* Iframe fix */
-iframe {
-  max-width: 100%;
-}
-
-/* Video responsive */
-video {
-  width: 100% !important;
-  height: auto !important;
-  background: var(--code);
-  border-radius: 5px;
+  color: var(--color-text);
 }
 
 /* ===================================================
@@ -607,10 +983,14 @@ video {
   line-height: 1.4;
 }
 
+.archive-posts li::before {
+  content: none;
+}
+
 .archive-posts .post-date {
   display: inline-block;
   min-width: 5em;
-  color: var(--accent2);
+  color: var(--color-text-light);
   font-size: 0.85em;
 }
 
@@ -620,6 +1000,17 @@ video {
 
 .archive-posts a:hover {
   text-decoration: underline;
+}
+
+/* Archive categories/tags section */
+.archive-categories ul,
+.archive-tags ul {
+  padding-left: 0;
+}
+
+.archive-categories ul li::before,
+.archive-tags ul li::before {
+  content: none;
 }
 
 /* Tag list on archives page */
@@ -646,17 +1037,21 @@ video {
   margin: 0;
 }
 
+.tag-list li::before {
+  content: none;
+}
+
 .tag-list a {
   display: inline-block;
   padding: 3px 8px;
-  border: 1px solid var(--link);
+  border: 1px solid var(--color-link);
   border-radius: 3px;
   text-decoration: none;
   font-size: 0.85em;
 }
 
 .tag-list a:hover {
-  background: var(--link);
+  background: var(--color-link);
   color: var(--button-text);
 }
 
@@ -673,6 +1068,10 @@ video {
   margin-bottom: 0.5em;
 }
 
+.taxonomy-list li::before {
+  content: none;
+}
+
 .taxonomy-list a {
   text-decoration: none;
 }
@@ -682,7 +1081,7 @@ video {
 }
 
 .taxonomy-list .count {
-  color: var(--accent2);
+  color: var(--color-text-light);
   font-size: 0.85em;
   margin-left: 0.3em;
 }
@@ -696,12 +1095,53 @@ video {
 }
 
 /* ===================================================
+   MISCELLANEOUS
+   =================================================== */
+
+sup a {
+  text-decoration: none;
+}
+
+.footnote-backref {
+  text-decoration: none;
+}
+
+mark {
+  background: var(--mark);
+}
+
+.tiny-img {
+  max-width: 25em;
+}
+
+.tiny-text {
+  font-size: 0.6em;
+}
+
+.tinylytics_countries {
+  font-size: 1.5em;
+  line-height: 1em;
+}
+
+/* Iframe fix */
+iframe {
+  max-width: 100%;
+}
+
+/* Video responsive */
+video {
+  width: 100% !important;
+  height: auto !important;
+  background: var(--code);
+  border-radius: 5px;
+}
+
+/* ===================================================
    RESPONSIVE ADJUSTMENTS
    =================================================== */
 
 @media (max-width: 600px) {
   body {
-    font-size: 16px;
     padding: 0 0.75em;
   }
 
@@ -718,6 +1158,8 @@ video {
 
 /* ===================================================
    PRINT STYLES
+   Clean layout for printed articles
+   Hides navigation and non-content elements
    =================================================== */
 
 @media print {
@@ -735,8 +1177,9 @@ video {
     text-decoration: underline;
   }
 
-  nav,
-  .page-footer {
+  .site-header,
+  .page-footer,
+  nav {
     display: none;
   }
 
