@@ -5,6 +5,18 @@
 
 ---
 
+## Environment Assumptions
+
+**This template assumes a secure development environment** where:
+- API keys and secrets can be safely provided to Claude Code during setup
+- Secrets are stored in `.env` files for local development (gitignored by default)
+- Claude Code will configure production secrets via Wrangler CLI commands
+- The Wrangler CLI is the primary tool for deployment and configuration (dashboard is optional)
+
+This approach maximizes automation and makes the setup process scriptable and reproducible.
+
+---
+
 ## Using This as a Template
 
 This repository is a production-ready template for deploying a Hugo blog to Cloudflare Workers with a working contact form. Clone it and customize for your own site.
@@ -17,15 +29,18 @@ This repository is a production-ready template for deploying a Hugo blog to Clou
 | Contact form | Turnstile spam protection + email delivery |
 | Cloudflare Worker | Handles contact form POST requests |
 | Git deployment | Push to main = automatic deploy |
+| CLI-first automation | Wrangler commands for all configuration |
 | 2026-ready setup | Uses current APIs (Resend, not MailChannels) |
 
 ### Quick Start (30-60 minutes)
 
-**Prerequisites:**
-- Node.js v20+ (`node --version` to check)
-- Cloudflare account (free)
-- Resend account (free, optional for testing)
-- GitHub account
+**Prerequisites (install in this order):**
+1. **Node.js v20+** - `node --version` to check (required for Wrangler)
+2. **Wrangler CLI** - `npm install -g wrangler && wrangler login`
+3. **Hugo** - `hugo version` to check
+4. **Cloudflare account** - free tier is fine
+5. **GitHub account**
+6. **Resend account** - free tier, optional for initial testing
 
 **Steps:**
 
@@ -44,7 +59,13 @@ git init
 # 3. Create GitHub repository
 gh repo create my-site --public --source=. --push
 
-# 4. Connect to Cloudflare (see "Deployment" section below)
+# 4. Deploy via Wrangler (see "Deployment" section below)
+wrangler deploy
+
+# 5. Configure secrets (provide values when prompted)
+wrangler secret put TURNSTILE_SECRET_KEY
+wrangler secret put RESEND_API_KEY
+wrangler secret put CONTACT_EMAIL
 ```
 
 ### What to Customize Per-Project
@@ -69,6 +90,8 @@ gh repo create my-site --public --source=. --push
 | GitHub | Repository | Git deployment |
 
 **For testing only:** You can skip Resend setup initially. The form will work with Turnstile testing keys and show errors for email (which is fine for testing layout/flow).
+
+**Providing Keys to Claude Code:** During setup, you'll provide API keys directly to Claude Code, which will configure them via `wrangler secret put` commands. Keys are stored securely in Cloudflare and in your local `.env` file (gitignored).
 
 ### Important: 2024-2025 Changes
 
@@ -113,50 +136,75 @@ my-site/
 └── public/            # Build output (gitignored)
 ```
 
-### Cloudflare Workers Setup (Step-by-Step)
+### Wrangler CLI Setup (Recommended)
 
-1. **Go to Cloudflare Dashboard**
-   - Navigate to: Compute (Workers) > Workers & Pages
-   - Click **Create** > **Import a repository**
+The Wrangler CLI provides the most automated and reproducible deployment workflow.
 
-2. **Connect GitHub**
-   - Authorize Cloudflare if needed
-   - Select your repository
+**1. Authenticate Wrangler:**
 
-3. **Configure Build**
-   - **Worker name**: Must match `name` in wrangler.toml exactly
-   - **Production branch**: `main`
-   - Leave other fields as defaults (wrangler.toml handles build config)
+```bash
+# Install globally (if not already done)
+npm install -g wrangler
 
-4. **Deploy**
-   - Click **Save and Deploy**
-   - Wait 2-3 minutes
-   - Site available at: `https://{worker-name}.{subdomain}.workers.dev`
+# Login to Cloudflare (opens browser)
+wrangler login
 
-5. **Add Environment Variables**
-   - Go to: Worker > Settings > Variables
-   - Add (see table below)
-   - Click **Deploy** to apply
+# Verify authentication
+wrangler whoami
+```
+
+**2. Initial Deployment:**
+
+```bash
+# Build and deploy
+wrangler deploy
+
+# Site available at: https://{worker-name}.{subdomain}.workers.dev
+```
+
+**3. Configure Secrets:**
+
+```bash
+# Set each secret (prompts for value securely)
+wrangler secret put TURNSTILE_SECRET_KEY
+wrangler secret put RESEND_API_KEY
+wrangler secret put CONTACT_EMAIL
+
+# List configured secrets
+wrangler secret list
+```
+
+**4. Set Up Git Integration (for auto-deploy on push):**
+
+```bash
+# Connect repository for automatic deployments
+# This still requires the dashboard, but is a one-time setup
+```
+
+Go to: Cloudflare Dashboard > Workers & Pages > Create > Import a repository
+- Select your GitHub repository
+- Worker name must match `name` in wrangler.toml
+- Production branch: `main`
+
+After this, `git push` triggers automatic deploys.
 
 ### Environment Variables
 
-Set these in Cloudflare Workers dashboard after initial deploy:
+Configure via Wrangler CLI:
 
-| Variable | Value | Type | Purpose |
-|----------|-------|------|---------|
-| `TURNSTILE_SECRET_KEY` | Your secret key | Encrypted | Spam protection |
-| `CONTACT_EMAIL` | `you@example.com` | Plain text | Form destination |
-| `RESEND_API_KEY` | `re_xxxxxxxx` | Encrypted | Email sending |
+| Variable | Command | Purpose |
+|----------|---------|---------|
+| `TURNSTILE_SECRET_KEY` | `wrangler secret put TURNSTILE_SECRET_KEY` | Spam protection |
+| `CONTACT_EMAIL` | `wrangler secret put CONTACT_EMAIL` | Form destination |
+| `RESEND_API_KEY` | `wrangler secret put RESEND_API_KEY` | Email sending |
 
-**Alternative: Set via Wrangler CLI:**
+**View configured secrets:**
 
 ```bash
-# Requires wrangler login first
-npx wrangler secret put TURNSTILE_SECRET_KEY
-npx wrangler secret put RESEND_API_KEY
-# For plain text variables
-npx wrangler secret put CONTACT_EMAIL
+wrangler secret list
 ```
+
+**Dashboard Alternative:** Worker > Settings > Variables > Add (then click Deploy)
 
 ### Custom Domain Setup
 
@@ -207,9 +255,14 @@ User sees success message
    - Edit `layouts/_default/about.html` line 44
    - Replace site key: `data-sitekey="YOUR_SITE_KEY"`
 
-3. **Add Secret to Cloudflare**
-   - Worker > Settings > Variables
-   - Add `TURNSTILE_SECRET_KEY` (encrypted)
+3. **Add Secret via Wrangler:**
+
+```bash
+wrangler secret put TURNSTILE_SECRET_KEY
+# Enter your secret key when prompted
+```
+
+**Dashboard Alternative:** Worker > Settings > Variables > Add `TURNSTILE_SECRET_KEY` (encrypted)
 
 **For Testing (workers.dev domains):**
 
@@ -231,9 +284,17 @@ The worker script automatically detects testing tokens and uses the appropriate 
    - Dashboard > API Keys > Create
    - Copy the key (starts with `re_`)
 
-3. **Add to Cloudflare**
-   - Worker > Settings > Variables
-   - Add `RESEND_API_KEY` (encrypted)
+3. **Add via Wrangler:**
+
+```bash
+wrangler secret put RESEND_API_KEY
+# Enter your API key when prompted
+
+wrangler secret put CONTACT_EMAIL
+# Enter your email address when prompted
+```
+
+**Dashboard Alternative:** Worker > Settings > Variables > Add `RESEND_API_KEY` (encrypted)
 
 **For Testing Without Domain Verification:**
 
@@ -282,8 +343,23 @@ Tags only (no categories). Common tags: `alaska`, `musings`, `technology`, `book
 
 ### Prerequisites
 
-- Hugo installed locally (`apt install hugo` or download from https://gohugo.io)
-- Node.js v20+ (for Wrangler)
+1. **Node.js v20+** (required for Wrangler)
+   ```bash
+   node --version  # Must be v20.0.0 or higher
+   ```
+
+2. **Wrangler CLI** (authenticated)
+   ```bash
+   npm install -g wrangler
+   wrangler login
+   wrangler whoami  # Verify authentication
+   ```
+
+3. **Hugo** (static site generator)
+   ```bash
+   sudo apt install hugo  # Ubuntu/Debian
+   # Or download from https://gohugo.io
+   ```
 
 ### Daily Workflow
 
@@ -349,11 +425,14 @@ npx wrangler dev
 
 | Command | Purpose |
 |---------|---------|
-| `npx wrangler dev` | Local dev with Worker |
-| `npx wrangler deploy` | Manual deploy |
-| `npx wrangler tail` | View live logs |
-| `npx wrangler secret put VAR_NAME` | Set secret |
-| `npx wrangler secret list` | List secrets |
+| `wrangler login` | Authenticate with Cloudflare |
+| `wrangler whoami` | Verify authentication |
+| `wrangler dev` | Local dev with Worker |
+| `wrangler deploy` | Deploy to Cloudflare |
+| `wrangler tail` | View live logs |
+| `wrangler secret put VAR_NAME` | Set secret |
+| `wrangler secret list` | List configured secrets |
+| `wrangler secret delete VAR_NAME` | Remove a secret |
 
 ---
 

@@ -7,6 +7,18 @@ A phased approach to building a Hugo blog hosted on Cloudflare Workers with Stat
 
 ---
 
+## Environment Assumptions
+
+**This plan assumes a secure development environment** where:
+- API keys and secrets can be safely provided to Claude Code during setup
+- Secrets are stored in `.env` files for local development (gitignored by default)
+- Claude Code will configure production secrets via Wrangler CLI commands
+- The Wrangler CLI is the primary tool for deployment and configuration (dashboard is optional)
+
+This approach maximizes automation and makes the setup process scriptable and reproducible.
+
+---
+
 ## Template Usage
 
 This implementation plan documents how 907.life was built and serves as a guide for future projects using this template.
@@ -15,12 +27,12 @@ This implementation plan documents how 907.life was built and serves as a guide 
 
 | Phase | One-Time Setup | Per-Project |
 |-------|----------------|-------------|
-| Phase 1 | Hugo, Cloudflare account | New repo, new Worker |
+| Phase 1 | Node.js, Wrangler, Hugo, Cloudflare account | New repo, wrangler login |
 | Phase 2 | - | hugo.toml customization |
 | Phase 3 | - | Theme customization |
 | Phase 4 | - | Content creation |
-| Phase 5 | Resend account | Turnstile widget, API keys |
-| Phase 6 | DNS nameservers | Worker setup, domain |
+| Phase 5 | Resend account | Turnstile widget, API keys via wrangler |
+| Phase 6 | DNS nameservers | wrangler deploy, domain setup |
 | Phase 7-9 | - | Workflow, testing, content |
 
 ### What Changed in 2024-2025
@@ -40,6 +52,7 @@ This plan reflects the current (January 2026) Cloudflare ecosystem:
 Before starting, ensure you have:
 
 - [ ] Node.js v20+ installed (`node --version`)
+- [ ] Wrangler CLI installed and authenticated (`wrangler whoami`)
 - [ ] Hugo installed (`hugo version`)
 - [ ] Cloudflare account (free tier is fine)
 - [ ] GitHub account
@@ -69,19 +82,67 @@ Before starting, ensure you have:
 
 ## Phase 1: Environment Setup
 
-**Goal**: Prepare the local development environment and accounts.
+**Goal**: Prepare the local development environment with all CLI tools authenticated and ready.
 
 ### Tasks
 
 | Task | Details | One-Time? |
 |------|---------|-----------|
-| **1.1 Install Hugo** | `sudo -A apt install hugo` | Yes |
-| **1.2 Verify Node.js** | Must be v20+ for Wrangler | Yes |
-| **1.3 Create Cloudflare Account** | Sign up at https://dash.cloudflare.com | Yes |
-| **1.4 Initialize Repository** | Set up git, push to GitHub | Per-project |
-| **1.5 Update CLAUDE.md** | Document versions, any issues | Per-project |
+| **1.1 Install Node.js v20+** | Required for Wrangler CLI | Yes |
+| **1.2 Install Wrangler CLI** | `npm install -g wrangler` | Yes |
+| **1.3 Authenticate Wrangler** | `wrangler login` | Yes |
+| **1.4 Install Hugo** | `sudo -A apt install hugo` | Yes |
+| **1.5 Create Cloudflare Account** | Sign up at https://dash.cloudflare.com | Yes |
+| **1.6 Initialize Repository** | Set up git, push to GitHub | Per-project |
+| **1.7 Update CLAUDE.md** | Document versions, any issues | Per-project |
 
-### 1.1 Install Hugo
+### 1.1 Install Node.js v20+
+
+```bash
+node --version  # Check current version
+
+# If too old or not installed, use nvm:
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+nvm install 20
+nvm use 20
+nvm alias default 20  # Set as default
+
+node --version  # Verify: v20.0.0 or higher
+```
+
+**Why v20+?** Wrangler (Cloudflare's CLI) requires Node.js 20 or later. Older versions will fail with cryptic errors.
+
+### 1.2 Install Wrangler CLI
+
+```bash
+# Install globally
+npm install -g wrangler
+
+# Verify installation
+wrangler --version
+```
+
+### 1.3 Authenticate Wrangler
+
+```bash
+# Login to Cloudflare (opens browser for OAuth)
+wrangler login
+
+# Verify authentication
+wrangler whoami
+# Should show: Getting User settings... You are logged in with an OAuth Token...
+```
+
+**Why authenticate now?** Wrangler is used throughout this project for:
+- Deploying the site (`wrangler deploy`)
+- Setting secrets (`wrangler secret put`)
+- Viewing logs (`wrangler tail`)
+- Local development (`wrangler dev`)
+
+Having it authenticated from the start enables CLI-first automation.
+
+### 1.4 Install Hugo
 
 ```bash
 # Ubuntu/Debian
@@ -92,28 +153,14 @@ hugo version  # Should be 0.123.7 or similar
 # Or download latest from https://gohugo.io/installation/
 ```
 
-### 1.2 Verify Node.js
-
-```bash
-node --version  # Must be v20.0.0 or higher
-
-# If too old, install via nvm:
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-source ~/.bashrc
-nvm install 20
-nvm use 20
-```
-
-**Why v20+?** Wrangler (Cloudflare's CLI) requires Node.js 20 or later. Older versions will fail with cryptic errors.
-
-### 1.3 Create Cloudflare Account
+### 1.5 Create Cloudflare Account
 
 1. Go to https://dash.cloudflare.com/sign-up
 2. Create free account
 3. Verify email
 4. Note: Domain and Worker configuration comes in Phase 6
 
-### 1.4 Initialize Repository
+### 1.6 Initialize Repository
 
 ```bash
 # If using template
@@ -130,8 +177,10 @@ gh repo create my-site --public --source=. --push
 
 ### Completion Checklist
 
-- [ ] `hugo version` returns 0.123.7+
 - [ ] `node --version` returns v20.0.0+
+- [ ] `wrangler --version` returns version info
+- [ ] `wrangler whoami` shows authenticated user
+- [ ] `hugo version` returns 0.123.7+
 - [ ] Cloudflare account created
 - [ ] Git repository initialized and pushed to GitHub
 - [ ] CLAUDE.md updated with Phase 1 specifics
@@ -309,7 +358,7 @@ Your content here...
 | **5.2 Generate API Key** | Dashboard > API Keys > Create | Per-project |
 | **5.3 Set Up Turnstile Widget** | Cloudflare Dashboard > Turnstile | Per-project |
 | **5.4 Update About Template** | Add Turnstile site key | Per-project |
-| **5.5 Document Environment Variables** | Update .env.example | Per-project |
+| **5.5 Configure Secrets via Wrangler** | `wrangler secret put` commands | Per-project |
 | **5.6 Update CLAUDE.md** | Document form setup | Per-project |
 
 ### 5.1-5.2 Resend Setup
@@ -358,15 +407,37 @@ Edit `layouts/_default/about.html`, find the Turnstile div (around line 44):
 
 Replace with your site key or testing key.
 
-### Environment Variables
+### 5.5 Configure Secrets via Wrangler
 
-These will be set in Cloudflare Workers dashboard in Phase 6:
+**This is the recommended approach.** Provide your API keys to Claude Code, which will configure them:
 
-| Variable | Type | Purpose |
-|----------|------|---------|
-| `TURNSTILE_SECRET_KEY` | Encrypted | Turnstile validation |
-| `CONTACT_EMAIL` | Plain text | Where emails go |
-| `RESEND_API_KEY` | Encrypted | Resend authentication |
+```bash
+# Set Turnstile secret key
+wrangler secret put TURNSTILE_SECRET_KEY
+# Enter value when prompted: (your Turnstile secret key)
+
+# Set Resend API key
+wrangler secret put RESEND_API_KEY
+# Enter value when prompted: re_xxxxxxxx
+
+# Set contact email
+wrangler secret put CONTACT_EMAIL
+# Enter value when prompted: you@example.com
+
+# Verify secrets are configured
+wrangler secret list
+```
+
+**Local Development:** For local testing with `wrangler dev`, create a `.env` file:
+
+```bash
+# .env (gitignored - safe to store locally)
+TURNSTILE_SECRET_KEY=your_secret_key_here
+RESEND_API_KEY=re_xxxxxxxx
+CONTACT_EMAIL=you@example.com
+```
+
+**Dashboard Alternative:** Worker > Settings > Variables > Add each variable (then click Deploy)
 
 ### Completion Checklist
 
@@ -374,7 +445,8 @@ These will be set in Cloudflare Workers dashboard in Phase 6:
 - [ ] API key generated
 - [ ] Turnstile widget created
 - [ ] Site key added to about.html
-- [ ] .env.example updated
+- [ ] Secrets configured via `wrangler secret put`
+- [ ] `wrangler secret list` shows all three secrets
 - [ ] CLAUDE.md updated
 
 ---
@@ -392,9 +464,9 @@ These will be set in Cloudflare Workers dashboard in Phase 6:
 | **6.1 Review wrangler.toml** | Verify configuration |
 | **6.2 Review build.sh** | Verify Hugo version |
 | **6.3 Review Worker Script** | Verify src/worker.js |
-| **6.4 Connect to Cloudflare** | Link GitHub repository |
-| **6.5 Initial Deployment** | Verify at workers.dev URL |
-| **6.6 Configure Environment Variables** | Add secrets |
+| **6.4 Deploy via Wrangler** | `wrangler deploy` |
+| **6.5 Verify Deployment** | Check workers.dev URL |
+| **6.6 Set Up Git Integration** | Enable auto-deploy on push |
 | **6.7 Add Custom Domain** | Connect your domain |
 | **6.8 Test Production** | Full end-to-end test |
 | **6.9 Update CLAUDE.md** | Document deployment |
@@ -425,7 +497,38 @@ run_worker_first = ["/contact"]  # MUST be inside [assets]
 - `main` after `[build]` = Worker won't load
 - `run_worker_first` outside `[assets]` = Contact form 404
 
-### 6.4 Connect to Cloudflare Workers
+### 6.4 Deploy via Wrangler (Recommended)
+
+```bash
+# Verify you're authenticated
+wrangler whoami
+
+# Build and deploy
+wrangler deploy
+
+# Output shows deployment URL:
+# Published your-site-name (x.xx sec)
+# https://your-site-name.your-subdomain.workers.dev
+```
+
+**Verify Secrets (if set in Phase 5):**
+
+```bash
+wrangler secret list
+# Should show: TURNSTILE_SECRET_KEY, RESEND_API_KEY, CONTACT_EMAIL
+```
+
+**If secrets not yet configured:**
+
+```bash
+wrangler secret put TURNSTILE_SECRET_KEY
+wrangler secret put RESEND_API_KEY
+wrangler secret put CONTACT_EMAIL
+```
+
+### 6.6 Set Up Git Integration (Auto-Deploy)
+
+For automatic deployments when you `git push`, connect your GitHub repository:
 
 1. **Dashboard Navigation**
    - Cloudflare Dashboard > Compute (Workers) > Workers & Pages
@@ -436,49 +539,38 @@ run_worker_first = ["/contact"]  # MUST be inside [assets]
    - Select your repository
 
 3. **Configure Build**
-   - **Worker name**: MUST match `name` in wrangler.toml
+   - **Worker name**: MUST match `name` in wrangler.toml exactly
    - **Production branch**: `main`
-   - Leave other fields as defaults
+   - Leave other fields as defaults (wrangler.toml handles build config)
 
-4. **Deploy**
+4. **Save**
    - Click **Save and Deploy**
-   - Wait 2-3 minutes for first build
+   - Future `git push` commands trigger automatic deploys
 
-### 6.6 Configure Environment Variables
+**Note:** This is the only step that requires the dashboard. All other configuration can be done via Wrangler CLI.
 
-**Via Dashboard:**
-
-1. Workers & Pages > Your Worker > Settings > Variables
-2. Add each variable:
-
-| Variable | Value | Type |
-|----------|-------|------|
-| `TURNSTILE_SECRET_KEY` | (your key) | Encrypted |
-| `CONTACT_EMAIL` | you@example.com | Plain text |
-| `RESEND_API_KEY` | re_xxxxxx | Encrypted |
-
-3. Click **Deploy** to apply
+### 6.7 Custom Domain Setup
 
 **Via Wrangler CLI:**
 
 ```bash
-# Login first
-npx wrangler login
+# Add custom domain route
+wrangler deploy --route your-domain.com/*
 
-# Set secrets (prompts for value)
-npx wrangler secret put TURNSTILE_SECRET_KEY
-npx wrangler secret put RESEND_API_KEY
-npx wrangler secret put CONTACT_EMAIL
+# Or add to wrangler.toml for persistence:
+# [[routes]]
+# pattern = "your-domain.com/*"
+# zone_name = "your-domain.com"
 ```
 
-### 6.7 Custom Domain Setup
+**Domain Prerequisites:**
 
 1. **Add domain to Cloudflare** (if not already)
    - Dashboard > Add a site > your-domain.com
    - Update nameservers at registrar
    - Wait for activation
 
-2. **Connect to Worker**
+2. **Connect to Worker** (Dashboard Alternative)
    - Workers & Pages > Your Worker > Settings > Domains & Routes
    - Add > Custom domain
    - Enter your domain
@@ -497,20 +589,27 @@ npx wrangler secret put CONTACT_EMAIL
 | Build fails with npm errors | Check Node.js version (v20+ required) |
 | 404 on all pages | Check `[assets] directory = "./public"` |
 | Contact form 404 | Check `run_worker_first` is inside `[assets]` section |
-| Env vars not working | Click **Deploy** after adding variables |
+| Env vars not working | Run `wrangler secret list` to verify, redeploy if needed |
 
-**Viewing Build Logs:**
-- Workers & Pages > Your Worker > Deployments
-- Click on a deployment > View logs
+**Viewing Logs via Wrangler:**
+
+```bash
+# Stream live logs
+wrangler tail
+
+# With filters
+wrangler tail --status error
+```
+
+**Dashboard Alternative:** Workers & Pages > Your Worker > Deployments > View logs
 
 ### Completion Checklist
 
 - [ ] wrangler.toml verified (field order correct)
-- [ ] Repository connected to Cloudflare
-- [ ] First build successful
+- [ ] `wrangler deploy` successful
 - [ ] Site loads at workers.dev URL
-- [ ] Environment variables configured
-- [ ] Variables deployed (clicked Deploy)
+- [ ] `wrangler secret list` shows all secrets
+- [ ] Git integration configured (for auto-deploy)
 - [ ] Custom domain connected (if applicable)
 - [ ] SSL working
 - [ ] Contact form working
@@ -655,24 +754,28 @@ npx wrangler dev
 | http://localhost:1313 | Hugo dev server |
 | http://localhost:8787 | Wrangler dev server |
 | https://your-domain.com | Production site |
-| https://dash.cloudflare.com | Cloudflare dashboard |
+| https://dash.cloudflare.com | Cloudflare dashboard (optional) |
 | https://resend.com | Email service |
 
 ### Common Commands
 
 ```bash
+# Wrangler (primary deployment tool)
+wrangler login          # Authenticate with Cloudflare
+wrangler whoami         # Verify authentication
+wrangler deploy         # Build and deploy
+wrangler dev            # Local development server
+wrangler tail           # Stream live logs
+wrangler secret put X   # Set secret X
+wrangler secret list    # List all secrets
+wrangler secret delete X # Remove secret X
+
 # Hugo
 hugo server -D          # Dev server with drafts
 hugo --gc --minify      # Production build
 hugo new posts/...      # Create post
 
-# Wrangler
-npx wrangler dev        # Local worker
-npx wrangler deploy     # Manual deploy
-npx wrangler tail       # View logs
-npx wrangler secret put # Set secret
-
-# Git
+# Git (triggers auto-deploy if git integration enabled)
 git add -A && git commit -m "..." && git push
 ```
 
@@ -690,6 +793,16 @@ git add -A && git commit -m "..." && git push
 ## Lessons Learned
 
 Documented during the 907.life implementation:
+
+### CLI-First Workflow
+
+Using Wrangler CLI from the start provides significant benefits:
+- **Automation**: Commands can be scripted and reproduced
+- **Speed**: No need to navigate dashboard UI
+- **Version control**: wrangler.toml captures configuration
+- **Claude Code integration**: Claude can configure secrets via CLI commands
+
+The dashboard is only required for one-time Git integration setup.
 
 ### wrangler.toml Gotchas
 
@@ -714,6 +827,11 @@ MailChannels discontinued free Cloudflare Workers integration on August 31, 2024
 
 Wrangler requires Node.js v20+. Check with `node --version` before troubleshooting other issues.
 
-### Environment Variables After Deploy
+### Secrets via Wrangler vs Dashboard
 
-Adding environment variables in Cloudflare dashboard doesn't automatically deploy them. You must click **Deploy** after adding/changing variables.
+Using `wrangler secret put` is preferred over dashboard:
+- Secrets take effect immediately (no manual "Deploy" click needed)
+- Can be scripted: `echo "value" | wrangler secret put NAME`
+- Verify with `wrangler secret list`
+
+If using dashboard: remember to click **Deploy** after adding/changing variables.
