@@ -1309,3 +1309,8 @@ video {
   font-weight: 600;
   margin: 0.5rem 0 0.7rem;
 }
+
+/* Profile photo styling */
+img.profile_photo {
+  border-radius: 80px;
+}

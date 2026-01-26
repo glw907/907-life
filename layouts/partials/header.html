@@ -4,6 +4,11 @@
 */}}
 
 <header class="site-header">
+  {{- /* Profile photo - add your photo to static/images/profile.jpg */ -}}
+  {{ if fileExists "static/images/profile.jpg" }}
+  <a href="/"><img src="/images/profile.jpg" alt="907.life Profile Photo" class="profile_photo u-photo" width="80" height="80"></a>
+  {{ end }}
+
   {{- /* Site title/logo */ -}}
   <h1><a class="site-title p-name u-url" href="/"><span class="site-number">907</span><span class="site-domain">.life</span></a></h1>
 
