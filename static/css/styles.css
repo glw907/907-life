@@ -131,6 +131,7 @@ h1 {
 
 h2 {
 	font-size: 1.6rem;
+	line-height: 1.25;
 	margin: 1.8rem 0 0.7rem;
 	font-weight: 600;
 	letter-spacing: -0.01em;
@@ -304,8 +305,7 @@ nav ul li {
 
 nav a,
 nav a:visited,
-nav a:hover,
-a.read-more {
+nav a:hover {
 	text-decoration: none;
 	padding: 5px 10px;
 	border: 1px solid var(--color-link);
@@ -314,10 +314,22 @@ a.read-more {
 	font-size: 0.9em;
 }
 
-nav a:hover,
-a.read-more:hover {
+nav a:hover {
 	background: var(--color-link);
 	color: var(--color-button-text);
+}
+
+/* Continue Reading link - subtle, not button-like */
+a.read-more {
+	font-size: 0.85em;
+	color: var(--color-text-light);
+	text-decoration: underline;
+	text-underline-offset: 0.12em;
+}
+
+a.read-more:hover {
+	color: var(--color-link);
+	text-decoration: underline;
 }
 
 nav a.active {
@@ -360,13 +372,13 @@ nav a.active {
 
 a.post-date {
 	font-size: 0.75em;  /* Smaller font size */
-	color: var(--color-link-light);  /* Lighter blue color */
+	color: var(--color-text-light);  /* Lighter grey color */
 	text-decoration: none;  /* No underline */
 }
 
 span.post-date {
 	font-size: 0.75em;  /* Smaller font size */
-	color: var(--color-link-light);  /* Lighter blue color */
+	color: var(--color-text-light);  /* Lighter grey color */
 }
 
 a.post-date:hover {
@@ -871,10 +883,9 @@ hr {
 }
 
 hr::before {
-	content: "* * *";
+	content: "•••••";
 	display: block;
-	color: var(--color-text-light);
-	letter-spacing: 0.5em;
+	color: var(--color-link);
 }
 
 /* Marks and highlighting */
