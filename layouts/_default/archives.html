@@ -15,7 +15,7 @@
   {{/* Tag list - simple, alphabetical */}}
   {{ if gt (len .Site.Taxonomies.tags) 0 }}
     <div class="tag-list">
-      <h3>Tags</h3>
+      <h3><i class="fa-solid fa-tags"></i>Tags</h3>
       <ul>
         {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
           <li>
@@ -33,7 +33,7 @@
 
   {{ if gt (len $postsByYear) 0 }}
     <div class="posts-by-year">
-      <h3>Posts by Year</h3>
+      <h3><i class="fa-solid fa-calendar"></i>Posts by Year</h3>
       {{ range $postsByYear }}
         <div class="year-group">
           <h4>{{ .Key }}</h4>

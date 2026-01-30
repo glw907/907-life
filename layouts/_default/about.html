@@ -53,6 +53,59 @@
   {{- /* Turnstile script */ -}}
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
+  {{- /* Form validation - mark fields as touched and show custom messages */ -}}
+  <script>
+    // Add 'touched' class and validation messages
+    document.querySelectorAll('#contact-form input, #contact-form textarea').forEach(field => {
+      field.addEventListener('blur', () => {
+        field.classList.add('touched');
+        showValidationMessage(field);
+      });
+
+      field.addEventListener('input', () => {
+        // Clear validation message when user starts typing
+        clearValidationMessage(field);
+      });
+    });
+
+    // Mark all fields as touched on submit attempt and validate
+    document.getElementById('contact-form').addEventListener('submit', (e) => {
+      let hasErrors = false;
+      document.querySelectorAll('#contact-form input, #contact-form textarea').forEach(field => {
+        field.classList.add('touched');
+        if (!field.validity.valid) {
+          showValidationMessage(field);
+          hasErrors = true;
+        }
+      });
+    });
+
+    function showValidationMessage(field) {
+      clearValidationMessage(field);
+
+      if (!field.validity.valid && field.classList.contains('touched')) {
+        const message = document.createElement('div');
+        message.className = 'validation-message';
+
+        if (field.validity.valueMissing) {
+          message.textContent = 'This field is required.';
+        } else if (field.validity.typeMismatch && field.type === 'email') {
+          message.textContent = 'Please enter a valid email address.';
+        }
+
+        // Insert message right after the input field
+        field.parentNode.insertBefore(message, field.nextSibling);
+      }
+    }
+
+    function clearValidationMessage(field) {
+      const message = field.nextSibling;
+      if (message && message.classList && message.classList.contains('validation-message')) {
+        message.remove();
+      }
+    }
+  </script>
+
   {{- /* Form submission handler */ -}}
   <script>
     document.getElementById('contact-form').addEventListener('submit', async (e) => {
