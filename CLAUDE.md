@@ -70,13 +70,25 @@ This repository serves as both a production site (907.life) and a template for f
 
 ### Content Organization
 
+**Page Bundles Structure** (as of January 2026):
+
 ```
 content/
 ├── _index.md          # Home page
-├── posts/             # Blog posts (YYYY-MM-DD-slug.md)
+├── posts/             # Blog posts (page bundles)
+│   ├── YYYY-MM-DD-slug/
+│   │   ├── index.md   # Post content
+│   │   └── image.jpg  # Post-specific images (optional)
+│   └── ...
 ├── archives.md        # Archives page
 └── about.md           # About + contact form
 ```
+
+Posts use Hugo **page bundles** (leaf bundles) for better organization:
+- Each post is a directory named `YYYY-MM-DD-slug/`
+- Content lives in `index.md` inside the directory
+- Post-specific images/resources can be stored alongside the post
+- URLs remain unchanged: `/YYYY/MM/DD/slug/`
 
 ### Taxonomy
 
@@ -105,37 +117,39 @@ New tags can be added anytime — just use them in front matter.
 
 ### Wrangler CLI (Primary Tool)
 
+**Important:** All npx wranglercommands must be prefixed with `npx` (e.g., `npx npx wranglerlogin`) unless npx wrangleris installed globally. This ensures the correct version is used.
+
 **Authentication:**
 
 ```bash
-wrangler login
-wrangler whoami
+npx npx wranglerlogin
+npx npx wranglerwhoami
 ```
 
 **Deployment:**
 
 ```bash
-wrangler deploy
+npx wranglerdeploy
 # Site available at: https://907-life.glw907.workers.dev
 ```
 
 **Secrets:**
 
 ```bash
-wrangler secret put TURNSTILE_SECRET_KEY
-wrangler secret put RESEND_API_KEY
-wrangler secret put CONTACT_EMAIL
+npx wranglersecret put TURNSTILE_SECRET_KEY
+npx wranglersecret put RESEND_API_KEY
+npx wranglersecret put CONTACT_EMAIL
 
-wrangler secret list
+npx wranglersecret list
 ```
 
 ### Environment Variables
 
 | Variable | Command | Purpose |
 |----------|---------|---------|
-| `TURNSTILE_SECRET_KEY` | `wrangler secret put TURNSTILE_SECRET_KEY` | Spam protection |
-| `CONTACT_EMAIL` | `wrangler secret put CONTACT_EMAIL` | geoff@907.life |
-| `RESEND_API_KEY` | `wrangler secret put RESEND_API_KEY` | Email sending |
+| `TURNSTILE_SECRET_KEY` | `npx wranglersecret put TURNSTILE_SECRET_KEY` | Spam protection |
+| `CONTACT_EMAIL` | `npx wranglersecret put CONTACT_EMAIL` | geoff@907.life |
+| `RESEND_API_KEY` | `npx wranglersecret put RESEND_API_KEY` | Email sending |
 
 ### Custom Domain
 
@@ -207,7 +221,7 @@ The worker script automatically detects testing tokens and uses the appropriate 
 
 2. **Wrangler CLI** (authenticated)
    ```bash
-   wrangler whoami  # Verify authentication
+   npx wranglerwhoami  # Verify authentication
    ```
 
 3. **Hugo** (static site generator)
@@ -234,9 +248,34 @@ git add -A && git commit -m "Add new post" && git push
 
 ### Creating Posts
 
+**Using page bundles:**
+
 ```bash
-hugo new posts/$(date +%Y-%m-%d)-my-post-slug.md
+hugo new posts/$(date +%Y-%m-%d)-my-post-slug/index.md
 ```
+
+This creates a directory structure:
+```
+content/posts/2026-01-31-my-post-slug/
+└── index.md
+```
+
+**Adding images to a post:**
+
+1. Place images in the post bundle directory:
+   ```
+   content/posts/2026-01-31-my-post-slug/
+   ├── index.md
+   ├── photo1.jpg
+   └── photo2.jpg
+   ```
+
+2. Reference in markdown (relative path):
+   ```markdown
+   ![Photo description](photo1.jpg)
+   ```
+
+Hugo automatically resolves the path relative to the page bundle.
 
 ### Front Matter Template
 
@@ -257,7 +296,7 @@ description: "Brief description for previews and SEO"
 hugo --gc --minify
 
 # Run local worker (contact form works)
-npx wrangler dev
+npx npx wranglerdev
 
 # Preview at http://localhost:8787
 ```
@@ -272,21 +311,21 @@ npx wrangler dev
 |---------|---------|
 | `hugo server -D` | Dev server with drafts |
 | `hugo server` | Dev server, published only |
-| `hugo new posts/...` | Create new post |
+| `hugo new posts/YYYY-MM-DD-slug/index.md` | Create new post (page bundle) |
 | `hugo --gc --minify` | Production build |
 
 ### Wrangler
 
 | Command | Purpose |
 |---------|---------|
-| `wrangler login` | Authenticate with Cloudflare |
-| `wrangler whoami` | Verify authentication |
-| `wrangler dev` | Local dev with Worker |
-| `wrangler deploy` | Deploy to Cloudflare |
-| `wrangler tail` | View live logs |
-| `wrangler secret put VAR_NAME` | Set secret |
-| `wrangler secret list` | List configured secrets |
-| `wrangler secret delete VAR_NAME` | Remove a secret |
+| `npx wranglerlogin` | Authenticate with Cloudflare |
+| `npx wranglerwhoami` | Verify authentication |
+| `npx wranglerdev` | Local dev with Worker |
+| `npx wranglerdeploy` | Deploy to Cloudflare |
+| `npx wranglertail` | View live logs |
+| `npx wranglersecret put VAR_NAME` | Set secret |
+| `npx wranglersecret list` | List configured secrets |
+| `npx wranglersecret delete VAR_NAME` | Remove a secret |
 
 ### Git
 
@@ -388,11 +427,11 @@ run_worker_first = ["/contact"]  # Must be INSIDE [assets]
 
 | Issue | Cause | Solution |
 |-------|-------|----------|
-| "Email service not configured" | Missing RESEND_API_KEY | `wrangler secret put RESEND_API_KEY` |
+| "Email service not configured" | Missing RESEND_API_KEY | `npx wranglersecret put RESEND_API_KEY` |
 | "Email service authentication failed" | Invalid API key | Generate new key in Resend dashboard |
 | "Email domain not verified" | Using custom from address | Verify domain OR use onboarding@resend.dev |
 | "Too many requests" | Hit rate limit | Wait, or upgrade Resend plan |
-| Form works locally, fails in production | Missing env vars | `wrangler secret list` to verify |
+| Form works locally, fails in production | Missing env vars | `npx wranglersecret list` to verify |
 
 ### Turnstile Issues
 
