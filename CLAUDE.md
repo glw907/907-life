@@ -143,6 +143,28 @@ npx wranglersecret put CONTACT_EMAIL
 npx wranglersecret list
 ```
 
+### API & CLI Access (Claude Code)
+
+**Claude Code has both Wrangler CLI and Cloudflare API access** and should default to using these tools where possible for automation and efficiency:
+
+- **Wrangler CLI**: For Workers deployment, secrets management, and logs
+  - Authentication: `CLOUDFLARE_API_TOKEN` environment variable (already configured)
+  - Account ID: `120c269ad6d3dfbe6d63a0bb53758ca0`
+
+- **Cloudflare API**: For DNS management, zone configuration, and other operations
+  - Zone ID (907.life): `a7c2b9103ec7d835d72f356489072e5b`
+  - API endpoint: `https://api.cloudflare.com/client/v4/`
+  - Authentication: Same token as Wrangler (`Bearer ${CLOUDFLARE_API_TOKEN}`)
+
+**Common automated tasks:**
+- DNS record management (create/update/delete)
+- Worker deployment and configuration
+- Secret management
+- Log viewing and debugging
+- Domain verification
+
+Claude Code should prefer API/CLI access over manual dashboard instructions when performing these operations.
+
 ### Environment Variables
 
 | Variable | Command | Purpose |
