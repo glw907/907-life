@@ -3,6 +3,7 @@ public/
 resources/
 .hugo_build.lock
 .bin/
+hugo
 
 # Environment and secrets
 .env
