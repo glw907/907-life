@@ -23,7 +23,7 @@ run_worker_first = ["/contact"]
 # - TURNSTILE_SECRET_KEY (encrypted)
 # - CONTACT_EMAIL (plain text)
 
-# Custom domain configuration (uncomment after DNS setup)
-# [[routes]]
-# pattern = "907.life/*"
-# zone_name = "907.life"
+# Custom domain configuration
+[[routes]]
+pattern = "907.life"
+custom_domain = true

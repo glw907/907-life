@@ -42,14 +42,14 @@
             </div>
           {{ else if .Params.custom_summary }}
             {{/* Use custom summary if specified in front matter */}}
-            <div class="p-summary"><p>{{ .Summary | safeHTML }}</p></div>
+            <div class="p-summary">{{ .Summary | markdownify }}</div>
           {{ else if .Description }}
             {{/* Use description if available */}}
-            <div class="p-summary"><p>{{ .Description }}</p></div>
+            <div class="p-summary">{{ .Description | markdownify }}</div>
           {{ else }}
             {{/* Show Hugo's automatic summary */}}
             <div class="p-summary">
-              <p>{{ .Summary }}</p>
+              {{ .Summary | markdownify }}
               <p><a class="read-more" href="{{ .Permalink }}">Continue reading →</a></p>
             </div>
           {{ end }}
