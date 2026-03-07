@@ -3,12 +3,27 @@
 baseURL = "https://907.life/"
 languageCode = "en-us"
 title = "907.life"
+theme = "PaperMod"
 
 # Author
 [params]
   author = "Geoffrey L. Wright"
   description = "Alaska adventures, philosophical musings, technology, books, music, photography, and whatever else comes to mind."
   email = "geoff@907.life"
+
+  # PaperMod theme settings
+  defaultTheme = "auto"
+  ShowThemeToggle = true
+  ShowToc = true
+  TocOpen = false
+  ShowReadingTime = false
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = false
+  env = "production"
+  disableScrollToTop = false
+  ShowAllPagesInArchive = false
+
 
 # Pagination
 [pagination]
@@ -26,11 +41,6 @@ title = "907.life"
 # Menu configuration
 [menu]
   [[menu.main]]
-    name = "Home"
-    url = "/"
-    weight = 1
-
-  [[menu.main]]
     name = "Photos"
     url = "https://photos.907.life"
     weight = 2
@@ -45,7 +55,7 @@ title = "907.life"
   [[menu.main]]
     name = "About"
     url = "/about/"
-    weight = 4
+    weight = 5
 
 # Markup configuration
 [markup]
@@ -83,7 +93,7 @@ title = "907.life"
     disable = true
   [privacy.instagram]
     disable = true
-  [privacy.twitter]
+  [privacy.x]
     disable = true
   [privacy.vimeo]
     disable = true

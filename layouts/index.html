@@ -1,83 +1,81 @@
-{{/*
-  Template: /layouts/index.html
-  Purpose: Homepage that displays recent posts.
+{{- define "main" }}
 
-  Shows all posts with pagination (20 per page).
-  No intro text - content starts immediately with post list.
-*/}}
+{{- $allPosts := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $allPosts = where $allPosts "Params.hiddenInHomeList" "!=" "true" }}
+{{- $featured := index $allPosts 0 }}
+{{- $rest := after 1 $allPosts }}
+{{- $paginator := .Paginate $rest }}
 
-{{ define "main" }}
-  {{/* Get all posts from the posts section, sorted newest first */}}
-  {{ $posts := where .Site.RegularPages "Section" "posts" }}
-  {{ $sorted := $posts.ByDate.Reverse }}
+{{/* Featured: most recent post, full content — page 1 only */}}
+{{- if and $featured (eq $paginator.PageNumber 1) }}
+<article class="home-featured">
+  <header class="post-header">
+    <h1 class="post-title"><a href="{{ $featured.Permalink }}">{{ $featured.Title }}</a></h1>
+    <div class="post-meta">{{- partial "post_meta.html" $featured -}}</div>
+  </header>
+  <div class="post-content e-content">
+    {{ $featured.Content }}
+  </div>
+  {{- $tags := $featured.Language.Params.Taxonomies.tag | default "tags" }}
+  {{- with $featured.GetTerms $tags }}
+  <footer class="post-footer">
+    <ul class="post-tags">
+      {{- range . }}
+      <li><a href="{{ .Permalink }}">{{- partial "icons/tag-icon.html" .Name }}{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+  </footer>
+  {{- end }}
+</article>
+<hr class="home-divider">
+{{- end }}
 
-  {{ if gt (len $sorted) 0 }}
-  <div class="posts h-feed">
-    <div class="post_list" role="main">
-      {{ $paginator := .Paginate $sorted }}
-      {{ range $paginator.Pages }}
-      <div class="post-preview h-entry">
-        {{/* Display post date with infinity symbol */}}
-        <p class="post-date">
-          <a href="{{ .RelPermalink }}" class="u-url post-date">
-            <i class="fa-regular fa-calendar"></i>
-            <time class="dt-published" datetime="{{ .Date.Format "2006-01-02 15:04:05 -0700" }}">
-              {{ .Date.Format "Jan 2, 2006" }}
-            </time>
-            <span class="post-date-infinity">∞</span>
-          </a>
-        </p>
-
-        {{/* Display logic: titled posts show title + summary, untitled show full content */}}
-        {{ if .Title }}
-          <h2 class="post-title p-name"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-          {{/* Check for <!--more--> tag to show excerpt with "Read More" link */}}
-          {{ if in .RawContent "<!--more-->" }}
-            <div class="p-summary">
-              {{/* Extract content before <!--more--> and strip footnote references */}}
-              {{ $split := split .RawContent "<!--more-->" }}
-              {{ $summary := index $split 0 | replaceRE "\\[\\^.*?\\]" "" | replaceRE "\\n\\[\\^.*?\\]:.*" "" }}
-              {{ $summary | markdownify }}
-              <p><a class="read-more" href="{{ .Permalink }}">Continue reading →</a></p>
-            </div>
-          {{ else if .Params.custom_summary }}
-            {{/* Use custom summary if specified in front matter */}}
-            <div class="p-summary">{{ .Summary | markdownify }}</div>
-          {{ else if .Description }}
-            {{/* Use description if available */}}
-            <div class="p-summary">{{ .Description | markdownify }}</div>
-          {{ else }}
-            {{/* Show Hugo's automatic summary */}}
-            <div class="p-summary">
-              {{ .Summary | markdownify }}
-              <p><a class="read-more" href="{{ .Permalink }}">Continue reading →</a></p>
-            </div>
-          {{ end }}
-        {{ else }}
-          {{/* Untitled posts (microblog style) show full content */}}
-          <div class="e-content">{{ .Content }}</div>
-        {{ end }}
-      </div>
-      {{ end }}
+{{/* Remaining posts: summaries with Read more link and tags */}}
+{{- range $paginator.Pages }}
+<article class="post-entry">
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">{{ .Title }}</h2>
+  </header>
+  {{- if (ne (.Param "hideSummary") true) }}
+  <div class="entry-content">
+    <p>{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
+    {{- if .Truncated }}
+    <a class="read-more" href="{{ .Permalink }}">Read more →</a>
+    {{- end }}
+  </div>
+  {{- end }}
+  {{- if not (.Param "hideMeta") }}
+  <footer class="entry-footer">
+    <div class="entry-meta">
+      {{- if not .Date.IsZero -}}
+      <span>{{- partial "icons/phosphor.html" (dict "name" "Calendar") -}}{{- .Date | time.Format (default ":date_long" site.Params.DateFormat) -}}</span>
+      {{- end -}}
+      {{- with (partial "author.html" .) -}}
+      <span class="meta-sep">•</span><span>{{- . | safeHTML -}}</span>
+      {{- end -}}
+      {{- $tags := .Language.Params.Taxonomies.tag | default "tags" -}}
+      {{- range .GetTerms $tags -}}
+      <span class="meta-sep">•</span><a href="{{ .Permalink }}">{{- partial "icons/tag-icon.html" .Name -}}{{- .LinkTitle -}}</a>
+      {{- end -}}
     </div>
-  </div>
+  </footer>
+  {{- end }}
+  <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
+</article>
+{{- end }}
 
-  {{/* Pagination navigation */}}
-  <div class="post-nav">
-    {{ if .Paginator.HasPrev }}
-      <span class="prev"><a href="{{ .Paginator.Prev.URL }}"><span class="arrow">← Newer Posts</span></a></span>
-    {{ end }}
-    {{ if .Paginator.HasNext }}
-      <span class="next"><a href="{{ .Paginator.Next.URL }}"><span class="arrow">Older Posts →</span></a></span>
-    {{ end }}
-  </div>
+{{/* Pagination */}}
+{{- if gt $paginator.TotalPages 1 }}
+<footer class="page-footer">
+  <nav class="pagination">
+    {{- if $paginator.HasPrev }}
+    <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">«&nbsp;{{ i18n "prev_page" }}</a>
+    {{- end }}
+    {{- if $paginator.HasNext }}
+    <a class="next" href="{{ $paginator.Next.URL | absURL }}">{{ i18n "next_page" }}&nbsp;»</a>
+    {{- end }}
+  </nav>
+</footer>
+{{- end }}
 
-  {{ else }}
-  {{/* Empty state when no posts exist */}}
-  <div class="posts h-feed">
-    <div class="post_list" role="main">
-      <p>No posts yet. Check back soon!</p>
-    </div>
-  </div>
-  {{ end }}
-{{ end }}
+{{- end }}

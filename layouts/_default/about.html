@@ -1,74 +1,66 @@
-{{/*
-  Template: /layouts/_default/about.html
-  Purpose: About page with contact form.
-*/}}
+{{- define "main" }}
 
-{{ define "main" }}
-<div class="page">
-  {{- /* Page title */ -}}
-  {{ if .Title }}
-    <h1>{{ .Title }}</h1>
-  {{ end }}
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">{{ .Title }}</h1>
+  </header>
 
-  {{- /* Page content (bio) */ -}}
-  <article class="page-content">
+  <div class="post-content">
     {{ .Content }}
-  </article>
+  </div>
 
-  {{- /* Contact Form - structure matches old Micro.blog site */ -}}
-  <form id="contact-form" action="/contact" method="POST" novalidate>
-    <div class="form-row">
+  {{- /* Contact Form */ -}}
+  <div class="contact-form-section">
+    <form id="contact-form" action="/contact" method="POST" novalidate>
+      <div class="form-row">
+        <p>
+          <label for="name">Name</label><br>
+          <input type="text" id="name" name="name" required>
+        </p>
+        <p>
+          <label for="email">Email</label><br>
+          <input type="email" id="email" name="email" required placeholder="you@example.com">
+        </p>
+      </div>
+
       <p>
-        <label for="name">Name</label><br>
-        <input type="text" id="name" name="name" required>
+        <label for="subject">Subject</label><br>
+        <input type="text" id="subject" name="subject" required>
       </p>
+
       <p>
-        <label for="email">Email</label><br>
-        <input type="email" id="email" name="email" required placeholder="you@example.com">
+        <label for="message">Message</label><br>
+        <textarea name="message" id="message" rows="6" required></textarea>
       </p>
-    </div>
 
-    <p>
-      <label for="subject">Subject</label><br>
-      <input type="text" id="subject" name="subject" required>
-    </p>
+      <!-- Cloudflare Turnstile widget -->
+      <!-- Production key: 0x4AAAAAACPc3bf8bl6ifC3c -->
+      <!-- Testing key (always passes, works on any domain): 1x00000000000000000000AA -->
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAACPc3bf8bl6ifC3c"></div>
 
-    <p>
-      <label for="message">Message</label><br>
-      <textarea name="message" id="message" rows="6" required></textarea>
-    </p>
+      <p>
+        <button type="submit" id="submit-btn">Send Message</button>
+      </p>
 
-    <!-- Cloudflare Turnstile widget -->
-    <!-- Production key: 0x4AAAAAACPc3bf8bl6ifC3c -->
-    <!-- Testing key (always passes, works on any domain): 1x00000000000000000000AA -->
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAACPc3bf8bl6ifC3c"></div>
-
-    <p>
-      <button type="submit" id="submit-btn">Send Message</button>
-    </p>
-
-    <div id="form-result" role="status" aria-live="polite"></div>
-  </form>
+      <div id="form-result" role="status" aria-live="polite"></div>
+    </form>
+  </div>
 
   {{- /* Turnstile script */ -}}
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
   {{- /* Form validation - mark fields as touched and show custom messages */ -}}
   <script>
-    // Add 'touched' class and validation messages
     document.querySelectorAll('#contact-form input, #contact-form textarea').forEach(field => {
       field.addEventListener('blur', () => {
         field.classList.add('touched');
         showValidationMessage(field);
       });
-
       field.addEventListener('input', () => {
-        // Clear validation message when user starts typing
         clearValidationMessage(field);
       });
     });
 
-    // Mark all fields as touched on submit attempt and validate
     document.getElementById('contact-form').addEventListener('submit', (e) => {
       let hasErrors = false;
       document.querySelectorAll('#contact-form input, #contact-form textarea').forEach(field => {
@@ -82,18 +74,14 @@
 
     function showValidationMessage(field) {
       clearValidationMessage(field);
-
       if (!field.validity.valid && field.classList.contains('touched')) {
         const message = document.createElement('div');
         message.className = 'validation-message';
-
         if (field.validity.valueMissing) {
           message.textContent = 'This field is required.';
         } else if (field.validity.typeMismatch && field.type === 'email') {
           message.textContent = 'Please enter a valid email address.';
         }
-
-        // Insert message right after the input field
         field.parentNode.insertBefore(message, field.nextSibling);
       }
     }
@@ -110,12 +98,10 @@
   <script>
     document.getElementById('contact-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const form = e.target;
       const resultDiv = document.getElementById('form-result');
       const submitButton = document.getElementById('submit-btn');
 
-      // Disable submit button
       submitButton.disabled = true;
       submitButton.textContent = 'Sending...';
       resultDiv.textContent = '';
@@ -123,19 +109,16 @@
 
       try {
         const formData = new FormData(form);
-
         const response = await fetch('/contact', {
           method: 'POST',
           body: formData
         });
-
         const result = await response.json();
 
         if (response.ok && result.success) {
           resultDiv.textContent = 'Message sent successfully! I\'ll get back to you soon.';
           resultDiv.className = 'success';
           form.reset();
-          // Reset Turnstile widget
           if (window.turnstile) {
             window.turnstile.reset();
           }
@@ -147,11 +130,12 @@
         resultDiv.textContent = 'Network error. Please check your connection and try again.';
         resultDiv.className = 'error';
       } finally {
-        // Re-enable submit button
         submitButton.disabled = false;
         submitButton.textContent = 'Send Message';
       }
     });
   </script>
-</div>
-{{ end }}
+
+</article>
+
+{{- end }}{{/* end main */}}

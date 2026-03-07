@@ -1,57 +1,46 @@
-{{/*
-  Template: /layouts/_default/archives.html
-  Purpose: Archives page showing posts by year and tag list.
+{{- define "main" }}
 
-  Structure:
-  - Tag list at top (alphabetical, simple)
-  - Posts grouped by year (newest first)
-  - Each post: date + title link
-*/}}
-
-{{ define "main" }}
-<div class="archives">
+<header class="page-header">
   <h1>{{ .Title }}</h1>
+  {{- if .Description }}
+  <div class="post-description">{{ .Description }}</div>
+  {{- end }}
+</header>
 
-  {{/* Tag list - simple, alphabetical */}}
-  {{ if gt (len .Site.Taxonomies.tags) 0 }}
-    <div class="tag-list">
-      <h3><i class="fa-solid fa-tags"></i>Tags</h3>
-      <ul>
-        {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
-          <li>
-            <a href="{{ "/tags/" | relURL }}{{ $name | urlize }}/">{{ $name }}</a>
-            <span class="tag-count">({{ len $taxonomy }})</span>
-          </li>
-        {{ end }}
-      </ul>
-    </div>
-  {{ end }}
-
-  {{/* Posts grouped by year */}}
-  {{ $posts := where .Site.RegularPages "Section" "posts" }}
-  {{ $postsByYear := $posts.GroupByDate "2006" }}
-
-  {{ if gt (len $postsByYear) 0 }}
-    <div class="posts-by-year">
-      <h3><i class="fa-solid fa-calendar"></i>Posts by Year</h3>
-      {{ range $postsByYear }}
-        <div class="year-group">
-          <h4>{{ .Key }}</h4>
-          <ul class="year-posts">
-            {{ range .Pages }}
-              <li>
-                <time datetime="{{ .Date.Format "2006-01-02" }}">
-                  {{ .Date.Format "Jan 02" }}
-                </time>
-                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-              </li>
-            {{ end }}
-          </ul>
-        </div>
-      {{ end }}
-    </div>
-  {{ else }}
-    <p>No posts yet.</p>
-  {{ end }}
+{{/* Tag list - alphabetical */}}
+{{ if gt (len .Site.Taxonomies.tags) 0 }}
+<div class="archive-tag-list">
+  <h2>Tags</h2>
+  <ul>
+    {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+    <li>
+      <a href="{{ "/tags/" | relURL }}{{ $name | urlize }}/">{{- partial "icons/tag-icon.html" $name }}{{ $name }}</a>
+      <span class="archive-count">{{ len $taxonomy }}</span>
+    </li>
+    {{ end }}
+  </ul>
 </div>
 {{ end }}
+
+{{/* Posts grouped by year, newest first */}}
+{{- $pages := where site.RegularPages "Section" "posts" }}
+{{- range $pages.GroupByDate "2006" }}
+{{- if ne .Key "0001" }}
+<div class="archive-year">
+  <h2 class="archive-year-header" id="{{ .Key }}">
+    <a class="archive-header-link" href="#{{ .Key }}">{{ .Key }}</a>
+    <sup class="archive-count">&nbsp;{{ len .Pages }}</sup>
+  </h2>
+  <ul class="archive-posts">
+    {{- range .Pages }}
+    <li class="archive-entry">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 02" }}</time>
+      <a href="{{ .Permalink }}">{{ .Title }}</a>
+    </li>
+    {{- end }}
+  </ul>
+</div>
+{{- end }}
+{{- end }}
+
+{{- end }}{{/* end main */}}

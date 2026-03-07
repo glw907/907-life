@@ -1,0 +1,661 @@
+/* ============================================
+   COUPLING MANIFEST
+   Selectors that target PaperMod-generated classes.
+   Spot-check these after theme submodule updates.
+
+   .post-single        — themes/PaperMod/layouts/_default/single.html
+   .post-header        — themes/PaperMod/layouts/_default/single.html
+   .post-content       — themes/PaperMod/layouts/_default/single.html
+   .post-meta          — themes/PaperMod/layouts/partials/post_meta.html
+   .post-footer        — themes/PaperMod/layouts/_default/single.html
+   .post-tags          — themes/PaperMod/layouts/_default/single.html
+   .archive-year       — layouts/_default/archives.html (local override)
+   .archive-tag-list   — layouts/_default/archives.html (local override)
+   .archive-entry      — layouts/_default/archives.html (local override)
+   .archive-count      — layouts/_default/archives.html (local override)
+   .ph-icon            — layouts/partials/icons/phosphor.html (Phosphor Regular inline SVG)
+   nav .ph-icon        — layouts/partials/header.html (nav icon sizing)
+   .nav-icon-item      — layouts/partials/header.html (right-side icon group: envelope, search, toggle)
+   .nav-icon-first     — layouts/partials/header.html (first icon in group — gap from text nav)
+   .ph-tag-icon        — layouts/partials/icons/tag-icon.html (per-tag semantic icons)
+   .home-featured      — layouts/index.html (featured post on home page)
+   .read-more          — layouts/index.html (truncated post CTA)
+   .entry-meta         — layouts/index.html (unified meta line on home page summary cards)
+   .meta-sep           — layouts/index.html (separator between meta items)
+   .post-header-tags   — layouts/_default/single.html (tags in article header)
+   ============================================ */
+
+/* ============================================
+   COLOR TOKENS — light mode
+   Override PaperMod's CSS variables to match 907.life palette.
+   Reference: themes/PaperMod/assets/css/core/theme-vars.css
+   ============================================ */
+
+:root {
+  --theme: #fffef5;           /* warm white background */
+  --entry: #f8f7f3;           /* slightly darker for cards/list items */
+  --primary: #3a3a3a;         /* body text */
+  --secondary: #666666;       /* secondary/meta text */
+  --tertiary: #d8d6d0;        /* borders, dividers */
+  --content: #3a3a3a;         /* post content text */
+  --border: #d8d6d0;
+  --code-bg: #e8e8e4;
+  --code-block-bg: #282a36;
+
+  /* Custom tokens not in PaperMod */
+  --color-link: #134d85;
+  --color-link-hover: #1a6bc4;    /* clearly lighter/brighter than --color-link #134d85 */
+  --color-button-text: #ffffff;
+  --color-field-bg: #ffffff;
+  --color-blockquote-bg: #fffee0;
+  --color-blockquote-border: #e5d600;
+  --color-aside-bg: #e0f7fa;
+  --color-aside-border: #0097a7;
+  --color-note-bg: #e8f5e9;
+  --color-note-border: #d5e1d6;
+  --color-alert-bg: #ffebee;
+  --color-alert-border: #d32f2f;
+  --color-mark: #FFFF99;
+  --border-opacity: 0.12;
+
+  /* Font stacks */
+  --font-body: Optima, Candara, 'Noto Sans', source-sans-pro, sans-serif;
+  --font-heading: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', Arial, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+}
+
+/* ============================================
+   COLOR TOKENS — dark mode
+   ============================================ */
+
+:root[data-theme="dark"] {
+  --theme: #181818;
+  --entry: #222222;
+  --primary: #e6e6e6;
+  --secondary: #aaaaaa;
+  --tertiary: #3a3a3a;
+  --content: #e6e6e6;
+  --border: #3a3a3a;
+  --code-bg: #44475a;
+  --code-block-bg: #282a36;
+
+  --color-link: #8ac1ff;
+  --color-link-hover: #c2dcff;    /* clearly lighter than --color-link #8ac1ff */
+  --color-button-text: #181818;
+  --color-field-bg: #44475a;
+  --color-blockquote-bg: #44475a;
+  --color-blockquote-border: #6272a4;
+  --color-aside-bg: #6272a4;
+  --color-aside-border: #7797b7;
+  --color-note-bg: #3f444a;
+  --color-note-border: #4f545a;
+  --color-alert-bg: #ff5555;
+  --color-alert-border: #ff6e6e;
+  --border-opacity: 0.15;
+}
+
+/* ============================================
+   TYPOGRAPHY — fonts and links
+   ============================================ */
+
+body { font-family: var(--font-body); }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ============================================
+   LINK & INTERACTIVE STATE STRATEGY
+
+   Approach: color shift + underline appearance on hover/focus.
+   The underline is the non-color WCAG 1.4.1 signal for all
+   link categories that don't carry a persistent underline.
+
+   Categories:
+     prose    .post-content a, .entry-content a
+              Always underlined. Hover shifts color only.
+
+     nav      .nav a
+              Default: --primary (gray). On hover: shifts to --color-link-hover
+              + underline. Gray default distinguishes nav from inline links.
+
+     tags     .post-tags a, .entry-tags a, .post-header-tags a
+              Inherits link or secondary color. Underline on hover.
+
+     ui       .read-more, .pagination a
+              CTA links. Underline on hover.
+
+     overlay  .entry-link
+              Invisible full-card link. Never underline.
+
+   Keyboard: :focus-visible mirrors :hover.
+             Browser default outline is preserved (not suppressed).
+
+   Motion: transitions disabled via prefers-reduced-motion.
+   ============================================ */
+
+a {
+  color: var(--color-link);
+  transition: color 0.15s ease;
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+
+/* Prose links: always underlined regardless of hover state */
+.post-content a,
+.entry-content a,
+.home-featured .post-content a {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+
+/* Nav links: gray (--primary) default and visited; shift to link-blue on hover */
+.nav a,
+.nav a:visited {
+  color: var(--primary);
+}
+
+.nav a:hover,
+.nav a:focus-visible {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+/* Visited: same color as default (intentional — avoids visual noise) */
+a:visited {
+  color: var(--color-link);
+}
+
+/* Overlay card links: never show underline */
+.entry-link:hover,
+.entry-link:focus-visible {
+  text-decoration: none;
+}
+
+/* Reduced motion: disable transitions for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  a { transition: none; }
+}
+
+/* ============================================
+   CONTENT WIDTH
+   Keep body text at a readable line length.
+   PaperMod's --main-width (720px) is about 45em.
+   ============================================ */
+
+.post-content {
+  max-width: 40em;
+}
+
+/* ============================================
+   HEADER / NAV LINKS
+   ============================================ */
+
+/* Theme toggle button */
+#theme-toggle {
+  color: var(--primary);
+}
+
+/* Nav icon group — envelope, search, theme toggle */
+.nav-icon-first {
+  margin-inline-start: 2.5em; /* wider gap: text links → icon cluster */
+}
+
+.nav-icon-item + .nav-icon-item {
+  margin-inline-start: 0.35em; /* tighter: icons read as a cluster (~7:1 ratio) */
+}
+
+.nav-icon-item .ph-icon {
+  margin-right: 0;      /* icon-only: no text follows */
+  width: 1.15em;
+  height: 1.15em;
+  opacity: 1;           /* full opacity — icon must stand alone without text */
+}
+
+.nav-icon-item a,
+.nav-icon-item a:visited {
+  color: var(--primary);
+}
+
+.nav-icon-item a:hover,
+.nav-icon-item a:focus-visible {
+  color: var(--color-link-hover);
+  text-decoration: none; /* icon-only: underline not applicable */
+}
+
+#theme-toggle:hover {
+  color: var(--color-link-hover);
+}
+
+/* Override dark-mode opacity reduction for icon group */
+:root[data-theme="dark"] .nav-icon-item .ph-icon {
+  opacity: 1;
+}
+
+/* Active nav indicator: underline text only, not the icon */
+#menu .active {
+  border-bottom: none;
+}
+
+#menu .active .nav-text {
+  border-bottom: 2px solid currentColor;
+}
+
+/* ============================================
+   INDIEWEB MICROFORMAT CLASSES
+   Ensure hidden IndieWeb metadata stays invisible.
+   ============================================ */
+
+.u-url[style*="display:none"],
+.p-author[style*="display:none"],
+.dt-published[style*="display:none"] {
+  display: none;
+}
+
+/* ============================================
+   HOME PAGE — featured post + read more
+   ============================================ */
+
+.home-featured {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.home-featured .post-title {
+  margin-bottom: 0.25rem;
+}
+
+.home-featured .post-title a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.home-featured .post-title a:hover,
+.home-featured .post-title a:focus-visible {
+  color: var(--color-link);
+}
+
+.home-divider {
+  display: none; /* visual separation handled by border-bottom on .home-featured */
+}
+
+.read-more {
+  display: inline-block;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-top: 0.4em;
+  text-decoration: none;
+}
+
+.read-more:hover,
+.read-more:focus-visible {
+  text-decoration: underline;
+}
+
+/* Home page summary card footer — unified meta line */
+.entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.meta-sep {
+  margin: 0 0.6em;
+  user-select: none;
+}
+
+.entry-meta a {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+
+.entry-meta a:visited {
+  color: inherit;
+}
+
+.entry-meta a:hover,
+.entry-meta a:focus-visible {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+.entry-meta .ph-tag-icon,
+.entry-meta .ph-icon {
+  color: inherit;
+  margin-right: 0.2em;
+}
+
+/* Tags in article page header — even more understated */
+.post-header-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.8em;
+  font-size: 0.8em;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.7;
+}
+
+.post-header-tags a {
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+.post-header-tags a:hover,
+.post-header-tags a:focus-visible {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.post-header-tags .ph-tag-icon {
+  color: inherit; /* muted, not link blue */
+}
+
+/* ============================================
+   ARCHIVES PAGE
+   Custom tag list and year-grouped post list.
+   ============================================ */
+
+.archive-tag-list {
+  margin-bottom: 2.5rem;
+}
+
+.archive-tag-list h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.archive-tag-list ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em 0.8em;
+}
+
+.archive-tag-list li {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+}
+
+.archive-count {
+  color: var(--secondary);
+  font-size: 0.8em;
+}
+
+.archive-posts {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.archive-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 1em;
+  margin-bottom: 0.3em;
+}
+
+.archive-entry time {
+  display: inline-block;
+  min-width: 4.5em;
+  color: var(--secondary);
+  font-size: 0.9em;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   FORMS & CONTACT
+   ============================================ */
+
+.contact-form-section {
+  margin-top: 2rem;
+}
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=url],
+input[type=tel],
+input[type=search],
+input[type=number],
+textarea {
+  padding: 10px;
+  font-size: 0.9em;
+  border: 1px solid var(--color-link);
+  border-radius: 5px;
+  color: var(--primary);
+  display: block;
+  height: auto;
+  background: var(--color-field-bg);
+  margin: 0 0 5px 0;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+}
+
+input[type=submit],
+button[type=submit] {
+  vertical-align: baseline;
+  padding: 8px 16px;
+  font-size: 0.9em;
+  border-radius: 5px;
+  border: 1px solid var(--color-link);
+  background: none;
+  color: var(--color-link);
+  cursor: pointer;
+  margin-top: 5px;
+  font-family: var(--font-body);
+}
+
+input[type=submit]:hover,
+button[type=submit]:hover {
+  background: var(--color-link);
+  color: var(--color-button-text);
+}
+
+input[type=submit]:disabled,
+button[type=submit]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+input:user-invalid,
+textarea:user-invalid {
+  border-color: rgba(211, 47, 47, 0.4);
+  background-color: rgba(255, 235, 238, 0.3);
+}
+
+input[required].touched:invalid,
+textarea[required].touched:invalid,
+input[type="email"].touched:invalid {
+  border-color: rgba(211, 47, 47, 0.4);
+  background-color: rgba(255, 235, 238, 0.3);
+}
+
+:root[data-theme="dark"] input:user-invalid,
+:root[data-theme="dark"] textarea:user-invalid,
+:root[data-theme="dark"] input.touched:invalid,
+:root[data-theme="dark"] textarea.touched:invalid {
+  border-color: rgba(255, 85, 85, 0.5);
+  background-color: rgba(255, 85, 85, 0.1);
+}
+
+form p {
+  position: relative;
+  margin-bottom: 0;
+  padding-bottom: 1.35rem;
+}
+
+.validation-message {
+  font-size: 0.7em;
+  color: #c62828;
+  font-style: italic;
+  font-variant: small-caps;
+  line-height: 1.2;
+  margin-top: 0.1rem;
+  margin-bottom: -1.2em;
+  position: relative;
+  z-index: 1;
+}
+
+:root[data-theme="dark"] .validation-message {
+  color: #ef9a9a;
+}
+
+label {
+  font-weight: 600;
+  font-variant: small-caps;
+  font-size: 0.9em;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 1.35rem;
+}
+
+.form-row > p {
+  flex: 1;
+  padding-bottom: 0;
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+#form-result {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 5px;
+}
+
+#form-result:empty {
+  display: none;
+}
+
+#form-result.success {
+  background: var(--color-note-bg);
+  border: 1px solid var(--color-note-border);
+  color: #2e7d32;
+}
+
+#form-result.error {
+  background: var(--color-alert-bg);
+  border: 1px solid var(--color-alert-border);
+  color: #c62828;
+}
+
+:root[data-theme="dark"] #form-result.success {
+  color: #81c784;
+}
+
+:root[data-theme="dark"] #form-result.error {
+  color: #ef9a9a;
+}
+
+.cf-turnstile {
+  margin: 1rem 0;
+}
+
+/* ============================================
+   BLOCKQUOTES & CALLOUTS
+   ============================================ */
+
+blockquote {
+  background: var(--color-blockquote-bg);
+  border-left-color: var(--color-blockquote-border);
+}
+
+aside, .aside {
+  background: var(--color-aside-bg);
+  border-left-color: var(--color-aside-border);
+}
+
+.note {
+  background: var(--color-note-bg);
+  border-left-color: var(--color-note-border);
+  font-style: italic;
+}
+
+.alert {
+  background: var(--color-alert-bg);
+  border-left-color: var(--color-alert-border);
+  font-weight: bold;
+}
+
+/* ============================================
+   MISC ELEMENTS
+   ============================================ */
+
+mark {
+  background: var(--color-mark);
+}
+
+hr::before {
+  content: "•••••";
+  display: block;
+  color: var(--color-link);
+  text-align: center;
+}
+
+/* ============================================
+   PHOSPHOR ICONS
+   Phosphor Regular weight — fill-based inline SVG icons.
+   Source: https://github.com/phosphor-icons/core (MIT)
+   ============================================ */
+
+.ph-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  margin-right: 0.35em;
+  opacity: 0.6;
+  fill: currentColor;
+}
+
+nav .ph-icon {
+  opacity: 0.5;
+}
+
+.ph-tag-icon {
+  color: var(--color-link);
+  opacity: 0.85;
+}
+
+:root[data-theme="dark"] .ph-icon { opacity: 0.5; }
+:root[data-theme="dark"] nav .ph-icon { opacity: 0.4; }
+:root[data-theme="dark"] .ph-tag-icon { opacity: 0.75; }
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  body {
+    background-color: white;
+    color: black;
+    font-size: 12pt;
+  }
+
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+
+  .header, nav, footer {
+    display: none;
+  }
+}

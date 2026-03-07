@@ -1,6 +1,6 @@
 # 907.life Hugo Site
 
-Personal blog built with Hugo, deployed to Cloudflare Workers.
+Personal blog built with Hugo + PaperMod theme, deployed to Cloudflare Workers.
 
 ---
 
@@ -18,18 +18,38 @@ Personal blog built with Hugo, deployed to Cloudflare Workers.
 
 ## Critical Constraints
 
+### Theme: PaperMod
+
+This site uses the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme as a git submodule at `themes/PaperMod/`.
+
+**CSS override rules:**
+- CSS variable definitions: `themes/PaperMod/assets/css/core/theme-vars.css`
+- All overrides go in: `assets/css/extended/custom.css` (auto-included by PaperMod)
+- Never edit files inside `themes/` — only override via `layouts/` and `assets/css/extended/`
+- Dark mode selector: `:root[data-theme="dark"]` (not `.dark`)
+
+**Layout override rules:**
+- Override a PaperMod layout by copying it to the same path under `layouts/`
+- Three overrides currently maintained: `layouts/_default/single.html`, `layouts/_default/archives.html`, `layouts/_default/about.html`
+- When PaperMod is updated, spot-check COUPLING MANIFEST in `assets/css/extended/custom.css`
+
+### Hugo Version
+
+**Minimum required:** Hugo 0.146.0 (enforced by PaperMod's baseof.html)
+**Build script uses:** 0.147.0 (set in `build.sh` as `HUGO_VERSION`)
+
 ### Contact Form Requires Worker
 
 The contact form won't work in Hugo's dev server (`hugo server`). To test:
 
 ```bash
 # Build site
-hugo
+./build.sh
 
 # Run worker locally
 npx wrangler dev
 
-# Test at http://localhost:8787/contact
+# Test at http://localhost:8787/about
 ```
 
 **Rationale:** Form handler runs in Cloudflare Worker, not Hugo's dev server.
@@ -51,13 +71,9 @@ npx wrangler secret list
 npx wrangler secret put SECRET_NAME
 ```
 
-**Rationale:** Secrets are stored encrypted in Cloudflare, not in code.
-
 ### Build Script Ensures Correct Hugo Version
 
 Always use `./build.sh` to build the site (not `hugo` directly).
-
-**Rationale:** The build script ensures the correct Hugo version is used (site uses specific version).
 
 ---
 
@@ -66,8 +82,11 @@ Always use `./build.sh` to build the site (not `hugo` directly).
 ### Development
 
 ```bash
-# Start dev server
-hugo server -D
+# Start dev server (uses local .bin/hugo if already built once)
+.bin/hugo server -D
+
+# Or build first, then serve
+./build.sh && .bin/hugo server -D
 
 # Site at http://localhost:1313
 # Note: Contact form won't work (needs worker)
@@ -77,7 +96,7 @@ hugo server -D
 
 ```bash
 # Create post bundle
-hugo new posts/2026-02-04-post-title/index.md
+.bin/hugo new posts/2026-02-04-post-title/index.md
 
 # Edit content
 # Set draft: false when ready
@@ -95,10 +114,10 @@ posts/
 ### Deploy
 
 ```bash
-# Automatic: Push to GitHub master
-git add .
+# Automatic: Push to GitHub main
+git add path/to/files
 git commit -m "Description"
-git push origin master
+git push origin main
 
 # Manual (if needed)
 ./build.sh
@@ -108,9 +127,7 @@ npx wrangler deploy
 ### Update Contact Form Email
 
 ```bash
-# Update the destination email
 npx wrangler secret put CONTACT_EMAIL
-
 # Enter: geoff@907.life (or new email)
 ```
 
@@ -122,29 +139,62 @@ npx wrangler secret put CONTACT_EMAIL
 907-life/
 ├── content/
 │   ├── _index.md          # Homepage
-│   ├── about.md           # About page (with contact form)
-│   ├── archives.md        # Archives page
+│   ├── about.md           # About page (layout: about → contact form)
+│   ├── archives.md        # Archives page (layout: archives)
+│   ├── search.md          # Search page (layout: search)
 │   └── posts/             # Blog posts (page bundles)
 ├── layouts/
 │   └── _default/
-│       ├── baseof.html    # Base template
-│       ├── about.html     # About page (contact form)
-│       ├── archives.html  # Archives listing
-│       ├── list.html      # Post list
-│       └── single.html    # Single post
+│       ├── about.html     # About page with contact form
+│       ├── archives.html  # Year-grouped posts + tag list
+│       └── single.html    # Single post with IndieWeb microformats
+├── assets/
+│   └── css/
+│       └── extended/
+│           └── custom.css # All CSS overrides (PaperMod extension point)
+├── themes/
+│   └── PaperMod/          # Theme submodule (never edit directly)
 ├── static/
-│   ├── css/
-│   │   └── styles.css     # All styles
 │   └── images/            # Site images
 ├── src/
-│   └── worker.js          # Contact form handler
+│   └── worker.js          # Contact form handler (unchanged by theme migration)
 ├── docs/
 │   ├── architecture.md    # Design decisions
 │   └── operations.md      # Dev, deploy, troubleshooting
-├── hugo.toml              # Hugo configuration
+├── hugo.toml              # Hugo configuration (theme + PaperMod params)
 ├── wrangler.toml          # Worker configuration
-└── build.sh               # Build script (ensures correct Hugo version)
+└── build.sh               # Build script (downloads Hugo 0.147.0)
 ```
+
+---
+
+## PaperMod Configuration
+
+Key params in `hugo.toml` under `[params]`:
+
+| Param | Value | Effect |
+|-------|-------|--------|
+| `defaultTheme` | `"auto"` | Respects OS preference |
+| `ShowThemeToggle` | `true` | Light/dark toggle in header |
+| `ShowToc` | `true` | Table of contents on posts |
+| `TocOpen` | `false` | TOC collapsed by default |
+| `ShowReadingTime` | `false` | Disabled |
+| `ShowShareButtons` | `false` | Disabled |
+| `ShowPostNavLinks` | `true` | Prev/next links on posts |
+
+No `socialIcons` are configured — social media links are intentionally absent.
+
+---
+
+## IndieWeb Microformats
+
+The custom `layouts/_default/single.html` adds microformat classes:
+- `article.h-entry` — entry wrapper
+- `h1.p-name` — post title
+- `div.e-content` — post body
+- `a.u-url` — permalink (hidden machine-readable)
+- `span.p-author` — author (hidden machine-readable)
+- `time.dt-published` — publish date (hidden machine-readable)
 
 ---
 
@@ -156,18 +206,10 @@ npx wrangler secret put CONTACT_EMAIL
 - `POST /contact` → Worker handles form submission
 - Everything else → Static assets from Hugo
 
-**How It Works:**
-1. Hugo builds static site to `public/`
-2. Wrangler deploys worker with static assets
-3. Worker intercepts POST /contact for form handling
-4. Worker serves static files for all other requests
-
 **Configuration:** `wrangler.toml`
 ```toml
-# Route POST /contact to worker
 run_worker_first = ["/contact"]
 
-# Static assets binding
 [assets]
 directory = "./public"
 binding = "ASSETS"
@@ -177,19 +219,14 @@ binding = "ASSETS"
 
 ## Contact Form Flow
 
-1. User fills out form on `/contact`
+1. User fills out form on `/about/`
 2. JavaScript submits form data + Turnstile token
 3. Worker validates Turnstile token with Cloudflare API
 4. Worker sends email via Resend API
 5. Worker returns JSON success/error response
 6. JavaScript displays message to user
 
-**Form Fields:**
-- Name (required)
-- Email (required)
-- Subject (required)
-- Message (required)
-- Turnstile token (automatic)
+**Turnstile site key (public):** `0x4AAAAAACPc3bf8bl6ifC3c`
 
 **Secrets Required:**
 - `TURNSTILE_SECRET_KEY` - Validates spam protection
@@ -202,14 +239,13 @@ binding = "ASSETS"
 
 | Problem | Solution |
 |---------|----------|
-| Contact form not working | Check secrets configured: `npx wrangler secret list` |
-| Form shows "invalid token" | Turnstile key mismatch, check site key in HTML matches dashboard |
-| Email not arriving | Check Resend logs, verify domain DNS records |
-| Worker not deploying | Check `wrangler.toml` syntax, run `npx wrangler deploy --dry-run` |
+| Build fails with Hugo version error | Check `build.sh` HUGO_VERSION ≥ 0.146.0 |
+| Contact form not working | Check secrets: `npx wrangler secret list` |
+| Form shows "invalid token" | Turnstile key mismatch |
+| Email not arriving | Check Resend logs, verify domain DNS |
 | CSS not updating | Hard refresh (Ctrl+Shift+R) or wait for CDN cache |
-| Build errors | Run `hugo --verbose` for details |
-
-**Full troubleshooting:** See `docs/operations.md`
+| Build errors | Run `.bin/hugo --verbose` for details |
+| Theme layout changed after update | Check COUPLING MANIFEST in `assets/css/extended/custom.css` |
 
 ---
 
@@ -219,10 +255,10 @@ binding = "ASSETS"
 **Repository:** https://github.com/glw907/907-life
 
 **Deployment Flow:**
-1. Push to GitHub master
+1. Push to GitHub main
 2. GitHub Actions runs `build.sh`
 3. Deploys via Wrangler
-4. Live in 1-2 minutes
+4. Live in ~2 minutes
 
 **Cloudflare Account:** Account ID `120c269ad6d3dfbe6d63a0bb53758ca0`
 
@@ -253,6 +289,7 @@ claude
 
 - **Repository:** https://github.com/glw907/907-life
 - **Cloudflare Dashboard:** https://dash.cloudflare.com/
+- **PaperMod Theme:** https://github.com/adityatelange/hugo-PaperMod
 - **Turnstile Dashboard:** https://dash.cloudflare.com/?to=/:account/turnstile
 - **Resend Dashboard:** https://resend.com/
 - **Hugo Docs:** https://gohugo.io/documentation/

@@ -5,7 +5,7 @@
 set -euo pipefail
 
 # Configuration
-HUGO_VERSION="${HUGO_VERSION:-0.123.7}"
+HUGO_VERSION="${HUGO_VERSION:-0.147.0}"
 export TZ=UTC
 
 echo "Starting Hugo build process..."
@@ -13,25 +13,28 @@ echo "Hugo version: ${HUGO_VERSION}"
 
 # Download Hugo extended (required for SCSS support, even if not used)
 echo "Downloading Hugo ${HUGO_VERSION}..."
-curl -sLO "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+HUGO_TARBALL="hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+curl -sLO "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/${HUGO_TARBALL}"
 
-# Extract Hugo binary
+# Extract Hugo binary into a temp dir to avoid clobbering project files
 echo "Extracting Hugo..."
-tar -xf "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+HUGO_TMP=$(mktemp -d)
+tar -xf "${HUGO_TARBALL}" -C "${HUGO_TMP}"
+rm -f "${HUGO_TARBALL}"
 
 # Move to a directory in PATH
 # Use /opt/buildhome in Cloudflare environment, local .bin directory otherwise
 if mkdir -p /opt/buildhome 2>/dev/null; then
-  cp hugo /opt/buildhome/
+  cp "${HUGO_TMP}/hugo" /opt/buildhome/
   export PATH="/opt/buildhome:$PATH"
 else
   mkdir -p .bin
-  cp hugo .bin/
+  cp "${HUGO_TMP}/hugo" .bin/
   export PATH="$(pwd)/.bin:$PATH"
 fi
 
-# Clean up downloaded files
-rm -f LICENSE README.md "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+# Clean up temp dir
+rm -rf "${HUGO_TMP}"
 
 # Verify Hugo installation
 echo "Hugo version check:"
