@@ -28,16 +28,14 @@ Task 1 (plugins + skill) is complete. Pass 3 begins at Task 2.
 
 ---
 
-## Starting the Next Pass
+## Continuing Development
 
-Open a fresh session and run:
+When the user says **"continue development"** (or similar), use
+`superpowers:subagent-driven-development` to execute the implementation plan.
 
-```
-Use superpowers:subagent-driven-development to execute
-docs/superpowers/plans/2026-04-05-sveltekit-implementation.md.
-Task 1 is complete. Pass 3 scope: Tasks 2–5
-(scaffold SvelteKit, update wrangler.toml, content pipeline, base layout).
-```
+**Plan:** `docs/superpowers/plans/2026-04-05-sveltekit-implementation.md`
+**Next pass:** Pass 3 — Tasks 2–5 (scaffold SvelteKit, update wrangler.toml, content pipeline, base layout)
+**Completed tasks:** Task 1
 
 After each pass, run the pass-end checklist:
 1. `/simplify` — review changed code for quality and clean up (code only, not docs)
