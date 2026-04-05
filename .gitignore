@@ -31,5 +31,6 @@ Thumbs.db
 *.swo
 *~
 
-# Claude Code local settings
-.claude/
+# Claude Code — ignore machine-local files, track skills and instructions
+.claude/settings.local.json
+.claude/hooks/

@@ -2,7 +2,8 @@
 
 Personal blog — SvelteKit + TypeScript, deployed to Cloudflare Workers.
 
-See `docs/architecture.md` for design decisions and `docs/superpowers/specs/` for the rebuild spec.
+@docs/STATUS.md
+@docs/architecture.md
 
 ## Stack
 
