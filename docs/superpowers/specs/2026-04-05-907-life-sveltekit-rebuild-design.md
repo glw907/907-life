@@ -61,7 +61,7 @@ Two pipelines, chosen per file type:
 
 **Posts** (`src/content/posts/*.md`) — processed with remark + remark-gfm at build time via `import.meta.glob`. Frontmatter: `title`, `date`, `draft`, `tags`, `description`. Straight prose, no Svelte components needed.
 
-**Special pages** (`src/routes/*/+page.svelte` or `.md`) — mdsvex. Enables Svelte components inside markdown. Used for: archives (dynamic year grouping), about (static prose with potential future interactive elements). Contact is a plain Svelte page with a `+page.server.ts` form action — mdsvex not needed there.
+**Special pages** (`src/routes/*/+page.svelte` or `.md`) — mdsvex. Enables Svelte components inside markdown. Used for: archives, contact, about. In each case, a `.md` file holds the editable prose content (managed via Sveltia), and the page embeds Svelte components for dynamic behavior (archive listing, contact form). The contact form logic lives in `+page.server.ts` alongside the mdsvex page file.
 
 ---
 
@@ -95,7 +95,12 @@ Sveltia CMS mounted at `/admin/`. Two files in `static/admin/`:
 - `index.html` — loads Sveltia from CDN
 - `config.yml` — collection schema pointing at `src/content/posts/`
 
-Config is deliberately minimal (title, date, draft, description, tags, body). Wired in properly so it works and establishes the pattern. Not over-engineered for day-to-day use — primary workflow is local editing + git push.
+Two collections:
+
+- **Posts** — `src/content/posts/`, fields: title, date, draft, description, tags, body
+- **Pages** — individual files for contact, archives, about. Fields: title, body (prose only — not the form or archive listing)
+
+Wired in properly so it works and establishes the pattern. Not over-engineered for day-to-day use — primary workflow is local editing + git push.
 
 ---
 
