@@ -40,7 +40,7 @@ Task 1 is complete. Pass 3 scope: Tasks 2–5
 ```
 
 After each pass, run the pass-end checklist:
-1. `/simplify` — review changed code for quality and clean up
+1. `/simplify` — review changed code for quality and clean up (code only, not docs)
 2. Update `docs/architecture.md` — add any design decisions made during the pass that belong in the long-term record
 3. Update this file — mark pass done, update "Current state," set next starter prompt
 4. Commit all changes
