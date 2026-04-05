@@ -39,4 +39,8 @@ Task 1 is complete. Pass 3 scope: Tasks 2–5
 (scaffold SvelteKit, update wrangler.toml, content pipeline, base layout).
 ```
 
-After each pass, update this file: mark the pass done and update "Current state."
+After each pass, run the pass-end checklist:
+1. `/simplify` — review changed code for quality and clean up
+2. Update this file — mark pass done, update "Current state," set next starter prompt
+3. Commit all changes
+4. `git push`
