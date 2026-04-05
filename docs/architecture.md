@@ -1,122 +1,108 @@
-# Architectural Decisions
+# 907.life Architecture
 
-Key design decisions for the 907.life Hugo site.
+Design decisions for the SvelteKit rebuild.
 
----
-
-## Site Design
-
-### Why minimal custom theme?
-
-**Decision:** Build a minimal custom theme rather than use a pre-made theme.
-
-**Rationale:**
-- Personal blog with simple requirements
-- Full control over design and performance
-- No unnecessary features or bloat
-- Learning exercise in Hugo theme development
-- Easier to maintain and modify
-
-**Implementation:**
-- Custom templates in `layouts/_default/`
-- Single CSS file (`static/css/styles.css`)
-- No JavaScript dependencies (except Turnstile for contact form)
+> **Pattern intent:** This site is a testbed. Architecture is documented as a
+> reusable pattern for future personal blog sites, not just "how this site works."
 
 ---
 
-## Content Structure
+## Stack
 
-### Why tags only (no categories)?
+| Layer | Choice | Rationale |
+|---|---|---|
+| Framework | SvelteKit + TypeScript | Modern, first-class Cloudflare support, Svelte 5 runes |
+| Styling | Tailwind CSS v4 + DaisyUI v5 | CSS-first config, no tailwind.config.js needed |
+| Markdown (posts) | remark + remark-gfm | Pure data pipeline, GFM support, no magic |
+| Markdown (special pages) | mdsvex | Svelte components inside markdown for pages with interactive sections |
+| Search | Pagefind | Post-build static index, zero runtime JS cost |
+| CMS | Sveltia CMS | Git-based, modern Decap replacement, reusable config schema |
+| Adapter | @sveltejs/adapter-cloudflare | First-class Workers support, form actions work natively |
+| Contact form | Cloudflare Email Workers | Native Cloudflare, free tier, replaces Resend |
+| Spam protection | Cloudflare Turnstile | Carried over from Hugo site |
+| Fonts | Lora (woff2, self-hosted) | Carried over from Hugo site |
 
-**Decision:** Use tags as the only taxonomy, disable categories.
+**Reusable core (the pattern):**
+SvelteKit + TS + adapter-cloudflare · Tailwind v4 + DaisyUI v5 · remark/mdsvex pipeline
+· Pagefind · Sveltia CMS config schema · Cloudflare Email Workers contact form
+· GitHub Actions → Cloudflare Workers deployment
 
-**Rationale:**
-- Simpler for a personal blog
-- Tags are more flexible than hierarchical categories
-- Reduces cognitive overhead when writing
-- Easier to cross-reference related topics
-
-**Implementation:** `hugo.toml` taxonomies section
-
-### Why page bundles for posts?
-
-**Decision:** Posts use page bundles (`posts/YYYY-MM-DD-slug/index.md`).
-
-**Rationale:**
-- Images co-located with content
-- Easier to organize and move posts
-- Cleaner content directory structure
-- Matches Hugo best practices
+**Site-specific:** domain, content, fonts, Cloudflare secrets
 
 ---
 
-## Contact Form
+## Routing
 
-### Why Cloudflare Worker + Turnstile + Resend?
+URL structure preserved from Hugo: `/:year/:month/:day/:slug/`
 
-**Decision:** Implement contact form using Cloudflare Worker for backend, Turnstile for spam protection, Resend for email delivery.
+SvelteKit route: `src/routes/[year]/[month]/[day]/[slug]/+page.svelte`
 
-**Rationale:**
-- **No backend server needed** - Worker handles form submission
-- **Free tier sufficient** - Cloudflare Workers, Turnstile, and Resend all have generous free tiers
-- **Spam protection** - Turnstile provides bot detection without CAPTCHA friction
-- **Reliable delivery** - Resend specialized in transactional email
-- **Fast** - Edge-deployed worker, minimal latency
-- **Simple** - Single worker.js file handles everything
+Slug derived from filename: `2026-03-06-early-march.md` → `/2026/03/06/early-march/`
 
-**Alternatives considered:**
-- *Formspree/Netlify Forms* - Third-party dependency, less control
-- *Self-hosted email* - More complexity, deliverability issues
-- *Google Forms* - Poor UX, no custom styling
+---
 
-**Implementation:**
-- `src/worker.js` - Form handler
-- `wrangler.toml` - Routes POST /contact to worker, static assets for everything else
-- `layouts/_default/about.html` - Contact form template with Turnstile widget
-- Secrets stored in Cloudflare dashboard: `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `CONTACT_EMAIL`
+## Content Pipeline
 
-**Worker Flow:**
-1. User submits form on /contact
-2. Worker validates Turnstile token with Cloudflare API
-3. If valid, sends email via Resend API
-4. Returns JSON response to browser
-5. JavaScript displays success/error message
+### Posts — remark + remark-gfm
+
+`src/content/posts/*.md` — loaded at build time via `import.meta.glob`, processed
+through remark + remark-gfm. Straight prose, no Svelte components in posts.
+
+Frontmatter: `title`, `date`, `draft`, `tags`, `description`
+
+### Special Pages — mdsvex
+
+About and archives pages use mdsvex. A `.md` file holds editable prose (managed via
+Sveltia CMS); embedded Svelte components handle dynamic behavior (archive listing,
+contact form).
+
+---
+
+## About + Contact
+
+No separate `/contact/` route. Contact form lives at the bottom of the about page,
+accessible via `#contact` anchor. Nav "Contact" link → `/about/#contact`.
+
+Form action: `src/routes/about/+page.server.ts`
+
+Flow: validate Turnstile → send via Cloudflare Email Workers `send_email` binding.
+
+Secrets: `TURNSTILE_SECRET_KEY`, `CONTACT_EMAIL`
+
+---
+
+## Search
+
+`npx pagefind --site build` runs post-build. Generates static index in `build/_pagefind/`.
+Search UI is a Svelte component wrapping the Pagefind JS API.
+
+---
+
+## CMS — Sveltia
+
+Mounted at `/admin/`. Config at `static/admin/config.yml`. Two collections:
+
+- **posts** — `src/content/posts/`, fields: title, date, draft, description, tags, body
+- **pages** — about and archives prose (title + body only, not form/archive components)
+
+Primary workflow is local editing + git push. CMS is wired in for the pattern.
 
 ---
 
 ## Deployment
 
-### Why Cloudflare Workers (not Pages)?
-
-**Decision:** Deploy via Cloudflare Workers with static assets (not Cloudflare Pages).
-
-**Rationale:**
-- **Worker needed for contact form** - Pages doesn't support custom backend logic
-- **Single deployment** - Both static site and form handler in one worker
-- **Flexible routing** - `run_worker_first` allows worker to intercept specific routes
-- **Same performance** - Workers serve static assets just as fast as Pages
-
-**Implementation:**
-- Hugo builds to `public/`
-- `build.sh` ensures correct Hugo version
-- Wrangler deploys worker + static assets
-- Worker intercepts POST /contact, serves static files for everything else
+Push to `main` → GitHub Actions → `npm run build` + `npx pagefind --site build`
++ `npx wrangler deploy` → live in ~2 min.
 
 ---
 
-## Documentation
+## What Replaced What
 
-### Why minimal docs?
-
-**Decision:** Keep documentation minimal - just architecture and operations.
-
-**Rationale:**
-- Simple site with straightforward design
-- Most patterns are standard Hugo
-- Contact form is well-documented in worker.js comments
-- Avoid over-documenting simple things
-
-**Implementation:**
-- `docs/architecture.md` - This file (design decisions)
-- `docs/operations.md` - Dev, deploy, troubleshooting
-- `CLAUDE.md` - Quick reference
+| Hugo | SvelteKit |
+|---|---|
+| `themes/PaperMod` + layout overrides | Own components, no theme |
+| `build.sh` to pin Hugo version | `package.json` lockfile |
+| `src/worker.js` separate Worker | SvelteKit form action in `+page.server.ts` |
+| Resend + `RESEND_API_KEY` | Cloudflare Email Workers (native) |
+| Page bundles (`posts/slug/index.md`) | Flat files (`src/content/posts/slug.md`) |
+| lunr.js search | Pagefind |
