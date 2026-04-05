@@ -73,7 +73,9 @@ Pagefind runs post-build (`npm run build && npx pagefind --site build`). Crawls 
 
 ## Contact Form
 
-SvelteKit form action in `src/routes/contact/+page.server.ts`. Flow:
+No separate `/contact/` route. Contact form lives at the bottom of the about page, accessible via `#contact` anchor. Nav "Contact" link points to `/about/#contact` — matching the current site.
+
+Form action in `src/routes/about/+page.server.ts`. Flow:
 
 1. User submits form
 2. Form action validates Turnstile token via Cloudflare API
@@ -98,7 +100,7 @@ Sveltia CMS mounted at `/admin/`. Two files in `static/admin/`:
 Two collections:
 
 - **Posts** — `src/content/posts/`, fields: title, date, draft, description, tags, body
-- **Pages** — individual files for contact, archives, about. Fields: title, body (prose only — not the form or archive listing)
+- **Pages** — individual files for about (includes contact prose) and archives. Fields: title, body (prose only — not the form or archive listing)
 
 Wired in properly so it works and establishes the pattern. Not over-engineered for day-to-day use — primary workflow is local editing + git push.
 
