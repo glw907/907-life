@@ -1,8 +1,8 @@
 # 907.life — Project Status
 
-**Current state:** Pass 2 complete. Implementation plan written, plugins installed,
-`svelte-check` skill created. No SvelteKit code written yet — repo has migrated
-content and config files only.
+**Current state:** Pass 3 complete. SvelteKit project scaffolded, wrangler.toml updated,
+content pipeline (Post types + remark loader) implemented, base layout + Nav + SearchModal
+built. Dev server starts and svelte-check passes. No route pages yet.
 
 ---
 
@@ -12,8 +12,8 @@ content and config files only.
 |------|------|--------|
 | 1 | Repo cleanup: remove Hugo, migrate content to `src/content/`, write new docs | ✓ Done |
 | 2 | Planning: SvelteKit implementation plan, plugins, `svelte-check` skill | ✓ Done |
-| 3 | Foundation: scaffold SvelteKit, configs, wrangler.toml, content pipeline, base layout | Pending |
-| 4 | Core routes: homepage, post detail, archives | Pending |
+| 3 | Foundation: scaffold SvelteKit, configs, wrangler.toml, content pipeline, base layout | ✓ Done |
+| 4 | Core routes: homepage, post detail, archives — use `frontend-design` skill for distinctive UI | Pending |
 | 5 | Features: contact form (Turnstile + Email Workers), Pagefind search | Pending |
 | 6 | CMS (Sveltia), GitHub Actions deploy, first live deploy to 907.life | Pending |
 
@@ -34,8 +34,8 @@ When the user says **"continue development"** (or similar), use
 `superpowers:subagent-driven-development` to execute the implementation plan.
 
 **Plan:** `docs/superpowers/plans/2026-04-05-sveltekit-implementation.md`
-**Next pass:** Pass 3 — Tasks 2–5 (scaffold SvelteKit, update wrangler.toml, content pipeline, base layout)
-**Completed tasks:** Task 1
+**Next pass:** Pass 4 — Tasks 6–8 (homepage, post detail, archives) — use `frontend-design` skill for UI
+**Completed tasks:** Tasks 1–5
 
 After each pass, run the pass-end checklist:
 1. `/simplify` — review changed code for quality and clean up (code only, not docs)

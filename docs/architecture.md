@@ -45,10 +45,18 @@ Slug derived from filename: `2026-03-06-early-march.md` → `/2026/03/06/early-m
 
 ### Posts — remark + remark-gfm
 
-`src/content/posts/*.md` — loaded at build time via `import.meta.glob`, processed
-through remark + remark-gfm. Straight prose, no Svelte components in posts.
+`src/content/posts/*.md` — loaded at build time via `import.meta.glob` with `?raw` +
+`eager: true`. All markdown is bundled as string constants at build time (required:
+Cloudflare Workers has no filesystem). Parsed at request time by gray-matter + remark.
 
 Frontmatter: `title`, `date`, `draft`, `tags`, `description`
+
+**Type split:** `PostSummary` (metadata only, returned by `getAllPosts`) vs `PostDetail`
+(adds `html: string`, returned by `getPost`). Prevents callers from accidentally
+accessing `.html` on list results — it's a type error, not a runtime undefined.
+
+**`getAllPosts` is synchronous** — rawFiles is eagerly loaded, gray-matter is sync,
+no awaits. Only `getPost` is async (remark `.process()` returns a Promise).
 
 ### Special Pages — mdsvex
 
