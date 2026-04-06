@@ -1,29 +1,18 @@
-# 907.life - Cloudflare Workers Configuration
-# Hugo static site with contact form handler
-
+# 907.life — Cloudflare Workers (SvelteKit adapter-cloudflare)
 name = "907-life"
 compatibility_date = "2025-01-25"
-main = "src/worker.js"
+compatibility_flags = ["nodejs_compat"]
 
-# Build configuration - uses build.sh to ensure correct Hugo version
-[build]
-command = "chmod +x build.sh && ./build.sh"
+main = "build/_worker.js"
 
-# Static assets from Hugo output directory
 [assets]
-directory = "./public"
+directory = "build"
 binding = "ASSETS"
-not_found_handling = "404-page"
-# Run worker first for contact form route
-# This allows the worker to handle POST /contact while
-# static assets serve everything else
-run_worker_first = ["/contact"]
 
-# Environment variables are set in Cloudflare dashboard:
-# - TURNSTILE_SECRET_KEY (encrypted)
-# - CONTACT_EMAIL (plain text)
+[[send_email]]
+name = "SEND_EMAIL"
+destination_address = "geoff@907.life"
 
-# Custom domain configuration
 [[routes]]
 pattern = "907.life"
 custom_domain = true
