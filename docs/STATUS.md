@@ -15,7 +15,7 @@ pending. Tagging feature designed and planned — added as Pass 6 before deploym
 | 4 | Core routes + design system: homepage, post detail, archives, about/contact, hookify rules | ✓ Done |
 | 5 | Features: Pagefind search (Task 10 ✓), Sveltia CMS config (Task 11) | In progress |
 | 6 | Tagging: data layer, clickable tags, archives block, tag index, tag detail pages | Pending |
-| 7 | RSS feed | Pending |
+| 7 | RSS + JSON Feed | Pending |
 | 8 | GitHub Actions deploy pipeline, first live deploy to 907.life | Pending |
 
 ---
@@ -36,7 +36,7 @@ When the user says **"continue development"** (or similar), pick up from where w
 
 **Next pass:** Pass 5 — complete Task 11 (Sveltia CMS config)
 **Then:** Pass 6 — tagging feature (`docs/superpowers/plans/2026-04-06-tagging.md`, Tasks 1–5)
-**Then:** Pass 7 — RSS feed (plan not yet written — brainstorm first)
+**Then:** Pass 7 — RSS + JSON Feed (plan not yet written — brainstorm first)
 **Then:** Pass 8 — GitHub Actions deploy
 **Completed tasks:** Tasks 1–10 (core plan), tagging design + plan
 
