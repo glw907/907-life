@@ -5,23 +5,30 @@ event: file
 conditions:
   - field: file_path
     operator: regex_match
-    pattern: \.(svelte|html)$
+    pattern: \.(svelte|html|ts|js)$
   - field: new_text
     operator: regex_match
-    pattern: class="[^"]*\[[^\]]+\]|class='[^']*\[[^\]]+\]
+    pattern: class="[^"]*\[[^\]]+\]|class='[^']*\[[^\]]+\]|`(?:bg|text|border|ring|p|m|w|h)-\$\{
 ---
 
-**Arbitrary Tailwind value detected (e.g. `w-[123px]`, `text-[#fff]`).**
+**Arbitrary Tailwind value or dynamic class construction detected.**
 
-This project uses DaisyUI v5 semantic tokens and scoped `<style>` blocks for values that don't map to the design system. Arbitrary values create inconsistency and defeat the purpose of a design token system.
+Two patterns are flagged:
 
-**Prefer:**
-- DaisyUI semantic classes: `btn`, `card`, `badge`, `input`, `prose`, etc.
-- Tailwind scale values: `p-4`, `text-sm`, `gap-2`, etc.
-- Scoped CSS with `oklch()` values for anything design-specific
+**1. Arbitrary values** (e.g. `w-[123px]`, `text-[#fff]`):
+This project uses DaisyUI v5 tokens and scoped `<style>` blocks. Arbitrary values create inconsistency and bypass the design token system. Prefer DaisyUI semantic classes, Tailwind scale values, or scoped CSS with `oklch()` values.
 
-**Only use arbitrary values if:**
-- You have a specific measurement from a design spec
-- No semantic token exists and a scoped style would be disproportionate overhead
+If you need an arbitrary value repeatedly, add an `@theme` token in `app.css` instead.
 
-If you find yourself reaching for arbitrary values repeatedly, that's a sign a new CSS class or `@theme` token is warranted.
+**2. Dynamic class construction** (e.g. `` `text-${color}-500` ``):
+Tailwind's scanner cannot detect dynamically-constructed class names — they will be purged from the production bundle and silently do nothing.
+
+```js
+// WRONG — purged in production
+`text-${color}-500`
+
+// CORRECT — full class names are statically visible
+color === 'red' ? 'text-red-500' : 'text-blue-500'
+```
+
+Always use complete, static class name strings.

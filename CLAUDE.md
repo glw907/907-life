@@ -60,21 +60,25 @@ Manual: `npm run build && npx pagefind --site build && npx wrangler deploy`
 
 ## Code Quality Rules
 
-Hookify guards enforce these conventions automatically:
+Hookify guards enforce these conventions automatically. Rules live in `.claude/hookify.*.local.md`.
 
 | Rule | Trigger | What it catches |
 |---|---|---|
-| `svelte5-runes` | Edit `.svelte` | `$:` reactive syntax (Svelte 4 — use runes instead) |
+| `svelte5-runes` | Edit `.svelte` | `$:`, `export let`, `on:` directives, `createEventDispatcher`, `$derived(() => ...)` |
 | `oklch-colors` | Edit `.svelte`/`.css` | Hex or `rgb()` colors (use `oklch()` throughout) |
-| `no-arbitrary-tailwind` | Edit `.svelte`/`.html` | Tailwind arbitrary values like `w-[123px]` |
+| `no-arbitrary-tailwind` | Edit `.svelte`/`.html`/`.ts` | Tailwind arbitrary values and dynamic class strings |
+| `daisyui-v5-classes` | Edit `.svelte`/`.html` | Removed DaisyUI v4 class names (e.g. `input-bordered`, `card-compact`) |
+| `daisyui-v5-vars` | Edit `.svelte`/`.css` | Old DaisyUI CSS vars (`--bc`, `--p`, `--b1`, etc.) |
+| `tailwind-v3-compat` | Edit `.svelte`/`.html` | Removed/renamed Tailwind v3 utilities (`shadow-sm`, `bg-opacity-*`, etc.) |
+| `sveltekit-patterns` | Edit `.svelte`/`.ts` | `$app/stores` (deprecated), `goto()` external URLs, `fs` imports |
+| `html-injection` | Edit `.svelte` | `{@html}` usage — prompts XSS checklist |
 | `svelte-check-reminder` | Session stop | Reminds to run `/svelte-check` before declaring done |
-
-Rules live in `.claude/hookify.*.local.md`. Disable individually by setting `enabled: false`.
 
 **Design system anchors:**
 - Colors: `oklch()` with hue 230 (UI chrome) and hue 61 (warm content text)
 - Typography: Spectral (body), Outfit (display), Monaspace Neon (mono)
 - Tokens: DaisyUI v5 semantic classes first, scoped `<style>` for anything design-specific
+- Never use DaisyUI v4 short CSS vars (`--bc`, `--p`, etc.) — renamed in v5, silently resolve to nothing
 
 ## Cross-Site Admin
 

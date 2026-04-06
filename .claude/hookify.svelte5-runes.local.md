@@ -8,20 +8,22 @@ conditions:
     pattern: \.svelte$
   - field: new_text
     operator: regex_match
-    pattern: \$:\s
+    pattern: \$:\s|\bexport\s+let\s+\w|\bon:[a-z]+=\{|createEventDispatcher|\$derived\s*\(\s*\(\s*\)\s*=>
 ---
 
-**Svelte 4 reactive syntax detected in a Svelte 5 project.**
+**Svelte 4 syntax or rune misuse detected in a Svelte 5 project.**
 
-`$:` reactive declarations are Svelte 4 syntax and do not work correctly with Svelte 5 runes mode.
+This project uses Svelte 5 runes throughout. The pattern that triggered this rule is one of:
 
-Use Svelte 5 runes instead:
+| Svelte 4 pattern | Svelte 5 replacement | Risk |
+|---|---|---|
+| `$: value = expr` | `let value = $derived(expr)` | Stale values in async contexts |
+| `$: { sideEffect() }` | `$effect(() => { sideEffect() })` | Different update timing |
+| `export let prop` | `let { prop } = $props()` | Two-way binding silently breaks without `$bindable()` |
+| `on:click={handler}` | `onclick={handler}` | Event modifiers silently stop working |
+| `createEventDispatcher` | Callback prop: `let { onmyevent } = $props()` | Type safety lost; runes-mode parents can't listen |
+| `$derived(() => expr)` | `$derived(expr)` or `$derived.by(() => expr)` | Returns the function, not the value |
 
-| Svelte 4 | Svelte 5 |
-|---|---|
-| `$: value = expr` | `let value = $derived(expr)` |
-| `$: { sideEffect() }` | `$effect(() => { sideEffect() })` |
-| `let x = $state` (store) | `let x = $state(initial)` |
-| `export let prop` | `let { prop } = $props()` |
+**Check:** `src/routes/+page.svelte` for correct rune usage examples.
 
-This project uses Svelte 5 runes throughout. Check `src/routes/+page.svelte` for reference patterns.
+Note: `export let` is also used legitimately in `.svelte` for re-exporting constants from a module script — only flag if this is in a `<script>` (not `<script context="module">`) and it looks like a prop declaration.
