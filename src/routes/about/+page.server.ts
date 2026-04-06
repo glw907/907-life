@@ -1,6 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
 import { fail } from '@sveltejs/kit';
-import { EmailMessage } from 'cloudflare:email';
 import { createMimeMessage } from 'mimetext';
 
 export const load: PageServerLoad = () => ({});
@@ -55,6 +54,7 @@ export const actions: Actions = {
     msg.setSubject(`Contact from ${name}`);
     msg.addMessage({ contentType: 'text/plain', data: `From: ${name} <${email}>\n\n${message}` });
 
+    const { EmailMessage } = await import('cloudflare:email');
     await sendEmail.send(new EmailMessage('noreply@907.life', contactEmail, msg.asRaw()));
 
     return { success: true };
