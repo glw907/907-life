@@ -4,19 +4,19 @@
 
 <header class="sticky top-0 z-30 bg-base-100 border-b border-base-200">
   <nav class="container mx-auto px-4 h-14 flex items-center justify-between max-w-3xl">
-    <a href="/" class="font-semibold text-base hover:opacity-70 transition-opacity">
-      907.life
+    <a href="/" class="site-logo">
+      <span class="logo-primary">907</span><span class="logo-secondary">.life</span>
     </a>
-    <div class="flex items-center gap-5 text-sm">
-      <a href="/archives" class="hover:opacity-70 transition-opacity">Archives</a>
-      <a href="/about" class="hover:opacity-70 transition-opacity">About</a>
-      <a href="/about#contact" class="hover:opacity-70 transition-opacity">Contact</a>
+    <div class="nav-links">
+      <a href="/archives" class="nav-link">Archives</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/about#contact" class="nav-link">Contact</a>
       <button
         onclick={onSearchOpen}
-        class="hover:opacity-70 transition-opacity"
+        class="nav-icon"
         aria-label="Search"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round">
           <circle cx="11" cy="11" r="8" />
@@ -26,3 +26,57 @@
     </div>
   </nav>
 </header>
+
+<style>
+  .site-logo {
+    display: flex;
+    align-items: baseline;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+  .site-logo:hover { opacity: 0.7; }
+
+  .logo-primary {
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    color: oklch(18% 0.01 230);
+  }
+  .logo-secondary {
+    font-weight: 400;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    color: oklch(62% 0.008 230);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .nav-link {
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: oklch(52% 0.008 230);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    /* adequate tap target */
+    padding-block: 0.4rem;
+  }
+  .nav-link:hover { color: oklch(28% 0.01 230); }
+  .nav-link:active { color: oklch(18% 0.01 230); }
+
+  .nav-icon {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0.4rem;
+    cursor: pointer;
+    color: oklch(52% 0.008 230);
+    transition: color 0.2s ease;
+  }
+  .nav-icon:hover { color: oklch(28% 0.01 230); }
+</style>

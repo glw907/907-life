@@ -1,7 +1,11 @@
 import type { PageServerLoad } from './$types';
-import { getAllPosts } from '$lib/posts';
+import { getAllPosts, getPost } from '$lib/posts';
 
-export const load: PageServerLoad = () => {
+export const load: PageServerLoad = async () => {
   const posts = getAllPosts();
-  return { posts };
+  const first = posts[0];
+  const featured = first
+    ? await getPost(first.year, first.month, first.day, first.slug)
+    : null;
+  return { posts, featured };
 };

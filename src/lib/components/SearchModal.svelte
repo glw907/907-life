@@ -3,11 +3,16 @@
 
   let { open = $bindable(false) }: { open: boolean } = $props();
 
+  let initialized = false;
+
   onMount(async () => {
+    if (initialized) return;
     try {
-      // @ts-expect-error — pagefind assets generated at build time, not present in dev
-      const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
+      // Path concatenated to prevent Vite static analysis — file only exists post-build
+      // Pagefind has no published types; cast is intentional
+      const { PagefindUI } = await import('/pagefind/pagefind-ui' + '.js') as any;
       new PagefindUI({ element: '#pagefind-search', showSubResults: true });
+      initialized = true;
     } catch {
       // dev mode — pagefind not built yet
     }

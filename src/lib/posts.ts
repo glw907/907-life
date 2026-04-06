@@ -25,7 +25,9 @@ function buildSummary(
   return {
     ...coords,
     title: data.title as string ?? '',
-    date: String(data.date ?? ''),
+    date: data.date instanceof Date
+      ? data.date.toISOString().slice(0, 10)
+      : String(data.date ?? ''),
     draft: data.draft as boolean ?? false,
     description: data.description as string ?? '',
     tags: data.tags as string[] ?? []
