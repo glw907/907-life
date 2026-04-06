@@ -1,0 +1,33 @@
+{
+  "name": "907-life",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-cloudflare": "^5",
+    "@sveltejs/kit": "^2",
+    "@sveltejs/vite-plugin-svelte": "^5",
+    "@tailwindcss/vite": "^4",
+    "daisyui": "^5",
+    "mdsvex": "^0.11",
+    "svelte": "^5",
+    "svelte-check": "^4",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vite": "^6"
+  },
+  "dependencies": {
+    "gray-matter": "^4",
+    "mimetext": "^3",
+    "remark": "^15",
+    "remark-gfm": "^4",
+    "remark-html": "^16"
+  },
+  "type": "module"
+}
