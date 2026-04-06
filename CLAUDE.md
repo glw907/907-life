@@ -58,6 +58,24 @@ Push to `main` → GitHub Actions runs build + pagefind + wrangler deploy → li
 
 Manual: `npm run build && npx pagefind --site build && npx wrangler deploy`
 
+## Code Quality Rules
+
+Hookify guards enforce these conventions automatically:
+
+| Rule | Trigger | What it catches |
+|---|---|---|
+| `svelte5-runes` | Edit `.svelte` | `$:` reactive syntax (Svelte 4 — use runes instead) |
+| `oklch-colors` | Edit `.svelte`/`.css` | Hex or `rgb()` colors (use `oklch()` throughout) |
+| `no-arbitrary-tailwind` | Edit `.svelte`/`.html` | Tailwind arbitrary values like `w-[123px]` |
+| `svelte-check-reminder` | Session stop | Reminds to run `/svelte-check` before declaring done |
+
+Rules live in `.claude/hookify.*.local.md`. Disable individually by setting `enabled: false`.
+
+**Design system anchors:**
+- Colors: `oklch()` with hue 230 (UI chrome) and hue 61 (warm content text)
+- Typography: Spectral (body), Outfit (display), Monaspace Neon (mono)
+- Tokens: DaisyUI v5 semantic classes first, scoped `<style>` for anything design-specific
+
 ## Cross-Site Admin
 
 For DNS, domain verification, or Cloudflare service config: `cd ~/Projects/cloudflare-sites && claude`
