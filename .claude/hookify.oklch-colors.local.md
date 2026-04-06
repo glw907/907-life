@@ -8,7 +8,7 @@ conditions:
     pattern: \.(svelte|css)$
   - field: new_text
     operator: regex_match
-    pattern: (?<!&)#[0-9a-fA-F]{3,6}(?![0-9a-fA-F])|:\s*rgb\(|:\s*rgba\(|:\s*hsl\(
+    pattern: (?<![{&])\B#[0-9a-fA-F]{3,6}(?![0-9a-fA-F])|:\s*rgb\(|:\s*rgba\(|:\s*hsl\(
 ---
 
 **Hex or legacy color format detected. This project uses oklch().**
