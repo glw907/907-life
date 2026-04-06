@@ -1,6 +1,7 @@
 <script lang="ts">
+  import type { PageData } from './$types';
   import ArchiveList from '$lib/components/ArchiveList.svelte';
-  let { data } = $props();
+  let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>

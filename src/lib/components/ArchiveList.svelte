@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { PostSummary } from '$lib/types';
-  import { formatDate } from '$lib/utils';
 
   let { posts }: { posts: PostSummary[] } = $props();
 

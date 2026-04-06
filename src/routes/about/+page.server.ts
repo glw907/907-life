@@ -29,6 +29,11 @@ export const actions: Actions = {
       return fail(400, { error: 'All fields are required.', values });
     }
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return fail(400, { error: 'Please enter a valid email address.', values });
+    }
+
+    // Turnstile skipped in dev (no TURNSTILE_SECRET_KEY env binding)
     const secret = platform?.env?.TURNSTILE_SECRET_KEY;
     if (secret) {
       const valid = await verifyTurnstile(token, getClientAddress(), secret);

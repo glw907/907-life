@@ -34,7 +34,7 @@
       {/if}
 
       <div class="field">
-        <label class="field-label" for="name">Name</label>
+        <label class="post-date" for="name">Name</label>
         <input
           id="name"
           name="name"
@@ -47,7 +47,7 @@
       </div>
 
       <div class="field">
-        <label class="field-label" for="email">Email</label>
+        <label class="post-date" for="email">Email</label>
         <input
           id="email"
           name="email"
@@ -60,7 +60,7 @@
       </div>
 
       <div class="field">
-        <label class="field-label" for="message">Message</label>
+        <label class="post-date" for="message">Message</label>
         <textarea
           id="message"
           name="message"
@@ -109,14 +109,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-  }
-
-  .field-label {
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: oklch(55% 0.008 230);
   }
 
   .field-input {

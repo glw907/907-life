@@ -1,6 +1,7 @@
 <script lang="ts">
+  import type { ActionData } from './$types';
   import ContactForm from '$lib/components/ContactForm.svelte';
-  let { data, form } = $props();
+  let { form }: { form: ActionData } = $props();
 </script>
 
 <svelte:head>
@@ -8,7 +9,7 @@
   <meta name="description" content="Geoffrey L. Wright — technology professional in Alaska." />
 </svelte:head>
 
-<div class="about-page">
+<div class="about-page post-body">
 
 ## About Geoffrey
 
@@ -34,17 +35,5 @@ This site is a place for me to share stories, thoughts, and discoveries from lif
     letter-spacing: -0.02em;
     color: oklch(18% 0.01 230);
     margin: 0 0 1.75rem;
-  }
-
-  .about-page :global(p) {
-    font-size: 1.03rem;
-    line-height: 1.6;
-    color: oklch(28% 0.01 230);
-    margin-block: 1em;
-    max-width: 60ch;
-  }
-
-  .about-page :global(p:first-of-type) {
-    margin-block-start: 0;
   }
 </style>
