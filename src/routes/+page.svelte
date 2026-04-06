@@ -164,12 +164,6 @@
     border: 1px solid oklch(var(--bc) / 0.15);
     border-radius: 2px;
     line-height: 1.5;
-    transition: color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .post-tag:hover {
-    color: oklch(var(--bc) / 0.65);
-    border-color: oklch(var(--bc) / 0.3);
   }
 
   /* ─── Responsive ──────────────────────────────────────────── */
