@@ -3,15 +3,11 @@
 
   let { open = $bindable(false) }: { open: boolean } = $props();
 
-  let initialized = false;
-
   onMount(async () => {
-    if (initialized) return;
     try {
-      // @ts-ignore — pagefind assets generated at build time, not present in dev
+      // @ts-expect-error — pagefind assets generated at build time, not present in dev
       const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
       new PagefindUI({ element: '#pagefind-search', showSubResults: true });
-      initialized = true;
     } catch {
       // dev mode — pagefind not built yet
     }

@@ -1,4 +1,4 @@
-export interface Post {
+interface PostBase {
   /** URL slug, e.g. "early-march" (filename minus date prefix) */
   slug: string;
   /** Four-digit year string, e.g. "2026" */
@@ -13,6 +13,13 @@ export interface Post {
   draft: boolean;
   description: string;
   tags: string[];
-  /** Rendered HTML — only present when loaded via getPost() */
-  html?: string;
 }
+
+/** Post metadata without rendered HTML — returned by getAllPosts(). */
+export type PostSummary = PostBase;
+
+/** Post with rendered HTML — returned by getPost(). */
+export type PostDetail = PostBase & { html: string };
+
+/** Union type for contexts that accept either. */
+export type Post = PostSummary | PostDetail;

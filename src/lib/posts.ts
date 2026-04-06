@@ -2,7 +2,7 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import remarkGfm from 'remark-gfm';
 import remarkHtml from 'remark-html';
-import type { Post } from './types.js';
+import type { PostDetail, PostSummary } from './types.js';
 
 // Bundled at build time — no runtime filesystem access needed.
 // Keys are absolute paths like "/src/content/posts/2026-03-06-early-march.md"
@@ -12,32 +12,35 @@ const rawFiles = import.meta.glob<string>('/src/content/posts/*.md', {
   eager: true
 });
 
-function parseFilepath(filepath: string): Pick<Post, 'year' | 'month' | 'day' | 'slug'> {
+function parseFilepath(filepath: string): Pick<PostSummary, 'year' | 'month' | 'day' | 'slug'> {
   const filename = filepath.split('/').pop()!.replace('.md', '');
   const [year, month, day, ...slugParts] = filename.split('-');
   return { year, month, day, slug: slugParts.join('-') };
 }
 
+function buildSummary(
+  coords: Pick<PostSummary, 'year' | 'month' | 'day' | 'slug'>,
+  data: Record<string, unknown>
+): PostSummary {
+  return {
+    ...coords,
+    title: data.title as string ?? '',
+    date: String(data.date ?? ''),
+    draft: data.draft as boolean ?? false,
+    description: data.description as string ?? '',
+    tags: data.tags as string[] ?? []
+  };
+}
+
 /** Returns all non-draft posts sorted newest-first. */
-export async function getAllPosts(includeDrafts = false): Promise<Post[]> {
-  const posts: Post[] = [];
+export function getAllPosts(includeDrafts = false): PostSummary[] {
+  const posts: PostSummary[] = [];
 
   for (const [filepath, raw] of Object.entries(rawFiles)) {
-    const { year, month, day, slug } = parseFilepath(filepath);
+    const coords = parseFilepath(filepath);
     const { data } = matter(raw);
     if (!includeDrafts && data.draft) continue;
-
-    posts.push({
-      slug,
-      year,
-      month,
-      day,
-      title: data.title ?? '',
-      date: String(data.date ?? ''),
-      draft: data.draft ?? false,
-      description: data.description ?? '',
-      tags: data.tags ?? []
-    });
+    posts.push(buildSummary(coords, data));
   }
 
   return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -49,7 +52,7 @@ export async function getPost(
   month: string,
   day: string,
   slug: string
-): Promise<Post | null> {
+): Promise<PostDetail | null> {
   const filepath = `/src/content/posts/${year}-${month}-${day}-${slug}.md`;
   const raw = rawFiles[filepath];
   if (!raw) return null;
@@ -58,15 +61,7 @@ export async function getPost(
   const processed = await remark().use(remarkGfm).use(remarkHtml).process(content);
 
   return {
-    slug,
-    year,
-    month,
-    day,
-    title: data.title ?? '',
-    date: String(data.date ?? ''),
-    draft: data.draft ?? false,
-    description: data.description ?? '',
-    tags: data.tags ?? [],
+    ...buildSummary({ year, month, day, slug }, data),
     html: processed.toString()
   };
 }
