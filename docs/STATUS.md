@@ -1,9 +1,9 @@
 # 907.life — Project Status
 
-**Current state:** Pass 4 complete. All core routes built (homepage, post detail, archives,
-about/contact). Design system established (Spectral + Monaspace Neon, DaisyUI silk theme,
-oklch color palette). Hookify quality rules in place. svelte-check passes at 0 errors.
-Remaining: Pagefind search, Sveltia CMS, GitHub Actions deploy.
+**Current state:** Pass 4 complete + simplify passes done. All core routes built (homepage,
+post detail, archives, about/contact). Design system established (Spectral + Monaspace Neon,
+DaisyUI silk theme, oklch color palette). Hookify quality rules in place. svelte-check
+passes at 0 errors. Remaining: Pagefind search, Sveltia CMS, GitHub Actions deploy.
 
 ---
 
