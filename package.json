@@ -10,6 +10,7 @@
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260405.1",
     "@sveltejs/adapter-cloudflare": "^5",
     "@sveltejs/kit": "^2",
     "@sveltejs/vite-plugin-svelte": "^5",
