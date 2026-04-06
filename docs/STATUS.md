@@ -1,8 +1,9 @@
 # 907.life — Project Status
 
-**Current state:** Pass 3 complete. SvelteKit project scaffolded, wrangler.toml updated,
-content pipeline (Post types + remark loader) implemented, base layout + Nav + SearchModal
-built. Dev server starts and svelte-check passes. No route pages yet.
+**Current state:** Pass 4 complete. All core routes built (homepage, post detail, archives,
+about/contact). Design system established (Spectral + Monaspace Neon, DaisyUI silk theme,
+oklch color palette). Hookify quality rules in place. svelte-check passes at 0 errors.
+Remaining: Pagefind search, Sveltia CMS, GitHub Actions deploy.
 
 ---
 
@@ -13,9 +14,9 @@ built. Dev server starts and svelte-check passes. No route pages yet.
 | 1 | Repo cleanup: remove Hugo, migrate content to `src/content/`, write new docs | ✓ Done |
 | 2 | Planning: SvelteKit implementation plan, plugins, `svelte-check` skill | ✓ Done |
 | 3 | Foundation: scaffold SvelteKit, configs, wrangler.toml, content pipeline, base layout | ✓ Done |
-| 4 | Core routes: homepage, post detail, archives — use `frontend-design` skill for distinctive UI | Pending |
-| 5 | Features: contact form (Turnstile + Email Workers), Pagefind search | Pending |
-| 6 | CMS (Sveltia), GitHub Actions deploy, first live deploy to 907.life | Pending |
+| 4 | Core routes + design system: homepage, post detail, archives, about/contact, hookify rules | ✓ Done |
+| 5 | Features: Pagefind search (verify end-to-end), Sveltia CMS config | Pending |
+| 6 | GitHub Actions deploy pipeline, first live deploy to 907.life | Pending |
 
 ---
 
@@ -24,18 +25,15 @@ built. Dev server starts and svelte-check passes. No route pages yet.
 Full task list with checkboxes:
 `docs/superpowers/plans/2026-04-05-sveltekit-implementation.md`
 
-Task 1 (plugins + skill) is complete. Pass 3 begins at Task 2.
-
 ---
 
 ## Continuing Development
 
-When the user says **"continue development"** (or similar), use
-`superpowers:subagent-driven-development` to execute the implementation plan.
+When the user says **"continue development"** (or similar), pick up from Task 10.
 
 **Plan:** `docs/superpowers/plans/2026-04-05-sveltekit-implementation.md`
-**Next pass:** Pass 4 — Tasks 6–8 (homepage, post detail, archives) — use `frontend-design` skill for UI
-**Completed tasks:** Tasks 1–5
+**Next pass:** Pass 5 — Tasks 10–11 (Pagefind search, Sveltia CMS config)
+**Completed tasks:** Tasks 1–9
 
 After each pass, run the pass-end checklist:
 1. `/simplify` — review changed code for quality and clean up (code only, not docs)
