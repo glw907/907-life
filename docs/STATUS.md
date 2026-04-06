@@ -1,9 +1,7 @@
 # 907.life — Project Status
 
-**Current state:** Pass 4 complete + simplify passes done. All core routes built (homepage,
-post detail, archives, about/contact). Design system established (Spectral + Monaspace Neon,
-DaisyUI silk theme, oklch color palette). Hookify quality rules in place. svelte-check
-passes at 0 errors. Remaining: Pagefind search, Sveltia CMS, GitHub Actions deploy.
+**Current state:** Pass 5 in progress. Task 10 (Pagefind search) complete. Task 11 (Sveltia CMS)
+pending. Tagging feature designed and planned — added as Pass 6 before deployment.
 
 ---
 
@@ -15,25 +13,30 @@ passes at 0 errors. Remaining: Pagefind search, Sveltia CMS, GitHub Actions depl
 | 2 | Planning: SvelteKit implementation plan, plugins, `svelte-check` skill | ✓ Done |
 | 3 | Foundation: scaffold SvelteKit, configs, wrangler.toml, content pipeline, base layout | ✓ Done |
 | 4 | Core routes + design system: homepage, post detail, archives, about/contact, hookify rules | ✓ Done |
-| 5 | Features: Pagefind search (verify end-to-end), Sveltia CMS config | Pending |
-| 6 | GitHub Actions deploy pipeline, first live deploy to 907.life | Pending |
+| 5 | Features: Pagefind search (Task 10 ✓), Sveltia CMS config (Task 11) | In progress |
+| 6 | Tagging: data layer, clickable tags, archives block, tag index, tag detail pages | Pending |
+| 7 | GitHub Actions deploy pipeline, first live deploy to 907.life | Pending |
 
 ---
 
-## Implementation Plan
+## Implementation Plans
 
-Full task list with checkboxes:
+Core site (Tasks 1–13):
 `docs/superpowers/plans/2026-04-05-sveltekit-implementation.md`
+
+Tagging feature (Tasks 12–16 in tagging plan):
+`docs/superpowers/plans/2026-04-06-tagging.md`
 
 ---
 
 ## Continuing Development
 
-When the user says **"continue development"** (or similar), pick up from Task 10.
+When the user says **"continue development"** (or similar), pick up from where we left off.
 
-**Plan:** `docs/superpowers/plans/2026-04-05-sveltekit-implementation.md`
-**Next pass:** Pass 5 — Tasks 10–11 (Pagefind search, Sveltia CMS config)
-**Completed tasks:** Tasks 1–9
+**Next pass:** Pass 5 — complete Task 11 (Sveltia CMS config)
+**Then:** Pass 6 — tagging feature (`docs/superpowers/plans/2026-04-06-tagging.md`, Tasks 1–5)
+**Then:** Pass 7 — GitHub Actions deploy
+**Completed tasks:** Tasks 1–10 (core plan), tagging design + plan
 
 After each pass, run the pass-end checklist:
 1. `/simplify` — review changed code for quality and clean up (code only, not docs)
