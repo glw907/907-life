@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { PageServerLoad, Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 import { createMimeMessage } from 'mimetext';

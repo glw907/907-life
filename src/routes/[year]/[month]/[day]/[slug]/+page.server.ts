@@ -2,8 +2,6 @@ import type { PageServerLoad } from './$types';
 import { getAllPosts, getPost } from '$lib/posts';
 import { error } from '@sveltejs/kit';
 
-export const prerender = true;
-
 export function entries() {
   return getAllPosts().map(({ year, month, day, slug }) => ({ year, month, day, slug }));
 }
