@@ -1,7 +1,7 @@
 # 907.life — Project Status
 
 **Current state:** Pass 5 in progress. Task 10 (Pagefind search) complete. Task 11 (Sveltia CMS)
-pending. Tagging feature designed and planned — added as Pass 6 before deployment.
+pending. Passes 6 and 7 designed and planned.
 
 ---
 
@@ -25,8 +25,11 @@ pending. Tagging feature designed and planned — added as Pass 6 before deploym
 Core site (Tasks 1–13):
 `docs/superpowers/plans/2026-04-05-sveltekit-implementation.md`
 
-Tagging feature (Tasks 12–16 in tagging plan):
+Tagging feature (Tasks 1–5 in tagging plan):
 `docs/superpowers/plans/2026-04-06-tagging.md`
+
+RSS + JSON Feed (Tasks 1–9 in feed plan):
+`docs/superpowers/plans/2026-04-06-rss-json-feed.md`
 
 ---
 
@@ -36,9 +39,9 @@ When the user says **"continue development"** (or similar), pick up from where w
 
 **Next pass:** Pass 5 — complete Task 11 (Sveltia CMS config)
 **Then:** Pass 6 — tagging feature (`docs/superpowers/plans/2026-04-06-tagging.md`, Tasks 1–5)
-**Then:** Pass 7 — RSS + JSON Feed (plan not yet written — brainstorm first)
+**Then:** Pass 7 — RSS + JSON Feed (`docs/superpowers/plans/2026-04-06-rss-json-feed.md`, Tasks 1–9)
 **Then:** Pass 8 — GitHub Actions deploy
-**Completed tasks:** Tasks 1–10 (core plan), tagging design + plan
+**Completed tasks:** Tasks 1–10 (core plan), tagging design + plan, RSS + JSON Feed design + plan
 
 After each pass, run the pass-end checklist:
 1. `/simplify` — review changed code for quality and clean up (code only, not docs)
