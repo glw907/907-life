@@ -24,7 +24,7 @@ jobs:
         run: npm run build
 
       - name: Build Pagefind index
-        run: npx pagefind --site build
+        run: npx pagefind --site .svelte-kit/cloudflare
 
       - name: Deploy
         run: npx wrangler deploy

@@ -15,7 +15,7 @@ SvelteKit · TypeScript · Tailwind CSS v4 · DaisyUI v5 · mdsvex · remark + r
 npm install
 npm run dev                                    # dev server at http://localhost:5173
 npm run build                                  # build to build/
-npm run build && npx pagefind --site build     # build + search index
+npm run build && npx pagefind --site .svelte-kit/cloudflare     # build + search index
 npx wrangler dev                               # test contact form at http://localhost:8787
 ```
 
@@ -56,7 +56,7 @@ Set with: `npx wrangler secret put SECRET_NAME`
 
 Push to `main` → GitHub Actions runs build + pagefind + wrangler deploy → live in ~2 min.
 
-Manual: `npm run build && npx pagefind --site build && npx wrangler deploy`
+Manual: `npm run build && npx pagefind --site .svelte-kit/cloudflare && npx wrangler deploy`
 
 ## Code Quality Rules
 
