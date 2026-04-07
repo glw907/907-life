@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { formatDate } from '$lib/utils';
+  import { HOMEPAGE_FEATURED_COUNT } from '$lib/config';
 
   let { data }: { data: PageData } = $props();
 </script>
@@ -25,10 +26,10 @@
     </article>
   {/if}
 
-  {#if data.posts.length > 1}
+  {#if data.posts.length > HOMEPAGE_FEATURED_COUNT}
     <h3 class="older-heading">Earlier</h3>
     <ol class="post-list" aria-label="Earlier posts">
-      {#each data.posts.slice(1) as post}
+      {#each data.posts.slice(HOMEPAGE_FEATURED_COUNT) as post}
         <li class="post-entry">
           <time class="post-date" datetime={post.date}>{formatDate(post.date)}</time>
           <h2 class="post-title">

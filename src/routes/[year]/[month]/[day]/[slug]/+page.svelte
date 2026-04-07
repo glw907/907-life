@@ -1,12 +1,13 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { formatDate } from '$lib/utils';
+  import { SITE_TITLE } from '$lib/config';
 
   let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>
-  <title>{data.post.title} — 907.life</title>
+  <title>{data.post.title} — {SITE_TITLE}</title>
   {#if data.post.description}
     <meta name="description" content={data.post.description} />
   {/if}
