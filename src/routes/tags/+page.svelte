@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
+  import { tagUrl } from '$lib/utils';
 
   let { data }: { data: PageData } = $props();
 </script>
@@ -13,7 +14,7 @@
   <h1 class="page-title">Tags</h1>
   <ul class="post-tags tags-list" aria-label="All tags">
     {#each data.tags as { tag, count }}
-      <li><a href="/tags/{tag}/" class="post-tag">{tag} ({count})</a></li>
+      <li><a href={tagUrl(tag)} class="post-tag">{tag} ({count})</a></li>
     {/each}
   </ul>
 </div>

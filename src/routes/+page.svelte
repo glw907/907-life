@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
-  import { formatDate } from '$lib/utils';
+  import { formatDate, postUrl, tagUrl } from '$lib/utils';
   import { HOMEPAGE_FEATURED_COUNT } from '$lib/config';
 
   let { data }: { data: PageData } = $props();
@@ -11,7 +11,7 @@
     <article class="featured-post">
       <time class="post-date" datetime={data.featured.date}>{formatDate(data.featured.date)}</time>
       <h2 class="featured-title">
-        <a href="/{data.featured.year}/{data.featured.month}/{data.featured.day}/{data.featured.slug}/">{data.featured.title}</a>
+        <a href={postUrl(data.featured)}>{data.featured.title}</a>
       </h2>
       <div class="post-body">
         {@html data.featured.html}
@@ -19,7 +19,7 @@
       {#if data.featured.tags.length > 0}
         <ul class="post-tags" aria-label="Tags">
           {#each data.featured.tags as tag}
-            <li><a href="/tags/{tag}/" class="post-tag">{tag}</a></li>
+            <li><a href={tagUrl(tag)} class="post-tag">{tag}</a></li>
           {/each}
         </ul>
       {/if}
@@ -33,7 +33,7 @@
         <li class="post-entry">
           <time class="post-date" datetime={post.date}>{formatDate(post.date)}</time>
           <h2 class="post-title">
-            <a href="/{post.year}/{post.month}/{post.day}/{post.slug}/">{post.title}</a>
+            <a href={postUrl(post)}>{post.title}</a>
           </h2>
           {#if post.description}
             <p class="post-description">{post.description}</p>
@@ -41,7 +41,7 @@
           {#if post.tags.length > 0}
             <ul class="post-tags" aria-label="Tags">
               {#each post.tags as tag}
-                <li><a href="/tags/{tag}/" class="post-tag">{tag}</a></li>
+                <li><a href={tagUrl(tag)} class="post-tag">{tag}</a></li>
               {/each}
             </ul>
           {/if}

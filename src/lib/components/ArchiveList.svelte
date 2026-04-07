@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PostSummary } from '$lib/types';
-  import { formatShortDate } from '$lib/utils';
+  import { formatShortDate, postUrl } from '$lib/utils';
 
   let { posts }: { posts: PostSummary[] } = $props();
 
@@ -22,7 +22,7 @@
         {#each byYear[year] as post}
           <li class="archive-entry">
             <time class="entry-date" datetime={post.date}>{formatShortDate(post.date)}</time>
-            <a class="entry-title" href="/{post.year}/{post.month}/{post.day}/{post.slug}/">
+            <a class="entry-title" href={postUrl(post)}>
               {post.title}
             </a>
           </li>

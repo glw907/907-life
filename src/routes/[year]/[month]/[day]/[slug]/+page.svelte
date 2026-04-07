@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
-  import { formatDate } from '$lib/utils';
+  import { formatDate, tagUrl } from '$lib/utils';
   import { SITE_TITLE } from '$lib/config';
 
   let { data }: { data: PageData } = $props();
@@ -26,7 +26,7 @@
   {#if data.post.tags.length > 0}
     <ul class="post-tags" aria-label="Tags">
       {#each data.post.tags as tag}
-        <li><a href="/tags/{tag}/" class="post-tag">{tag}</a></li>
+        <li><a href={tagUrl(tag)} class="post-tag">{tag}</a></li>
       {/each}
     </ul>
   {/if}

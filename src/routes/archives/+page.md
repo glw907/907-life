@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import ArchiveList from '$lib/components/ArchiveList.svelte';
+  import { tagUrl } from '$lib/utils';
   let { data }: { data: PageData } = $props();
 </script>
 
@@ -15,7 +16,7 @@
     <h2 class="section-heading">Tags</h2>
     <ul class="post-tags">
       {#each data.tags as { tag, count }}
-        <li><a href="/tags/{tag}/" class="post-tag">{tag} ({count})</a></li>
+        <li><a href={tagUrl(tag)} class="post-tag">{tag} ({count})</a></li>
       {/each}
     </ul>
   </section>
