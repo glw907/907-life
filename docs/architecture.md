@@ -91,8 +91,9 @@ Secrets: `TURNSTILE_SECRET_KEY`, `CONTACT_EMAIL`
 
 ## Search
 
-`npx pagefind --site build` runs post-build. Generates static index in `build/_pagefind/`.
-Search UI is a Svelte component wrapping the Pagefind JS API.
+`npx pagefind --site .svelte-kit/cloudflare` runs post-build. Generates static index in
+`.svelte-kit/cloudflare/pagefind/`. Search UI is a Svelte component wrapping the Pagefind
+JS API.
 
 ---
 
@@ -109,8 +110,13 @@ Primary workflow is local editing + git push. CMS is wired in for the pattern.
 
 ## Deployment
 
-Push to `main` → GitHub Actions → `npm run build` + `npx pagefind --site build`
-+ `npx wrangler deploy` → live in ~2 min.
+Push to `main` → GitHub Actions → `npm run build` + `npx pagefind --site
+.svelte-kit/cloudflare` + `npx wrangler deploy` → live in ~2 min.
+
+**Build output path:** adapter-cloudflare v5 outputs to `.svelte-kit/cloudflare/`, not
+`build/`. `wrangler.toml` `main` and `[assets] directory` both point there. Pagefind
+indexes prerendered HTML from the same directory. GitHub Actions secrets:
+`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
 
 ---
 

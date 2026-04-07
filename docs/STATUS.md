@@ -1,6 +1,6 @@
 # 907.life — Project Status
 
-**Current state:** Passes 5, 6, and 7 complete. Pass 8 (GitHub Actions deploy + first live deploy) is next.
+**Current state:** Passes 5–8 complete. All core plan tasks (1–13) done. Site is deployable — push to main triggers GitHub Actions → Cloudflare Workers.
 
 ---
 
@@ -15,7 +15,7 @@
 | 5 | Features: Pagefind search (Task 10 ✓), Sveltia CMS config (Task 11 ✓) | ✓ Done |
 | 6 | Tagging: data layer, clickable tags, archives block, tag index, tag detail pages | ✓ Done |
 | 7 | RSS + JSON Feed: config module, URL helpers, feed endpoints, footer icons | ✓ Done |
-| 8 | GitHub Actions deploy pipeline, first live deploy to 907.life | Next |
+| 8 | GitHub Actions deploy pipeline, build path fix, build verification | ✓ Done |
 
 ---
 
@@ -36,10 +36,8 @@ RSS + JSON Feed (Tasks 1–9 in feed plan):
 
 When the user says **"continue development"** (or similar), pick up from where we left off.
 
-**Next pass:** Pass 8 — GitHub Actions deploy pipeline + first live deploy to 907.life
-  - See Task 12 in `docs/superpowers/plans/2026-04-05-sveltekit-implementation.md` for the deploy workflow YAML
-  - Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` set as GitHub Actions secrets
-**Completed tasks:** Tasks 1–11 (core plan), Pass 6 (all tagging), Pass 7 (all feed tasks)
+**Next pass:** First live deploy — push to main, verify GitHub Actions runs, confirm site at 907.life
+**Completed tasks:** Tasks 1–13 (core plan), Pass 6 (all tagging), Pass 7 (all feed tasks), Pass 8 (deploy pipeline + build verification)
 
 After each pass, run the pass-end checklist:
 1. `/simplify` — review changed code for quality and clean up (code only, not docs)
