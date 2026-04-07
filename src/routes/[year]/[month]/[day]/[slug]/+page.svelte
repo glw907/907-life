@@ -61,15 +61,4 @@
     border-top: 1px solid oklch(88% 0.005 230);
   }
 
-  .back-link {
-    font-size: 0.8rem;
-    letter-spacing: 0.04em;
-    color: oklch(52% 0.008 230);
-    text-decoration: none;
-    transition: color 0.15s ease;
-  }
-
-  .back-link:hover {
-    color: oklch(28% 0.01 230);
-  }
 </style>

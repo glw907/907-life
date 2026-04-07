@@ -1,7 +1,6 @@
 # 907.life — Project Status
 
-**Current state:** Pass 5 in progress. Task 10 (Pagefind search) complete. Task 11 (Sveltia CMS)
-pending. Passes 6 and 7 designed and planned.
+**Current state:** Passes 5 and 6 complete. Pass 7 (RSS + JSON Feed) is next.
 
 ---
 
@@ -13,9 +12,9 @@ pending. Passes 6 and 7 designed and planned.
 | 2 | Planning: SvelteKit implementation plan, plugins, `svelte-check` skill | ✓ Done |
 | 3 | Foundation: scaffold SvelteKit, configs, wrangler.toml, content pipeline, base layout | ✓ Done |
 | 4 | Core routes + design system: homepage, post detail, archives, about/contact, hookify rules | ✓ Done |
-| 5 | Features: Pagefind search (Task 10 ✓), Sveltia CMS config (Task 11) | In progress |
-| 6 | Tagging: data layer, clickable tags, archives block, tag index, tag detail pages | Pending |
-| 7 | RSS + JSON Feed | Pending |
+| 5 | Features: Pagefind search (Task 10 ✓), Sveltia CMS config (Task 11 ✓) | ✓ Done |
+| 6 | Tagging: data layer, clickable tags, archives block, tag index, tag detail pages | ✓ Done |
+| 7 | RSS + JSON Feed | Next |
 | 8 | GitHub Actions deploy pipeline, first live deploy to 907.life | Pending |
 
 ---
@@ -37,11 +36,9 @@ RSS + JSON Feed (Tasks 1–9 in feed plan):
 
 When the user says **"continue development"** (or similar), pick up from where we left off.
 
-**Next pass:** Pass 5 — complete Task 11 (Sveltia CMS config)
-**Then:** Pass 6 — tagging feature (`docs/superpowers/plans/2026-04-06-tagging.md`, Tasks 1–5)
-**Then:** Pass 7 — RSS + JSON Feed (`docs/superpowers/plans/2026-04-06-rss-json-feed.md`, Tasks 1–9)
+**Next pass:** Pass 7 — RSS + JSON Feed (`docs/superpowers/plans/2026-04-06-rss-json-feed.md`, Tasks 1–9)
 **Then:** Pass 8 — GitHub Actions deploy
-**Completed tasks:** Tasks 1–10 (core plan), tagging design + plan, RSS + JSON Feed design + plan
+**Completed tasks:** Tasks 1–11 (core plan), Pass 6 (all tagging tasks), tagging + RSS + JSON Feed design + plans
 
 After each pass, run the pass-end checklist:
 1. `/simplify` — review changed code for quality and clean up (code only, not docs)

@@ -12,6 +12,8 @@ const rawFiles = import.meta.glob<string>('/src/content/posts/*.md', {
   eager: true
 });
 
+let _cachedPosts: PostSummary[] | null = null;
+
 function parseFilepath(filepath: string): Pick<PostSummary, 'year' | 'month' | 'day' | 'slug'> {
   const filename = filepath.split('/').pop()!.replace('.md', '');
   const [year, month, day, ...slugParts] = filename.split('-');
@@ -36,16 +38,19 @@ function buildSummary(
 
 /** Returns all non-draft posts sorted newest-first. */
 export function getAllPosts(includeDrafts = false): PostSummary[] {
-  const posts: PostSummary[] = [];
+  if (!includeDrafts && _cachedPosts) return _cachedPosts;
 
+  const posts: PostSummary[] = [];
   for (const [filepath, raw] of Object.entries(rawFiles)) {
     const coords = parseFilepath(filepath);
     const { data } = matter(raw);
     if (!includeDrafts && data.draft) continue;
     posts.push(buildSummary(coords, data));
   }
+  const sorted = posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  if (!includeDrafts) _cachedPosts = sorted;
+  return sorted;
 }
 
 /** Returns all unique tags across non-draft posts, sorted alphabetically with counts. */

@@ -55,8 +55,18 @@ Frontmatter: `title`, `date`, `draft`, `tags`, `description`
 (adds `html: string`, returned by `getPost`). Prevents callers from accidentally
 accessing `.html` on list results — it's a type error, not a runtime undefined.
 
-**`getAllPosts` is synchronous** — rawFiles is eagerly loaded, gray-matter is sync,
-no awaits. Only `getPost` is async (remark `.process()` returns a Promise).
+**`getAllPosts` is synchronous and memoized** — rawFiles is eagerly loaded, gray-matter
+is sync, no awaits. The parsed+sorted result is cached in `_cachedPosts` (module-level)
+so repeated calls within a build/request don't re-parse. Only `getPost` is async
+(remark `.process()` returns a Promise).
+
+**Tagging:** `getAllTags()` derives tag counts from `getAllPosts()`. `getPostsByTag(tag)`
+filters `getAllPosts()`. Both benefit from the `_cachedPosts` memo — the underlying
+parse work only happens once even when both are called in the same load function.
+
+**Tag routes:** `/tags/` index and `/tags/[tag]/` detail pages are fully pre-rendered.
+`entries()` in `[tag]/+page.server.ts` drives static generation of all tag pages at
+build time. Tags not present in any post return 404.
 
 ### Special Pages — mdsvex
 
@@ -122,8 +132,9 @@ predictable contrast. DaisyUI CSS vars still used for theme-level overrides only
 **Homepage layout:** Featured post shown in full (most recent), followed by summary list
 ("Earlier"). Rationale: the blog is read top-to-bottom — the newest thing is the point.
 
-**Shared CSS in `app.css`:** `.post-body`, `.post-date`, `.post-tags`/`.post-tag` are
-global classes used by both homepage and post detail. Everything else is scoped per route.
+**Shared CSS in `app.css`:** `.post-body`, `.post-date`, `.post-tags`/`.post-tag`,
+`.page-title`, and `.back-link` are global classes used across multiple routes.
+Everything else is scoped per route.
 
 **Hookify quality rules:** Nine rules in `.claude/hookify.*.local.md` enforce Svelte 5
 runes, oklch colors, DaisyUI v5 class names, Tailwind v4 APIs, and SvelteKit patterns.
