@@ -48,6 +48,24 @@ export function getAllPosts(includeDrafts = false): PostSummary[] {
   return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
+/** Returns all unique tags across non-draft posts, sorted alphabetically with counts. */
+export function getAllTags(): { tag: string; count: number }[] {
+  const counts: Record<string, number> = {};
+  for (const post of getAllPosts()) {
+    for (const tag of post.tags) {
+      counts[tag] = (counts[tag] ?? 0) + 1;
+    }
+  }
+  return Object.entries(counts)
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => a.tag.localeCompare(b.tag));
+}
+
+/** Returns all non-draft posts with the given tag, sorted newest-first. */
+export function getPostsByTag(tag: string): PostSummary[] {
+  return getAllPosts().filter(p => p.tags.includes(tag));
+}
+
 /** Returns a single post with rendered HTML, or null if not found. */
 export async function getPost(
   year: string,
