@@ -18,7 +18,7 @@
       {#if data.featured.tags.length > 0}
         <ul class="post-tags" aria-label="Tags">
           {#each data.featured.tags as tag}
-            <li class="post-tag">{tag}</li>
+            <li><a href="/tags/{tag}/" class="post-tag">{tag}</a></li>
           {/each}
         </ul>
       {/if}
@@ -40,7 +40,7 @@
           {#if post.tags.length > 0}
             <ul class="post-tags" aria-label="Tags">
               {#each post.tags as tag}
-                <li class="post-tag">{tag}</li>
+                <li><a href="/tags/{tag}/" class="post-tag">{tag}</a></li>
               {/each}
             </ul>
           {/if}

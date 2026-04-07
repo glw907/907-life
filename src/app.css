@@ -125,6 +125,13 @@ body {
   border: 1px solid oklch(82% 0.006 230);
   border-radius: 2px;
   line-height: 1.6;
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.post-tag:hover {
+  color: oklch(35% 0.012 230);
+  border-color: oklch(62% 0.01 230);
 }
 
 /* ─── Post body (rendered markdown HTML) ─────────────────── */
