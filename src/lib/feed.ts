@@ -4,27 +4,28 @@ import { postUrl } from '$lib/utils';
 
 export interface FeedItem {
   title: string;
-  /** Absolute URL: SITE_URL + postUrl(post) */
   url: string;
-  /** ISO date string from frontmatter, e.g. "2026-03-06" */
   date: string;
   description: string;
-  /** Full rendered HTML from getPost() */
   html: string;
   tags: string[];
 }
 
+let _cachedFeed: FeedItem[] | null = null;
+
 /**
- * Fetches all feed items, newest-first. Respects FEED_MAX_ITEMS (0 = all).
- * Renders full HTML for each post via getPost().
+ * Returns feed items newest-first, up to FEED_MAX_ITEMS (0 = all).
+ * Memoized: post content is bundled at build time and never changes at runtime.
  */
 export async function getFeedItems(): Promise<FeedItem[]> {
+  if (_cachedFeed) return _cachedFeed;
+
   let posts = getAllPosts();
   if (FEED_MAX_ITEMS > 0) {
     posts = posts.slice(0, FEED_MAX_ITEMS);
   }
 
-  return Promise.all(
+  _cachedFeed = await Promise.all(
     posts.map(async (post) => {
       const detail = await getPost(post.year, post.month, post.day, post.slug);
       return {
@@ -37,4 +38,6 @@ export async function getFeedItems(): Promise<FeedItem[]> {
       };
     })
   );
+
+  return _cachedFeed;
 }

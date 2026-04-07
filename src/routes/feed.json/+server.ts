@@ -1,6 +1,7 @@
 import type { RequestHandler } from './$types';
 import { getFeedItems } from '$lib/feed';
 import { SITE_TITLE, SITE_URL, SITE_DESCRIPTION, SITE_AUTHOR } from '$lib/config';
+import { toISODateTime } from '$lib/utils';
 
 export const GET: RequestHandler = async () => {
   const items = await getFeedItems();
@@ -16,7 +17,7 @@ export const GET: RequestHandler = async () => {
       id: item.url,
       url: item.url,
       title: item.title,
-      date_published: item.date + 'T00:00:00Z',
+      date_published: toISODateTime(item.date),
       summary: item.description,
       content_html: item.html,
       ...(item.tags.length > 0 && { tags: item.tags })

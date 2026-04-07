@@ -1,6 +1,7 @@
 import type { RequestHandler } from './$types';
 import { getFeedItems } from '$lib/feed';
 import { SITE_TITLE, SITE_URL, SITE_DESCRIPTION } from '$lib/config';
+import { toRFC822 } from '$lib/utils';
 
 function escapeXml(str: string): string {
   return str
@@ -8,10 +9,6 @@ function escapeXml(str: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-}
-
-function toRFC822(iso: string): string {
-  return new Date(iso + 'T00:00:00Z').toUTCString();
 }
 
 export const GET: RequestHandler = async () => {

@@ -136,6 +136,22 @@ predictable contrast. DaisyUI CSS vars still used for theme-level overrides only
 `.page-title`, and `.back-link` are global classes used across multiple routes.
 Everything else is scoped per route.
 
+**Site constants in `src/lib/config.ts`:** All site-specific values (`SITE_URL`,
+`SITE_TITLE`, `SITE_DESCRIPTION`, `SITE_AUTHOR`, `SITE_LOCALE`, `FEED_MAX_ITEMS`,
+`HOMEPAGE_FEATURED_COUNT`) live here. A hookify rule (`site-constants`) catches
+hardcoded drift in `.svelte` and `.ts` files. Adapting for a new site = update
+`config.ts` + hookify pattern.
+
+**URL helpers in `src/lib/utils.ts`:** `postUrl(post)` and `tagUrl(tag)` produce
+canonical relative URLs. `toRFC822(iso)` and `toISODateTime(iso)` produce feed-format
+dates. All date parsing uses a private `parseUtcDate(iso)` helper to avoid
+timezone-shift on bare YYYY-MM-DD strings.
+
+**Feeds:** RSS 2.0 at `/feed.xml`, JSON Feed 1.1 at `/feed.json`. Both use a shared
+`getFeedItems()` data layer in `src/lib/feed.ts`. The feed result is memoized at module
+level — post content is bundled at build time and never changes within a Worker isolate.
+Autodiscovery `<link rel="alternate">` tags in `+layout.svelte` cover both formats.
+
 **Hookify quality rules:** Nine rules in `.claude/hookify.*.local.md` enforce Svelte 5
 runes, oklch colors, DaisyUI v5 class names, Tailwind v4 APIs, and SvelteKit patterns.
 Research-backed against official migration guides and community best practices.

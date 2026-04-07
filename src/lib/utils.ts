@@ -2,13 +2,17 @@ import { SITE_LOCALE } from '$lib/config';
 import type { PostSummary } from '$lib/types';
 
 /**
- * Format an ISO date string (YYYY-MM-DD) as a human-readable date.
- * Parses as UTC to avoid timezone-shift on bare YYYY-MM-DD strings.
+ * Parse an ISO date string (YYYY-MM-DD) as a UTC Date.
+ * Avoids timezone-shift that occurs when Date parses bare YYYY-MM-DD as local time.
  */
-export function formatDate(iso: string): string {
+function parseUtcDate(iso: string): Date {
   const [year, month, day] = iso.split('-').map(Number);
-  const d = new Date(Date.UTC(year, month - 1, day));
-  return d.toLocaleDateString(SITE_LOCALE, {
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+/** Format an ISO date string (YYYY-MM-DD) as a human-readable date. */
+export function formatDate(iso: string): string {
+  return parseUtcDate(iso).toLocaleDateString(SITE_LOCALE, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -16,18 +20,23 @@ export function formatDate(iso: string): string {
   });
 }
 
-/**
- * Format an ISO date string (YYYY-MM-DD) as a short date (e.g. "Mar 6").
- * Parses as UTC to avoid timezone-shift on bare YYYY-MM-DD strings.
- */
+/** Format an ISO date string (YYYY-MM-DD) as a short date (e.g. "Mar 6"). */
 export function formatShortDate(iso: string): string {
-  const [year, month, day] = iso.split('-').map(Number);
-  const d = new Date(Date.UTC(year, month - 1, day));
-  return d.toLocaleDateString(SITE_LOCALE, {
+  return parseUtcDate(iso).toLocaleDateString(SITE_LOCALE, {
     month: 'short',
     day: 'numeric',
     timeZone: 'UTC',
   });
+}
+
+/** Format an ISO date string (YYYY-MM-DD) as an RFC 822 date (for RSS). */
+export function toRFC822(iso: string): string {
+  return parseUtcDate(iso).toUTCString();
+}
+
+/** Format an ISO date string (YYYY-MM-DD) as an ISO 8601 datetime (for JSON Feed). */
+export function toISODateTime(iso: string): string {
+  return iso + 'T00:00:00Z';
 }
 
 /** Returns the canonical relative URL for a post, e.g. /2026/03/06/early-march/ */
