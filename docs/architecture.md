@@ -122,13 +122,23 @@ indexes prerendered HTML from the same directory. GitHub Actions secrets:
 
 ## Design System
 
+**Color tokens:** 17 semantic tokens defined in `@theme` (generates both CSS vars and
+Tailwind utilities). Light (silk) values are defaults; `@plugin "daisyui/theme"` extends
+the built-in dim theme with dark overrides. Tokens use `--color-*` namespace to avoid
+collision with DaisyUI slots. Full token table in
+`docs/superpowers/specs/2026-04-07-css-token-system-design.md`.
+
 **Color:** `oklch()` throughout — no hex, no `rgb()`. Two hue anchors:
 - Hue 230 (cool blue-grey) — UI chrome: nav, borders, code blocks, date labels
-- Hue 61 (warm content) — body text via DaisyUI silk theme (`--color-base-content`)
+- Hue 61 (warm content) — body text via DaisyUI theme (`--color-base-content`)
 
-**Why fixed oklch over DaisyUI CSS vars:** `oklch(var(--bc) / opacity)` lookups were too
-faint on the silk theme's warm off-white background. Fixed oklch values give precise,
-predictable contrast. DaisyUI CSS vars still used for theme-level overrides only.
+**Theme persistence:** Cookie-based (`theme` cookie) with `hooks.server.ts` SSR injection.
+Inline `<script>` in app.html reads cookie → localStorage → prefers-color-scheme as
+fallback chain. No flash on any path. Toggle in nav writes cookie + localStorage.
+
+**DaisyUI theme config:** `@plugin "daisyui" { themes: silk --default, dim --prefersdark }`
+enables both themes. Custom overrides use `@plugin "daisyui/theme"` (NOT raw
+`[data-theme]` blocks) to inherit built-in theme variables like `base-100`.
 
 **Typography hierarchy:**
 - Body: Spectral 400/700 — warm serif, handles technical density without feeling clinical
@@ -158,9 +168,10 @@ timezone-shift on bare YYYY-MM-DD strings.
 level — post content is bundled at build time and never changes within a Worker isolate.
 Autodiscovery `<link rel="alternate">` tags in `+layout.svelte` cover both formats.
 
-**Hookify quality rules:** Nine rules in `.claude/hookify.*.local.md` enforce Svelte 5
-runes, oklch colors, DaisyUI v5 class names, Tailwind v4 APIs, and SvelteKit patterns.
-Research-backed against official migration guides and community best practices.
+**Hookify quality rules:** Ten rules in `.claude/hookify.*.local.md` enforce Svelte 5
+runes, oklch colors, color token usage, DaisyUI v5 class names, Tailwind v4 APIs, and
+SvelteKit patterns. Research-backed against official migration guides and community best
+practices.
 
 **Turnstile in dev:** Skipped gracefully — `verifyTurnstile` only runs when
 `platform.env.TURNSTILE_SECRET_KEY` is present. Always-pass test key

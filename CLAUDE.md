@@ -72,13 +72,15 @@ Hookify guards enforce these conventions automatically. Rules live in `.claude/h
 | `tailwind-v3-compat` | Edit `.svelte`/`.html` | Removed/renamed Tailwind v3 utilities (`shadow-sm`, `bg-opacity-*`, etc.) |
 | `sveltekit-patterns` | Edit `.svelte`/`.ts` | `$app/stores` (deprecated), `goto()` external URLs, `fs` imports |
 | `html-injection` | Edit `.svelte` | `{@html}` usage — prompts XSS checklist |
+| `hardcoded-oklch` | Edit `.svelte`/`.css` | Raw `oklch()` values (use `var(--color-*)` tokens) |
 | `svelte-check-reminder` | Session stop | Reminds to run `/svelte-check` before declaring done |
 
 **Design system anchors:**
-- Colors: `oklch()` with hue 230 (UI chrome) and hue 61 (warm content text)
+- Colors: 17 semantic tokens (`--color-*`) in `@theme`, dark overrides via `@plugin "daisyui/theme"`
 - Typography: Spectral (body), Outfit (display), Monaspace Neon (mono)
-- Tokens: DaisyUI v5 semantic classes first, scoped `<style>` for anything design-specific
+- Tokens: `var(--color-*)` for all colors, DaisyUI v5 semantic classes for layout, scoped `<style>` for design-specific rules
 - Never use DaisyUI v4 short CSS vars (`--bc`, `--p`, etc.) — renamed in v5, silently resolve to nothing
+- Never hardcode `oklch()` in component styles — define new tokens in `@theme` block
 
 ## Cross-Site Admin
 
