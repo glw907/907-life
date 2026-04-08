@@ -1,5 +1,7 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: silk --default, dim --prefersdark;
+}
 
 @font-face {
   font-family: 'Outfit';
@@ -100,12 +102,19 @@
   --color-highlight: oklch(85% 0.06 80 / 0.35);
 }
 
-/* Deepen silk theme text for reading contrast */
-[data-theme="silk"] {
+/* Silk theme — deepen base-content for reading contrast */
+@plugin "daisyui/theme" {
+  name: "silk";
+  default: true;
+  color-scheme: light;
   --color-base-content: oklch(22% 0.012 61);
 }
 
-[data-theme="dim"] {
+/* Dim theme — inherit DaisyUI dim (dark bg, etc.) + custom token overrides */
+@plugin "daisyui/theme" {
+  name: "dim";
+  prefersdark: true;
+  color-scheme: dark;
   --color-base-content: oklch(80% 0.012 61);
   --color-heading: oklch(88% 0.01 230);
   --color-body: oklch(78% 0.01 230);
