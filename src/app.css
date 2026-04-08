@@ -79,6 +79,25 @@
   --font-mono: 'Monaspace Neon', ui-monospace, monospace;
   --default-font-family: 'Spectral', Georgia, serif;
   --default-mono-font-family: 'Monaspace Neon', ui-monospace, monospace;
+
+  /* Color tokens — silk (light) defaults */
+  --color-heading: oklch(18% 0.01 230);
+  --color-body: oklch(28% 0.01 230);
+  --color-muted: oklch(55% 0.008 230);
+  --color-faint: oklch(68% 0.008 230);
+  --color-border: oklch(82% 0.006 230);
+  --color-border-subtle: oklch(90% 0.004 230);
+  --color-surface: oklch(93.5% 0.005 230);
+  --color-link: oklch(32% 0.015 230);
+  --color-link-hover: oklch(22% 0.02 230);
+  --color-tag: oklch(50% 0.012 230);
+  --color-tag-hash: oklch(68% 0.008 230);
+  --color-focus-ring: oklch(62% 0.012 230 / 0.12);
+  --color-success: oklch(42% 0.012 145);
+  --color-error: oklch(45% 0.02 25);
+  --color-error-bg: oklch(96% 0.008 25);
+  --color-error-border: oklch(85% 0.015 25);
+  --color-highlight: oklch(85% 0.06 80 / 0.35);
 }
 
 /* Deepen silk theme text for reading contrast */
@@ -86,10 +105,32 @@
   --color-base-content: oklch(22% 0.012 61);
 }
 
+[data-theme="dim"] {
+  --color-base-content: oklch(80% 0.012 61);
+  --color-heading: oklch(88% 0.01 230);
+  --color-body: oklch(78% 0.01 230);
+  --color-muted: oklch(58% 0.008 230);
+  --color-faint: oklch(45% 0.008 230);
+  --color-border: oklch(32% 0.012 230);
+  --color-border-subtle: oklch(28% 0.008 230);
+  --color-surface: oklch(26% 0.012 230);
+  --color-link: oklch(72% 0.015 230);
+  --color-link-hover: oklch(82% 0.02 230);
+  --color-tag: oklch(60% 0.012 230);
+  --color-tag-hash: oklch(45% 0.008 230);
+  --color-focus-ring: oklch(58% 0.008 230 / 0.2);
+  --color-success: oklch(62% 0.012 145);
+  --color-error: oklch(65% 0.02 25);
+  --color-error-bg: oklch(26% 0.012 25);
+  --color-error-border: oklch(35% 0.015 25);
+  --color-highlight: oklch(45% 0.08 80 / 0.4);
+}
+
 body {
   font-family: var(--font-body);
   font-size: 1.05rem;
   line-height: 1.58;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ─── Shared post chrome ──────────────────────────────────── */
