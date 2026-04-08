@@ -78,6 +78,7 @@
   .site-logo:hover { opacity: 0.7; }
 
   .logo-primary {
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 1.35rem;
     letter-spacing: -0.02em;

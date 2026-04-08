@@ -48,6 +48,7 @@
   }
 
   .post-title {
+    font-family: var(--font-display);
     font-size: clamp(1.55rem, 4.5vw, 1.95rem);
     font-weight: 700;
     line-height: 1.18;

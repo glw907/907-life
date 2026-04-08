@@ -31,19 +31,21 @@
     <ol class="post-list" aria-label="Earlier posts">
       {#each data.posts.slice(HOMEPAGE_FEATURED_COUNT) as post}
         <li class="post-entry">
-          <time class="post-date" datetime={post.date}>{formatDate(post.date)}</time>
+          <div class="post-meta">
+            <time class="post-date" datetime={post.date}>{formatDate(post.date)}</time>
+            {#if post.tags.length > 0}
+              <ul class="post-tags post-tags-inline" aria-label="Tags">
+                {#each post.tags as tag}
+                  <li><a href={tagUrl(tag)} class="post-tag">{tag}</a></li>
+                {/each}
+              </ul>
+            {/if}
+          </div>
           <h2 class="post-title">
             <a href={postUrl(post)}>{post.title}</a>
           </h2>
           {#if post.description}
             <p class="post-description">{post.description}</p>
-          {/if}
-          {#if post.tags.length > 0}
-            <ul class="post-tags" aria-label="Tags">
-              {#each post.tags as tag}
-                <li><a href={tagUrl(tag)} class="post-tag">{tag}</a></li>
-              {/each}
-            </ul>
           {/if}
         </li>
       {/each}
@@ -66,6 +68,7 @@
 
   /* Featured title — the anchor of the page */
   .featured-title {
+    font-family: var(--font-display);
     font-size: clamp(1.55rem, 4.5vw, 1.95rem);
     font-weight: 700;
     line-height: 1.18;
@@ -111,6 +114,7 @@
 
   /* Post list title */
   .post-title {
+    font-family: var(--font-display);
     font-size: clamp(1.05rem, 3vw, 1.25rem);
     font-weight: 700;
     line-height: 1.25;
@@ -126,6 +130,17 @@
 
   .post-title a:hover {
     color: var(--color-muted);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .post-tags-inline {
+    margin-block-start: 0;
+    gap: 0.1rem 0.5rem;
   }
 
   /* Description — quieter than the title, italic */

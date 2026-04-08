@@ -12,9 +12,14 @@
 
 <div class="tags-page">
   <h1 class="page-title">Tags</h1>
-  <ul class="post-tags tags-list" aria-label="All tags">
+  <ul class="tags-list" aria-label="All tags">
     {#each data.tags as { tag, count }}
-      <li><a href={tagUrl(tag)} class="post-tag">{tag} ({count})</a></li>
+      <li>
+        <a href={tagUrl(tag)} class="tag-entry">
+          <span class="tag-name">{tag}</span>
+          <span class="tag-count">{count}</span>
+        </a>
+      </li>
     {/each}
   </ul>
 </div>
@@ -25,6 +30,32 @@
   }
 
   .tags-list {
-    margin-block-start: 0;
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.25rem;
+  }
+
+  .tag-entry {
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    font-weight: 400;
+    color: var(--color-tag);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .tag-entry:hover {
+    color: var(--color-heading);
+  }
+
+  .tag-count {
+    font-size: 0.65em;
+    font-weight: 400;
+    color: var(--color-muted);
+    vertical-align: super;
+    margin-inline-start: 0.1em;
   }
 </style>
