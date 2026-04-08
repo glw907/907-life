@@ -104,7 +104,6 @@
     color: var(--color-muted);
     text-decoration: none;
     transition: color 0.2s ease;
-    /* adequate tap target */
     padding-block: 0.4rem;
   }
   .nav-link:hover { color: var(--color-body); }

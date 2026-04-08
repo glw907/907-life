@@ -28,7 +28,7 @@
               </a>
               {#if post.tags.length > 0}
                 <span class="entry-tags">
-                  {#each post.tags as tag, i}
+                  {#each post.tags as tag}
                     <a href={tagUrl(tag)} class="entry-tag">{tag}</a>
                   {/each}
                 </span>

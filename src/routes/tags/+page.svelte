@@ -1,12 +1,13 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { tagUrl } from '$lib/utils';
+  import { SITE_TITLE } from '$lib/config';
 
   let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>
-  <title>Tags — 907.life</title>
+  <title>Tags — {SITE_TITLE}</title>
   <meta name="description" content="Browse posts by tag." />
 </svelte:head>
 
