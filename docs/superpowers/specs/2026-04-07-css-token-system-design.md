@@ -60,7 +60,9 @@ New tokens can be added to `@theme` + the dim override block as needed.
 
 ```
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: silk --default, dim --prefersdark;
+}
 
 @font-face declarations (unchanged)
 
@@ -69,13 +71,19 @@ New tokens can be added to `@theme` + the dim override block as needed.
   --color-heading through --color-highlight (silk defaults)
 }
 
-[data-theme="silk"] {
-  --color-base-content: oklch(22% 0.012 61);   /* DaisyUI override */
+@plugin "daisyui/theme" {
+  name: "silk";
+  default: true;
+  color-scheme: light;
+  --color-base-content: oklch(22% 0.012 61);
 }
 
-[data-theme="dim"] {
-  --color-base-content: oklch(80% 0.012 61);   /* DaisyUI override */
-  --color-heading through --color-highlight     /* dark overrides */
+@plugin "daisyui/theme" {
+  name: "dim";
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-content: oklch(80% 0.012 61);
+  --color-heading through --color-highlight   /* dark overrides */
 }
 
 body { ... }
@@ -86,6 +94,10 @@ Shared post chrome (.post-date, .post-tags, etc.)
 Post body (.post-body)
   — all using var(--color-*) references
 ```
+
+**Important:** Theme overrides MUST use `@plugin "daisyui/theme"`, not raw
+`[data-theme="..."]` blocks. Raw blocks don't inherit the built-in theme's
+variables (base-100, base-200, etc.), so backgrounds/surfaces won't change.
 
 ## Theme Infrastructure
 
