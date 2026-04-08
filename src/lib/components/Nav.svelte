@@ -40,13 +40,13 @@
     font-weight: 700;
     font-size: 1.35rem;
     letter-spacing: -0.02em;
-    color: oklch(18% 0.01 230);
+    color: var(--color-heading);
   }
   .logo-secondary {
     font-weight: 400;
     font-size: 0.95rem;
     letter-spacing: -0.01em;
-    color: oklch(62% 0.008 230);
+    color: var(--color-muted);
   }
 
   .nav-links {
@@ -59,14 +59,14 @@
     font-size: 0.75rem;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: oklch(52% 0.008 230);
+    color: var(--color-muted);
     text-decoration: none;
     transition: color 0.2s ease;
     /* adequate tap target */
     padding-block: 0.4rem;
   }
-  .nav-link:hover { color: oklch(28% 0.01 230); }
-  .nav-link:active { color: oklch(18% 0.01 230); }
+  .nav-link:hover { color: var(--color-body); }
+  .nav-link:active { color: var(--color-heading); }
 
   .nav-icon {
     display: flex;
@@ -75,8 +75,8 @@
     border: none;
     padding: 0.4rem;
     cursor: pointer;
-    color: oklch(52% 0.008 230);
+    color: var(--color-muted);
     transition: color 0.2s ease;
   }
-  .nav-icon:hover { color: oklch(28% 0.01 230); }
+  .nav-icon:hover { color: var(--color-body); }
 </style>

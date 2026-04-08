@@ -46,7 +46,7 @@
     font-weight: 400;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: oklch(58% 0.008 230);
+    color: var(--color-muted);
     margin-block-end: 1rem;
   }
 
@@ -61,7 +61,7 @@
     align-items: baseline;
     gap: 1.25rem;
     padding-block: 0.6rem;
-    border-bottom: 1px solid oklch(92% 0.003 230);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .archive-entry:last-child {
@@ -71,7 +71,7 @@
   .entry-date {
     font-size: 0.75rem;
     letter-spacing: 0.04em;
-    color: oklch(58% 0.008 230);
+    color: var(--color-muted);
     white-space: nowrap;
     width: 4.5rem;
     flex-shrink: 0;
@@ -79,13 +79,13 @@
 
   .entry-title {
     font-size: 0.975rem;
-    color: oklch(22% 0.01 230);
+    color: var(--color-heading);
     text-decoration: none;
     transition: color 0.15s ease;
     line-height: 1.4;
   }
 
   .entry-title:hover {
-    color: oklch(40% 0.025 230);
+    color: var(--color-muted);
   }
 </style>

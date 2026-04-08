@@ -87,14 +87,14 @@
   .contact-section {
     margin-block-start: 3.5rem;
     padding-block-start: 3rem;
-    border-top: 1px solid oklch(88% 0.005 230);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
   .contact-heading {
     font-size: clamp(1.15rem, 3vw, 1.35rem);
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: oklch(18% 0.01 230);
+    color: var(--color-heading);
     margin: 0 0 1.75rem;
   }
 
@@ -114,9 +114,9 @@
   .field-input {
     font-family: inherit;
     font-size: 0.975rem;
-    color: oklch(22% 0.01 230);
-    background: oklch(98% 0.002 230);
-    border: 1px solid oklch(82% 0.006 230);
+    color: var(--color-heading);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 3px;
     padding: 0.55rem 0.75rem;
     width: 100%;
@@ -125,8 +125,8 @@
   }
 
   .field-input:focus {
-    border-color: oklch(62% 0.012 230);
-    box-shadow: 0 0 0 3px oklch(62% 0.012 230 / 0.12);
+    border-color: var(--color-muted);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
   }
 
   .field-textarea {
@@ -141,8 +141,8 @@
     font-size: 0.8rem;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: oklch(98% 0.002 230);
-    background: oklch(28% 0.01 230);
+    color: var(--color-surface);
+    background: var(--color-body);
     border: none;
     border-radius: 3px;
     padding: 0.6em 1.4em;
@@ -151,7 +151,7 @@
   }
 
   .submit-btn:hover:not(:disabled) {
-    background: oklch(20% 0.01 230);
+    background: var(--color-heading);
   }
 
   .submit-btn:disabled {
@@ -161,16 +161,16 @@
 
   .form-success {
     font-style: italic;
-    color: oklch(42% 0.012 145);
+    color: var(--color-success);
     font-size: 0.975rem;
   }
 
   .form-error {
     font-size: 0.875rem;
-    color: oklch(45% 0.02 25);
+    color: var(--color-error);
     padding: 0.6rem 0.75rem;
-    background: oklch(96% 0.008 25);
-    border: 1px solid oklch(85% 0.015 25);
+    background: var(--color-error-bg);
+    border: 1px solid var(--color-error-border);
     border-radius: 3px;
   }
 </style>
