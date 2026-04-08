@@ -61,7 +61,7 @@
   .featured-post {
     padding-block-end: 3.5rem;
     margin-block-end: 3.5rem;
-    border-bottom: 1px solid oklch(82% 0.006 230);
+    border-bottom: 1px solid var(--color-border);
   }
 
   /* Featured title — the anchor of the page */
@@ -72,17 +72,17 @@
     margin: 0 0 1.75rem;
     letter-spacing: -0.02em;
     padding-bottom: 1.75rem;
-    border-bottom: 1px solid oklch(88% 0.005 230);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .featured-title a {
-    color: oklch(18% 0.01 230);
+    color: var(--color-heading);
     text-decoration: none;
     transition: color 0.15s ease;
   }
 
   .featured-title a:hover {
-    color: oklch(38% 0.04 230);
+    color: var(--color-muted);
   }
 
   /* ─── Older posts section ─────────────────────────────────── */
@@ -91,7 +91,7 @@
     font-weight: 400;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: oklch(58% 0.008 230);
+    color: var(--color-muted);
     margin-block-end: 1.75rem;
   }
 
@@ -103,7 +103,7 @@
 
   .post-entry {
     padding-block: 1.5rem;
-    border-bottom: 1px solid oklch(90% 0.004 230);
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .post-entry:first-child { padding-block-start: 0; }
@@ -119,13 +119,13 @@
   }
 
   .post-title a {
-    color: oklch(20% 0.01 230);
+    color: var(--color-heading);
     text-decoration: none;
     transition: color 0.15s ease;
   }
 
   .post-title a:hover {
-    color: oklch(40% 0.025 230);
+    color: var(--color-muted);
   }
 
   /* Description — quieter than the title, italic */
@@ -133,7 +133,7 @@
     font-size: 0.88rem;
     font-style: italic;
     line-height: 1.55;
-    color: oklch(48% 0.008 230);
+    color: var(--color-muted);
     margin: 0.35rem 0 0;
   }
 </style>

@@ -43,7 +43,7 @@
 
   .post-header {
     padding-block-end: 1.75rem;
-    border-bottom: 1px solid oklch(88% 0.005 230);
+    border-bottom: 1px solid var(--color-border-subtle);
     margin-block-end: 1.75rem;
   }
 
@@ -53,13 +53,13 @@
     line-height: 1.18;
     margin: 0.65rem 0 0;
     letter-spacing: -0.02em;
-    color: oklch(18% 0.01 230);
+    color: var(--color-heading);
   }
 
   .post-footer {
     margin-block-start: 3.5rem;
     padding-block-start: 1.75rem;
-    border-top: 1px solid oklch(88% 0.005 230);
+    border-top: 1px solid var(--color-border-subtle);
   }
 
 </style>

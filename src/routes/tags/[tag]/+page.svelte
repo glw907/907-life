@@ -26,6 +26,6 @@
   .tag-footer {
     margin-block-start: 3rem;
     padding-block-start: 1.75rem;
-    border-top: 1px solid oklch(88% 0.005 230);
+    border-top: 1px solid var(--color-border-subtle);
   }
 </style>

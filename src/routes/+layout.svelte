@@ -63,17 +63,17 @@
   .footer-icon-link {
     display: flex;
     align-items: center;
-    color: oklch(60% 0.008 230);
+    color: var(--color-muted);
     transition: color 0.2s ease;
   }
 
   .footer-icon-link:hover {
-    color: oklch(35% 0.012 230);
+    color: var(--color-body);
   }
 
   .footer-name {
     font-size: 0.75rem;
-    color: oklch(62% 0.008 230);
+    color: var(--color-muted);
     margin: 0;
   }
 </style>
