@@ -20,7 +20,7 @@ Design decisions for the SvelteKit rebuild.
 | Adapter | @sveltejs/adapter-cloudflare | First-class Workers support, form actions work natively |
 | Contact form | Cloudflare Email Workers | Native Cloudflare, free tier, replaces Resend |
 | Spam protection | Cloudflare Turnstile | Carried over from Hugo site |
-| Fonts | Spectral + Outfit + Monaspace Neon (woff2, self-hosted) | Scholar's study aesthetic: Spectral for prose warmth, Monaspace Neon for terminal-precise code |
+| Fonts | Spectral + Karla + Monaspace Neon (woff2, self-hosted) | Scholar's study aesthetic: Spectral for prose warmth, Monaspace Neon for terminal-precise code |
 
 **Reusable core (the pattern):**
 SvelteKit + TS + adapter-cloudflare · Tailwind v4 + DaisyUI v5 · remark/mdsvex pipeline
@@ -142,7 +142,7 @@ enables both themes. Custom overrides use `@plugin "daisyui/theme"` (NOT raw
 
 **Typography hierarchy:**
 - Body: Spectral 400/700 — warm serif, handles technical density without feeling clinical
-- Display: Outfit 400/600/700 — used in nav logo only; provides sans contrast
+- Display: Karla 400–700 — used in nav logo only; provides sans contrast
 - Mono: Monaspace Neon — tight line-height (1.35) for terminal character
 
 **Homepage layout:** Featured post shown in full (most recent), followed by summary list

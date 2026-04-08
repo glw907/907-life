@@ -31,6 +31,7 @@
           <circle cx="5" cy="19" r="1" fill="currentColor" stroke="none"/>
         {/snippet}
       </Icon>
+      <span class="footer-label">rss</span>
     </a>
     <a href="/feed.json" aria-label="JSON feed" class="footer-icon-link">
       <Icon label="JSON feed">
@@ -39,6 +40,7 @@
           <polyline points="8 6 2 12 8 18"/>
         {/snippet}
       </Icon>
+      <span class="footer-label">json</span>
     </a>
     <a href="/about#contact" aria-label="Contact" class="footer-icon-link">
       <Icon label="Contact">
@@ -47,6 +49,7 @@
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
         {/snippet}
       </Icon>
+      <span class="footer-label">email</span>
     </a>
   </div>
   <p class="footer-name">{SITE_TITLE}</p>
@@ -56,15 +59,29 @@
   .footer-links {
     display: flex;
     justify-content: center;
-    gap: 1.25rem;
+    gap: 2rem;
     margin-block-end: 0.75rem;
+  }
+
+  .footer-icon-link :global(svg) {
+    width: 18px;
+    height: 18px;
   }
 
   .footer-icon-link {
     display: flex;
     align-items: center;
+    gap: 0.4rem;
     color: var(--color-muted);
+    text-decoration: none;
     transition: color 0.2s ease;
+  }
+
+  .footer-label {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
   }
 
   .footer-icon-link:hover {

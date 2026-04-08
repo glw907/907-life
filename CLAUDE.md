@@ -77,7 +77,7 @@ Hookify guards enforce these conventions automatically. Rules live in `.claude/h
 
 **Design system anchors:**
 - Colors: 17 semantic tokens (`--color-*`) in `@theme`, dark overrides via `@plugin "daisyui/theme"`
-- Typography: Spectral (body), Outfit (display), Monaspace Neon (mono)
+- Typography: Spectral (body), Karla (display), Monaspace Neon (mono)
 - Tokens: `var(--color-*)` for all colors, DaisyUI v5 semantic classes for layout, scoped `<style>` for design-specific rules
 - Never use DaisyUI v4 short CSS vars (`--bc`, `--p`, etc.) — renamed in v5, silently resolve to nothing
 - Never hardcode `oklch()` in component styles — define new tokens in `@theme` block

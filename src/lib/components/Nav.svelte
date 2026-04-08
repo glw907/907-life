@@ -78,17 +78,21 @@
   .site-logo:hover { opacity: 0.7; }
 
   .logo-primary {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-weight: 700;
-    font-size: 1.35rem;
-    letter-spacing: -0.02em;
+    font-size: 1.6rem;
+    letter-spacing: -0.025em;
     color: var(--color-heading);
   }
   .logo-secondary {
+    font-family: var(--font-display);
     font-weight: 400;
-    font-size: 0.95rem;
-    letter-spacing: -0.01em;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
     color: var(--color-muted);
+    margin-left: 0.05em;
+    position: relative;
+    top: -0.04em;
   }
 
   .nav-links {

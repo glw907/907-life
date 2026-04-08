@@ -4,25 +4,9 @@
 }
 
 @font-face {
-  font-family: 'Outfit';
-  src: url('/fonts/Outfit-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Outfit';
-  src: url('/fonts/Outfit-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Outfit';
-  src: url('/fonts/Outfit-Bold.woff2') format('woff2');
-  font-weight: 700;
+  font-family: 'Karla';
+  src: url('/fonts/Karla.woff2') format('woff2');
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
@@ -77,7 +61,7 @@
 
 @theme {
   --font-body: 'Spectral', Georgia, serif;
-  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-display: 'Karla', system-ui, sans-serif;
   --font-mono: 'Monaspace Neon', ui-monospace, monospace;
   --default-font-family: 'Spectral', Georgia, serif;
   --default-mono-font-family: 'Monaspace Neon', ui-monospace, monospace;
