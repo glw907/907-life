@@ -9,6 +9,30 @@ Personal blog — SvelteKit + TypeScript, deployed to Cloudflare Workers.
 
 SvelteKit · TypeScript · Tailwind CSS v4 · DaisyUI v5 · mdsvex · remark + remark-gfm · Pagefind · Sveltia CMS · @sveltejs/adapter-cloudflare
 
+## Development Workflow
+
+Pass-driven. Each pass has a starter prompt in `docs/STATUS.md`, a
+plan under `docs/superpowers/plans/`, and usually a spec under
+`docs/superpowers/specs/`.
+
+Trigger phrases — "continue development," "next pass," "finish pass,"
+"ship pass" — invoke the `cairn-pass` skill. It covers both starting
+a pass (read STATUS, read plan, execute) and ending one (the
+consolidation ritual).
+
+**On-demand reading:**
+- `docs/STATUS.md` — current pass, pass table, next starter prompt.
+  Load at the start of every pass.
+- `docs/architecture.md` — design decisions and system overview.
+  Load when planning structural changes.
+- `docs/superpowers/specs/` — feature specs. Load the relevant spec
+  before starting implementation.
+- `BACKLOG.md` — known issues and future work. Check before starting
+  a pass — may contain relevant known limitations.
+- `.claude/rules/design-system.md` — auto-loads when editing
+  `.svelte`/`.css`. Contains color token, typography, and shared
+  class binding facts.
+
 ## Build & Dev
 
 ```bash
