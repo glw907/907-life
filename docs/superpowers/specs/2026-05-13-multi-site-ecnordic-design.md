@@ -1,8 +1,12 @@
-# Multi-Site: ECN Nordic (ecnordic.ski)
+# Cairn CMS — Multi-Site & ECN Nordic
 
-Design for extending the 907.life codebase to support a second site —
-East Community Nordic, a small nonprofit supporting year-round Nordic ski
-training for high school and junior high students in Anchorage, Alaska.
+Design for evolving 907.life into **Cairn CMS**: a reusable SvelteKit
+site engine supporting multiple independent sites from one codebase.
+First new site: East Community Nordic (ecnordic.ski), a small nonprofit
+supporting year-round Nordic ski training for high school and junior high
+students in Anchorage, Alaska.
+
+**Repo rename:** `907-life` → `cairn-cms`
 
 ---
 
@@ -201,9 +205,10 @@ admin remains at its own `/admin/`.
 
 | Pass | Scope |
 |---|---|
-| **1 — Multi-site infrastructure** | Repo restructure, build system, two Worker configs, two GitHub Actions workflows, ECN skeleton with placeholder theme |
-| **2 — ECN design** | Color tokens, typography, layout for org site (nav, homepage, schedule page) |
-| **3 — ECN features** | Calendar/schedule route, static page routing, Sveltia CMS config for ECN |
+| **1 — Project infrastructure** | Rename repo to `cairn-cms`; adopt poplar-style dev patterns: `cairn-cms-pass` skill, BACKLOG.md, richer STATUS.md with starter prompts, path-scoped `.claude/rules/` |
+| **2 — Multi-site engine** | Restructure for `VITE_SITE` builds, move content dirs, Vite aliases, two Worker configs, two GitHub Actions workflows, ECN skeleton with placeholder theme |
+| **3 — ECN design** | Color tokens, typography, layout for org site (nav, homepage, schedule page) |
+| **4 — ECN features** | Calendar/schedule route, static page routing, Sveltia CMS config for ECN |
 
 ---
 
