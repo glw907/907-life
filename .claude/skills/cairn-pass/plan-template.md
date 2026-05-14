@@ -41,4 +41,5 @@ mdsvex. Note any new deps.
 - [ ] Update `docs/architecture.md`
 - [ ] Update `docs/STATUS.md` (mark done, write next starter prompt)
 - [ ] Archive plan: `git mv docs/superpowers/plans/<this>.md docs/superpowers/archive/plans/`
+- [ ] Archive spec (if one exists): `git mv docs/superpowers/specs/<this>-design.md docs/superpowers/archive/specs/`
 - [ ] Commit and push
