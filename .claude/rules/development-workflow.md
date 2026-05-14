@@ -1,8 +1,11 @@
 ---
-description: Development workflow for 907.life passes
+description: Development workflow for cairn-cms passes
+paths: []
 ---
 
-When the user says "continue development" (or "next pass", "start the next pass", "continue"):
-1. Read `docs/STATUS.md` to find the current pass, completed tasks, and plan location
-2. Use `superpowers:subagent-driven-development` to execute the plan from where it left off
-3. At the end of the pass, follow the pass-end checklist in STATUS.md
+When the user says "continue development", "next pass", "start the
+next pass", "finish pass", "ship pass", or "continue" in the context
+of cairn-cms work, invoke the `cairn-pass` skill. It handles both
+pass start (read STATUS, read plan, execute) and pass end (the
+consolidation ritual: simplify, svelte-check, STATUS update, plan
+archival, commit + push).
