@@ -205,8 +205,8 @@ admin remains at its own `/admin/`.
 
 | Pass | Scope |
 |---|---|
-| **1 — Project infrastructure** | Rename repo to `cairn-cms`; adopt poplar-style dev patterns: `cairn-cms-pass` skill, BACKLOG.md, richer STATUS.md with starter prompts, path-scoped `.claude/rules/` |
-| **2 — Multi-site engine** | Restructure for `VITE_SITE` builds, move content dirs, Vite aliases, two Worker configs, two GitHub Actions workflows, ECN skeleton with placeholder theme |
+| **1 — Claude infrastructure** | Adopt poplar-style dev patterns: `cairn-cms-pass` skill, BACKLOG.md, richer STATUS.md with starter prompts, path-scoped `.claude/rules/` for Svelte/CSS |
+| **2 — Repo rename + multi-site engine** | Rename repo to `cairn-cms`; restructure for `VITE_SITE` builds, move content dirs, Vite aliases, two Worker configs, two GitHub Actions workflows, ECN skeleton with placeholder theme |
 | **3 — ECN design** | Color tokens, typography, layout for org site (nav, homepage, schedule page) |
 | **4 — ECN features** | Calendar/schedule route, static page routing, Sveltia CMS config for ECN |
 
