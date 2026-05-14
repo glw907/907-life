@@ -34,3 +34,9 @@ Thumbs.db
 # Claude Code — ignore machine-local files, track skills and instructions
 .claude/settings.local.json
 .claude/hooks/
+
+# Playwright
+test-results/
+
+# Font experiments (not the active stack)
+et-book-gh-pages/
