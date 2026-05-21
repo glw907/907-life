@@ -36,7 +36,7 @@ mdsvex. Note any new deps.
 
 ## Pass-end checklist
 
-- [ ] `/simplify` on changed code
+- [ ] `code-simplifier` agent on changed code
 - [ ] `/svelte-check` — no errors
 - [ ] Update `docs/architecture.md`
 - [ ] Update `docs/STATUS.md` (mark done, write next starter prompt)

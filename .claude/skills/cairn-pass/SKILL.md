@@ -2,7 +2,7 @@
 name: cairn-pass
 description: >
   Invoke at the start or end of a cairn-cms development pass. Covers
-  pass-end consolidation (simplify, svelte-check, STATUS update, plan
+  pass-end consolidation (code-simplifier, svelte-check, STATUS update, plan
   archival, commit + push) and the starter-prompt format for the next
   pass. Trigger on "continue development", "next pass", "finish pass",
   "ship pass", or explicit invocation.
@@ -29,9 +29,10 @@ starter prompt in `docs/STATUS.md`, a plan doc under
 
 Every pass ends here. No pass is done until every step has run.
 
-### 1. /simplify
+### 1. Simplify
 
-Run the `simplify` skill on changed code. Docs-only passes skip this.
+Dispatch Anthropic's `code-simplifier` agent over the code changed this
+pass. Docs-only passes skip this.
 
 ### 2. /svelte-check
 
