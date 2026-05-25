@@ -13,6 +13,18 @@ binding = "ASSETS"
 name = "SEND_EMAIL"
 destination_address = "geoff@907.life"
 
+# cairn-cms: unrestricted Email Sending binding for magic links (arbitrary recipients).
+# remote = true so `wrangler dev` sends real mail.
+[[send_email]]
+name = "EMAIL"
+remote = true
+
+# cairn-cms: magic-link nonces, sessions, and the editor allowlist (per-site, distinct
+# from ecnordic's — no cross-site SSO).
+[[kv_namespaces]]
+binding = "AUTH_KV"
+id = "9dff7ea324db4d5db8ca0e8e54078e68"
+
 [[routes]]
 pattern = "907.life"
 custom_domain = true

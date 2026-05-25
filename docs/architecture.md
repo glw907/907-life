@@ -16,7 +16,7 @@ Design decisions for the SvelteKit rebuild.
 | Markdown (posts) | remark + remark-gfm | Pure data pipeline, GFM support, no magic |
 | Markdown (special pages) | mdsvex | Svelte components inside markdown for pages with interactive sections |
 | Search | Pagefind | Post-build static index, zero runtime JS cost |
-| CMS | Sveltia CMS | Git-based, modern Decap replacement, reusable config schema |
+| CMS | cairn-cms (magic-link admin) | Embedded, passwordless, GitHub-committing; per-site adapter (replaced Sveltia in Pass F) |
 | Adapter | @sveltejs/adapter-cloudflare | First-class Workers support, form actions work natively |
 | Contact form | Cloudflare Email Workers | Native Cloudflare, free tier, replaces Resend |
 | Spam protection | Cloudflare Turnstile | Carried over from Hugo site |
@@ -24,7 +24,7 @@ Design decisions for the SvelteKit rebuild.
 
 **Reusable core (the pattern):**
 SvelteKit + TS + adapter-cloudflare · Tailwind v4 + DaisyUI v5 · remark/mdsvex pipeline
-· Pagefind · Sveltia CMS config schema · Cloudflare Email Workers contact form
+· Pagefind · cairn-cms magic-link admin (per-site adapter) · Cloudflare Email Workers contact form
 · GitHub Actions → Cloudflare Workers deployment
 
 **Site-specific:** domain, content, fonts, Cloudflare secrets
@@ -70,9 +70,9 @@ build time. Tags not present in any post return 404.
 
 ### Special Pages — mdsvex
 
-About and archives pages use mdsvex. A `.md` file holds editable prose (managed via
-Sveltia CMS); embedded Svelte components handle dynamic behavior (archive listing,
-contact form).
+About and archives pages use mdsvex. A `.md` file holds editable prose; embedded Svelte
+components handle dynamic behavior (archive listing, contact form). These mdsvex route
+pages are edited in-repo — the cairn admin manages the `posts` collection only.
 
 ---
 
@@ -97,14 +97,28 @@ JS API.
 
 ---
 
-## CMS — Sveltia
+## CMS — cairn-cms (magic-link admin)
 
-Mounted at `/admin/`. Config at `static/admin/config.yml`. Two collections:
+907.life is **consumer #2** of cairn-cms (see `../cairn-cms/docs/PLAN.md`), onboarded in
+Pass F. It replaced the never-wired Sveltia config (removed with `static/admin/`).
 
-- **posts** — `src/content/posts/`, fields: title, date, draft, description, tags, body
-- **pages** — about and archives prose (title + body only, not form/archive components)
+Mounted at `/admin`, in 907.life's own Worker. Editors sign in by email (magic link, no
+GitHub account); the Carta editor edits raw markdown; saving commits to `main` via the
+shared GitHub App (committer `cairn-cms[bot]`, author = the editor), which auto-deploys.
 
-Primary workflow is local editing + git push. CMS is wired in for the pattern.
+- **Adapter** (`src/lib/cairn.config.ts`): one **posts** collection — `src/content/posts/`,
+  filename-based ids (`YYYY-MM-DD-slug`), fields title/date/description/draft, **free-form
+  tags** (no controlled vocabulary). Preview is plain markdown (Carta's built-in
+  remark→rehype mirrors the live remark + remark-gfm + remark-html render — no directives).
+- **Backend reads.** `glw907/907-life` is public (like ecnordic), so the admin lists/loads
+  content anonymously; the GitHub App install token is minted only for the commit path.
+- **Bindings/secrets.** `AUTH_KV` (allowlist + magic-link nonces + sessions) and the `EMAIL`
+  send binding in `wrangler.toml`; `MAGIC_LINK_SECRET`, `SESSION_SECRET`, and the
+  `GITHUB_APP_*` creds via `wrangler secret put` / `.dev.vars`.
+- **Guard.** `/admin/**` is gated in `hooks.server.ts` (session cookie → `locals.editor`);
+  the admin layout sets `prerender = false` + `data-pagefind-ignore` so it's never indexed.
+
+Local editing + git push still works for any content; the admin is the no-git path for posts.
 
 ---
 

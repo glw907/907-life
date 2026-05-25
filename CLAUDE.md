@@ -7,7 +7,7 @@ Personal blog — SvelteKit + TypeScript, deployed to Cloudflare Workers.
 
 ## Stack
 
-SvelteKit · TypeScript · Tailwind CSS v4 · DaisyUI v5 · mdsvex · remark + remark-gfm · Pagefind · Sveltia CMS · @sveltejs/adapter-cloudflare
+SvelteKit · TypeScript · Tailwind CSS v4 · DaisyUI v5 · mdsvex · remark + remark-gfm · Pagefind · cairn-cms (magic-link admin) · @sveltejs/adapter-cloudflare
 
 ## Development Workflow
 
@@ -61,13 +61,22 @@ tags: ["tag1", "tag2"]
 ## Content Pipeline
 
 - **Posts** (`src/content/posts/*.md`) — remark + remark-gfm. Straight prose only.
-- **Special pages** (`src/routes/about/`, `src/routes/archives/`) — mdsvex. Prose editable via Sveltia; Svelte components handle form and archive listing.
+- **Special pages** (`src/routes/about/`, `src/routes/archives/`) — mdsvex. Svelte components handle form and archive listing; prose is edited in-repo.
 
-## Sveltia CMS
+## cairn-cms admin
 
-Config: `static/admin/config.yml`
-Editor: `/admin/` (requires GitHub OAuth)
-Collections: **posts** and **pages** (about + archives prose)
+907.life is **consumer #2** of cairn-cms (the embedded magic-link, GitHub-committing CMS;
+see `../cairn-cms/docs/PLAN.md`). Editors sign in by email at `/admin` (no GitHub account)
+and edit raw markdown in a Carta editor; saving commits to `main` via the shared GitHub App
+(`cairn-cms[bot]`), which auto-deploys.
+
+- **Adapter:** `src/lib/cairn.config.ts` — posts collection only (filename-based ids, plain
+  remark-html-equivalent preview, **free-form tags**), backend `glw907/907-life`.
+- **Validator:** `src/lib/content-schema.ts`. Reads are anonymous (public repo, like
+  ecnordic); the GitHub App install token is minted only for the commit path.
+- **Routes:** `src/routes/admin/**`. **Guard:** `/admin/**` in `hooks.server.ts`.
+- **Bindings:** `AUTH_KV` (allowlist `editor:<email>` → name) + `EMAIL` in `wrangler.toml`.
+- **Replaces Sveltia** (removed in Pass F — the dead `static/admin/` is gone).
 
 ## Worker & Secrets
 

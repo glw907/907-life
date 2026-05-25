@@ -25,6 +25,7 @@
     "vite": "^6"
   },
   "dependencies": {
+    "carta-md": "4.11.2",
     "gray-matter": "^4",
     "mimetext": "^3",
     "remark": "^15",
