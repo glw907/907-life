@@ -1,55 +1,36 @@
-# cairn-cms — Project Status
+# 907.life — Project Status
 
-**Current state:** Pass 10 complete. Claude infrastructure in place.
-Transitioning to Cairn multi-repo architecture.
+**Current state:** Site rebuilt and deployed (SvelteKit + adapter-cloudflare,
+ET Book / plain `remark-html`, CSS token system). Passes 1–10 done. **No active
+907-local roadmap** — the next chapter is becoming a cairn-cms site.
+
+> **Architecture note (2026-05-24).** The earlier "Cairn multi-repo engine"
+> direction (old passes 11–15: `VITE_SITE`, overlay script, site-packages,
+> content repos, service-account writes) is **SUPERSEDED.** cairn is now a
+> meta-workspace (`~/Projects/cairn/`) where **cairn-cms** is an embedded
+> magic-link CMS *library* and each site is its own repo consuming it via a
+> per-site adapter. **907.life is consumer #2** — it becomes a cairn site as
+> part of the cairn-cms roadmap at **Pass E**, tracked in
+> `../cairn-cms/docs/PLAN.md` and run via the **`cairn-pass`** skill (not a
+> 907-local pass). Superseded specs/plans under `docs/superpowers/` are kept
+> only as historical record.
 
 ---
 
-## Passes
+## Passes (907.life's own build)
 
 | Pass | Goal | Status |
 |------|------|--------|
 | 1–9 | SvelteKit rebuild, features, CSS token system | ✓ Done |
-| 10 | Claude infrastructure: cairn-pass skill, BACKLOG, STATUS, rules | ✓ Done |
-| 11 | Multi-repo architecture: VITE_SITE, overlay script, 907-life content repo, CI pipeline | next |
-| 12 | ECN site package: ecnordic-ski repo, content scaffold, training calendar route | planned |
-| 13 | ECN design: color tokens, typography, org-site layout | planned |
-| 14 | Cairn CMS: editor interface, magic-link auth, service-account GitHub writes | planned |
-| 15 | AKS site package: aksailingclub-org content migration, events calendar | planned |
+| 10 | Claude infrastructure: pass ritual skill, BACKLOG, STATUS, rules | ✓ Done |
+| 11–15 | Multi-repo engine roadmap | ✗ Superseded — see note above |
 
 ---
 
-### Next starter prompt (Pass 11)
+### Next
 
-> **Goal.** Restructure cairn-cms into a generic engine where each
-> site's content and config live in an isolated GitHub repo.
->
-> **Scope.** Wire `VITE_SITE` define and `$site-config`/`$site-theme`/
-> `$site-lib` aliases into Vite; extract 907-life theme + config into
-> `src/sites/907-life/`; update `posts.ts` for multi-site static globs;
-> write `scripts/overlay.sh`; add `build-site.yml` CI workflow for
-> `repository_dispatch`; create `glw907/907-life` content repo and
-> populate it; wire the push trigger; verify end-to-end deploy.
->
-> **Settled (do not re-brainstorm):** See
-> `docs/superpowers/specs/2026-05-13-cairn-cms-multi-repo-architecture.md`
-> — Option 4 (GitHub template + site package convention), CI-clone
-> content delivery, overlay precedence model.
->
-> **Note:** Editor auth (no GitHub login required) is a Cairn CMS
-> concern deferred to Pass 14. This pass creates the content repos
-> that Cairn CMS will write to via service account.
->
-> **Plan:** `docs/superpowers/plans/2026-05-13-pass-11-multi-repo-architecture.md`
->
-> **Approach.** Invoke cairn-pass to start. Standard pass-end
-> checklist applies.
+No active 907-local pass. Day-to-day content/design work: invoke `site-pass`.
+Becoming a cairn-cms site (per-site adapter, magic-link admin) arrives as
+**cairn-cms Pass E** — see `../cairn-cms/docs/PLAN.md`.
 
----
-
-## Spec + Plan Locations
-
-`docs/superpowers/specs/2026-05-13-cairn-cms-multi-repo-architecture.md`
-`docs/superpowers/specs/2026-05-13-multi-site-ecnordic-design.md`
-`docs/superpowers/plans/2026-05-13-pass-11-multi-repo-architecture.md`
-`docs/superpowers/plans/2026-05-13-pass-1-claude-infrastructure.md`
+**Deploy:** Push to `main` → GitHub Actions (build + pagefind + wrangler deploy).

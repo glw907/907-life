@@ -16,9 +16,10 @@ plan under `docs/superpowers/plans/`, and usually a spec under
 `docs/superpowers/specs/`.
 
 Trigger phrases — "continue development," "next pass," "finish pass,"
-"ship pass" — invoke the `cairn-pass` skill. It covers both starting
-a pass (read STATUS, read plan, execute) and ending one (the
-consolidation ritual).
+"ship pass" — invoke the `site-pass` skill (this repo's own roadmap). It
+covers both starting a pass (read STATUS, read plan, execute) and ending
+one (the consolidation ritual). For cairn-cms library work (passes 0/A–F,
+tracked in `cairn-cms/docs/PLAN.md`), use `cairn-pass` instead.
 
 **On-demand reading:**
 - `docs/STATUS.md` — current pass, pass table, next starter prompt.
