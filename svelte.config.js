@@ -12,7 +12,11 @@ const config = {
     })
   ],
   kit: {
-    adapter: adapter(),
+    // remoteBindings:false keeps the build-time platform proxy from connecting to Cloudflare
+    // during prerender. The EMAIL binding is `remote = true` for `wrangler dev` real-mail only;
+    // wrangler dev still honors it, but without this the CI prerender (no Cloudflare auth) fails
+    // with "Failed to start the remote proxy session".
+    adapter: adapter({ platformProxy: { remoteBindings: false } }),
     prerender: {
       handleHttpError: 'warn',
       handleMissingId: 'warn'
