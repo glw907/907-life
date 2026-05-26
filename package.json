@@ -12,9 +12,9 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260405.1",
-    "@sveltejs/adapter-cloudflare": "^5",
+    "@sveltejs/adapter-cloudflare": "^7.2.8",
     "@sveltejs/kit": "^2",
-    "@sveltejs/vite-plugin-svelte": "^5",
+    "@sveltejs/vite-plugin-svelte": "^7",
     "@tailwindcss/vite": "^4",
     "daisyui": "^5",
     "mdsvex": "^0.11",
@@ -22,7 +22,7 @@
     "svelte-check": "^4",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vite": "^6"
+    "vite": "^8"
   },
   "dependencies": {
     "carta-md": "4.11.2",

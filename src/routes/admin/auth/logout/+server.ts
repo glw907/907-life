@@ -1,8 +1,4 @@
 import type { RequestHandler } from './$types';
-import { redirect } from '@sveltejs/kit';
-import { SESSION_COOKIE } from 'cairn-cms';
+import { logout } from 'cairn-cms/sveltekit';
 
-export const POST: RequestHandler = ({ cookies }) => {
-  cookies.delete(SESSION_COOKIE, { path: '/' });
-  throw redirect(303, '/admin/login');
-};
+export const POST: RequestHandler = (event) => logout(event);

@@ -2,10 +2,10 @@
 //
 // Validates the abstraction on a second design: no slug codec (filename-based ids,
 // YYYY-MM-DD-slug), plain markdown preview (no directive pipeline), and free-form tags.
-// cairn-core consumes only this; everything ecnordic-specific stays
-// out. The `tags` field is NOT in `fields` because 907.life tags are free-form — the admin
-// routes render/parse them as a comma-separated input (see edit/save), so they bypass the
-// controlled-vocabulary checkbox the generic field renderer assumes.
+// cairn-core consumes only this; everything ecnordic-specific stays out. Free-form tags
+// ride the `freetags` field type (a comma-separated input → trimmed, de-duplicated list),
+// folded into the contract in Pass F2 so the shared admin shell handles them with no
+// per-site route code — distinct from ecnordic's controlled-vocabulary `tags` checkboxes.
 import type { CairnAdapter } from 'cairn-cms';
 import { validatePostFrontmatter } from './content-schema';
 
@@ -26,6 +26,7 @@ export const cairn: CairnAdapter = {
         { type: 'text', name: 'title', label: 'Title', required: true },
         { type: 'date', name: 'date', label: 'Date', required: true },
         { type: 'textarea', name: 'description', label: 'Description', required: true, rows: 2 },
+        { type: 'freetags', name: 'tags', label: 'Tags' },
         { type: 'boolean', name: 'draft', label: 'Draft (hidden from the live site)' },
       ],
       validate: validatePostFrontmatter,

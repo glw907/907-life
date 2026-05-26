@@ -1,8 +1,4 @@
 import type { PageServerLoad } from './$types';
+import { loginLoad } from 'cairn-cms/sveltekit';
 
-export const load: PageServerLoad = ({ url }) => {
-  return {
-    sent: url.searchParams.get('sent') === '1',
-    error: url.searchParams.get('error'),
-  };
-};
+export const load: PageServerLoad = (event) => loginLoad(event);

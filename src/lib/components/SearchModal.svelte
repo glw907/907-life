@@ -27,7 +27,10 @@
     }
 
     try {
-      const { PagefindUI } = await import('/pagefind/pagefind-ui' + '.js') as any;
+      // Pagefind generates this bundle post-build, so it can't be resolved at build time;
+      // @vite-ignore keeps the bundler (rolldown, on vite 8) from trying to resolve it.
+      const pagefindUrl = '/pagefind/pagefind-ui.js';
+      const { PagefindUI } = (await import(/* @vite-ignore */ pagefindUrl)) as any;
       new PagefindUI({
         element: '#pagefind-search',
         showSubResults: true,
