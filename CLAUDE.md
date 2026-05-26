@@ -72,8 +72,9 @@ and edit raw markdown in a Carta editor; saving commits to `main` via the shared
 
 - **Adapter:** `src/lib/cairn.config.ts` — posts collection only (filename-based ids, plain
   remark-html-equivalent preview, **free-form tags**), backend `glw907/907-life`.
-- **Validator:** `src/lib/content-schema.ts`. Reads are anonymous (public repo, like
-  ecnordic); the GitHub App install token is minted only for the commit path.
+- **Validator:** `src/lib/content-schema.ts`. Reads use the GitHub App installation token
+  (5000/hr) when configured — anonymous reads 403 from Cloudflare's shared egress IPs hitting
+  GitHub's 60/hr limit (fixed in cairn-cms 0.3.1); the same token also commits.
 - **Routes:** `src/routes/admin/**`. **Guard:** `/admin/**` in `hooks.server.ts`.
 - **Bindings:** `AUTH_KV` (allowlist `editor:<email>` → name) + `EMAIL` in `wrangler.toml`.
 - **Replaces Sveltia** (removed in Pass F — the dead `static/admin/` is gone).

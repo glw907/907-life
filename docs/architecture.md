@@ -110,8 +110,11 @@ shared GitHub App (committer `cairn-cms[bot]`, author = the editor), which auto-
   filename-based ids (`YYYY-MM-DD-slug`), fields title/date/description/draft, **free-form
   tags** (no controlled vocabulary). Preview is plain markdown (Carta's built-in
   remark→rehype mirrors the live remark + remark-gfm + remark-html render — no directives).
-- **Backend reads.** `glw907/907-life` is public (like ecnordic), so the admin lists/loads
-  content anonymously; the GitHub App install token is minted only for the commit path.
+- **Backend reads.** `glw907/907-life` is public (like ecnordic), but the admin reads (list +
+  edit) authenticate with the GitHub App installation token (5000/hr): anonymous reads share
+  GitHub's 60/hr-per-IP limit across Cloudflare's shared egress IPs and 403 in prod (fixed in
+  cairn-cms 0.3.1). The same token mints the commit path; reads fall back to anonymous if the App
+  is unconfigured.
 - **Bindings/secrets.** `AUTH_KV` (allowlist + magic-link nonces + sessions) and the `EMAIL`
   send binding in `wrangler.toml`; `MAGIC_LINK_SECRET`, `SESSION_SECRET`, and the
   `GITHUB_APP_*` creds via `wrangler secret put` / `.dev.vars`.
