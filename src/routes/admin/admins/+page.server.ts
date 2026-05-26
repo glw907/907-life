@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
-import { adminsLoad, addAdmin, removeAdmin, setAdminRole } from '@glw907/cairn-cms/sveltekit';
+import { adminsLoad, addAdmin, removeAdmin, setAdminRole } from '@glw907/cairn-cms/auth';
 
 export const load: PageServerLoad = (event) => adminsLoad(event);
 

@@ -19,11 +19,22 @@ destination_address = "geoff@907.life"
 name = "EMAIL"
 remote = true
 
-# cairn-cms: magic-link nonces, sessions, and the editor allowlist (per-site, distinct
-# from ecnordic's — no cross-site SSO).
+# cairn-cms: legacy hand-rolled auth store (per-site, distinct from ecnordic's — no
+# cross-site SSO). Kept for rollback grace during the better-auth cutover; removed once stable.
 [[kv_namespaces]]
 binding = "AUTH_KV"
 id = "9dff7ea324db4d5db8ca0e8e54078e68"
+
+# cairn-cms: better-auth store — users (= editor allowlist), sessions, magic-link verifications.
+[[d1_databases]]
+binding = "AUTH_DB"
+database_name = "cairn-907-auth"
+database_id = "93aa929d-0228-4f8b-8d1e-5e7e0d755617"
+migrations_dir = "drizzle/migrations"
+
+[vars]
+# better-auth base URL (prod origin). Dev overrides via PUBLIC_ORIGIN in .dev.vars.
+BETTER_AUTH_URL = "https://907.life"
 
 [[routes]]
 pattern = "907.life"

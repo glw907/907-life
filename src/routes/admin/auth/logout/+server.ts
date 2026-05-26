@@ -1,4 +1,4 @@
 import type { RequestHandler } from './$types';
-import { logout } from '@glw907/cairn-cms/sveltekit';
+import { signOut } from '@glw907/cairn-cms/auth';
 
-export const POST: RequestHandler = (event) => logout(event);
+export const POST: RequestHandler = (event) => signOut(event);
