@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AdminLayout } from 'cairn-cms/components';
+  import { AdminLayout } from '@glw907/cairn-cms/components';
 
   let { children } = $props();
 </script>

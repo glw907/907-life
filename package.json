@@ -25,6 +25,7 @@
     "vite": "^8"
   },
   "dependencies": {
+    "@glw907/cairn-cms": "^0.1.0",
     "carta-md": "4.11.2",
     "gray-matter": "^4",
     "mimetext": "^3",

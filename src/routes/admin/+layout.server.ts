@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import { adminLayoutLoad } from 'cairn-cms/sveltekit';
+import { adminLayoutLoad } from '@glw907/cairn-cms/sveltekit';
 import { cairn } from '$lib/cairn.config';
 
 // The admin surface is dynamic and must never be prerendered, indexed, or Pagefind-crawled.

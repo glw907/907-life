@@ -1,5 +1,5 @@
 import { type Handle, redirect } from '@sveltejs/kit';
-import { verifySession, SESSION_COOKIE } from 'cairn-cms';
+import { verifySession, SESSION_COOKIE } from '@glw907/cairn-cms';
 
 // Routes under /admin that an unauthenticated visitor may still reach.
 function isPublicAdminPath(pathname: string): boolean {

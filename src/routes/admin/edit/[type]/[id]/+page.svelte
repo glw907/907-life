@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { EditPage } from 'cairn-cms/components';
+  import { EditPage } from '@glw907/cairn-cms/components';
   import { cairn } from '$lib/cairn.config';
   import type { PageData } from './$types';
 
