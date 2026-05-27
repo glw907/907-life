@@ -23,6 +23,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Bundle-size / startup guard (cairn-cms C4/M5): fails the deploy if the Worker bundle
+      # regresses past the size or startup-CPU limits — e.g. if Carta/Shiki leaks server-side.
+      - name: Bundle guard (wrangler dry-run)
+        run: npx wrangler deploy --dry-run
+
       - name: Build Pagefind index
         run: npx pagefind --site .svelte-kit/cloudflare
 
