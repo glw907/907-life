@@ -1,6 +1,6 @@
 # 907.life
 
-Personal blog — SvelteKit + TypeScript, deployed to Cloudflare Workers.
+Personal blog. SvelteKit + TypeScript, deployed to Cloudflare Workers.
 
 @docs/STATUS.md
 @docs/architecture.md
@@ -15,24 +15,18 @@ Pass-driven. Each pass has a starter prompt in `docs/STATUS.md`, a
 plan under `docs/superpowers/plans/`, and usually a spec under
 `docs/superpowers/specs/`.
 
-Trigger phrases — "continue development," "next pass," "finish pass,"
-"ship pass" — invoke the `site-pass` skill (this repo's own roadmap). It
-covers both starting a pass (read STATUS, read plan, execute) and ending
-one (the consolidation ritual). For cairn-cms library work (passes 0/A–F,
-tracked in `cairn-cms/docs/PLAN.md`), use `cairn-pass` instead.
+The phrases "continue development," "next pass," "finish pass," and "ship
+pass" invoke the `site-pass` skill (this repo's own roadmap), which covers
+both starting a pass (read STATUS, read plan, execute) and ending one (the
+consolidation ritual). For cairn-cms library work (passes 0/A–F, tracked in
+`cairn-cms/docs/PLAN.md`), use `cairn-pass` instead.
 
 **On-demand reading:**
-- `docs/STATUS.md` — current pass, pass table, next starter prompt.
-  Load at the start of every pass.
-- `docs/architecture.md` — design decisions and system overview.
-  Load when planning structural changes.
-- `docs/superpowers/specs/` — feature specs. Load the relevant spec
-  before starting implementation.
-- `BACKLOG.md` — known issues and future work. Check before starting
-  a pass — may contain relevant known limitations.
-- `.claude/rules/design-system.md` — auto-loads when editing
-  `.svelte`/`.css`. Contains color token, typography, and shared
-  class binding facts.
+- `docs/STATUS.md`: current pass, pass table, next starter prompt. Open at the start of every pass.
+- `docs/architecture.md`: design decisions and system overview. Consult when planning structural changes.
+- `docs/superpowers/specs/`: feature specs. Pull the relevant spec before starting implementation.
+- `BACKLOG.md`: known issues and future work. Check before starting a pass; it may contain relevant known limitations.
+- `.claude/rules/design-system.md`: auto-loads when editing `.svelte`/`.css`. Contains color token, typography, and shared class binding facts.
 
 ## Build & Dev
 
@@ -60,8 +54,8 @@ tags: ["tag1", "tag2"]
 
 ## Content Pipeline
 
-- **Posts** (`src/content/posts/*.md`) — remark + remark-gfm. Straight prose only.
-- **Special pages** (`src/routes/about/`, `src/routes/archives/`) — mdsvex. Svelte components handle form and archive listing; prose is edited in-repo.
+- **Posts** (`src/content/posts/*.md`): remark + remark-gfm. Straight prose only.
+- **Special pages** (`src/routes/about/`, `src/routes/archives/`): mdsvex. Svelte components handle form and archive listing; prose is edited in-repo.
 
 ## cairn-cms admin
 
@@ -70,18 +64,15 @@ see `../cairn-cms/docs/PLAN.md`). Editors sign in by email at `/admin` (no GitHu
 and edit raw markdown in a Carta editor; saving commits to `main` via the shared GitHub App
 (`cairn-cms[bot]`), which auto-deploys.
 
-- **Adapter:** `src/lib/cairn.config.ts` — posts collection only (filename-based ids, plain
-  remark-html-equivalent preview, **free-form tags**), backend `glw907/907-life`.
-- **Validator:** `src/lib/content-schema.ts`. Reads use the GitHub App installation token
-  (5000/hr) when configured — anonymous reads 403 from Cloudflare's shared egress IPs hitting
-  GitHub's 60/hr limit (fixed in cairn-cms 0.3.1); the same token also commits.
+- **Adapter:** `src/lib/cairn.config.ts` configures the posts collection (filename-based ids, plain remark-html-equivalent preview, **free-form tags**), backend `glw907/907-life`.
+- **Validator:** `src/lib/content-schema.ts`. Reads use the GitHub App installation token (5000/hr) when configured. Without it, anonymous reads 403 from Cloudflare's shared egress IPs hitting GitHub's 60/hr limit (fixed in cairn-cms 0.3.1); the same token also commits.
 - **Routes:** `src/routes/admin/**`. **Guard:** `/admin/**` in `hooks.server.ts`.
 - **Bindings:** `AUTH_KV` (allowlist `editor:<email>` → name) + `EMAIL` in `wrangler.toml`.
-- **Replaces Sveltia** (removed in Pass F — the dead `static/admin/` is gone).
+- **Replaces Sveltia** (removed in Pass F; the dead `static/admin/` is gone).
 
 ## Worker & Secrets
 
-Two secrets required — check with `npx wrangler secret list`:
+Two secrets required. Check with `npx wrangler secret list`:
 - `TURNSTILE_SECRET_KEY`
 - `CONTACT_EMAIL`
 
@@ -106,7 +97,7 @@ Hookify guards enforce these conventions automatically. Rules live in `.claude/h
 | `daisyui-v5-vars` | Edit `.svelte`/`.css` | Old DaisyUI CSS vars (`--bc`, `--p`, `--b1`, etc.) |
 | `tailwind-v3-compat` | Edit `.svelte`/`.html` | Removed/renamed Tailwind v3 utilities (`shadow-sm`, `bg-opacity-*`, etc.) |
 | `sveltekit-patterns` | Edit `.svelte`/`.ts` | `$app/stores` (deprecated), `goto()` external URLs, `fs` imports |
-| `html-injection` | Edit `.svelte` | `{@html}` usage — prompts XSS checklist |
+| `html-injection` | Edit `.svelte` | `{@html}` usage (prompts XSS checklist) |
 | `hardcoded-oklch` | Edit `.svelte`/`.css` | Raw `oklch()` values (use `var(--color-*)` tokens) |
 | `svelte-check-reminder` | Session stop | Reminds to run `/svelte-check` before declaring done |
 
@@ -114,8 +105,8 @@ Hookify guards enforce these conventions automatically. Rules live in `.claude/h
 - Colors: 17 semantic tokens (`--color-*`) in `@theme`, dark overrides via `@plugin "daisyui/theme"`
 - Typography: Spectral (body), Karla (display), Monaspace Neon (mono)
 - Tokens: `var(--color-*)` for all colors, DaisyUI v5 semantic classes for layout, scoped `<style>` for design-specific rules
-- Never use DaisyUI v4 short CSS vars (`--bc`, `--p`, etc.) — renamed in v5, silently resolve to nothing
-- Never hardcode `oklch()` in component styles — define new tokens in `@theme` block
+- Never use DaisyUI v4 short CSS vars (`--bc`, `--p`, etc.); they were renamed in v5 and silently resolve to nothing.
+- Never hardcode `oklch()` in component styles; define new tokens in the `@theme` block instead.
 
 ## Cross-Site Admin
 
