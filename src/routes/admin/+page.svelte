@@ -1,8 +1,2 @@
-<script lang="ts">
-  import { AdminList } from '@glw907/cairn-cms/components';
-  import type { PageData } from './$types';
-
-  let { data }: { data: PageData } = $props();
-</script>
-
-<AdminList {data} />
+<!-- /admin redirects to the first collection in +page.server.ts; this never renders. -->
+<p class="opacity-60">Redirecting…</p>
