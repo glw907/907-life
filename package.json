@@ -25,8 +25,10 @@
     "vite": "^8"
   },
   "dependencies": {
-    "@glw907/cairn-cms": "^0.3.1",
+    "@glw907/cairn-cms": "^0.4.0",
+    "better-auth": "^1.6",
     "carta-md": "4.11.2",
+    "drizzle-orm": "^0.45",
     "gray-matter": "^4",
     "mimetext": "^3",
     "remark": "^15",
