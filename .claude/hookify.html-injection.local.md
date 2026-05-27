@@ -11,7 +11,7 @@ conditions:
     pattern: \{@html\s
 ---
 
-**`{@html}` usage detected — verify the source is safe.**
+**`{@html}` usage detected. Verify the source is safe.**
 
 `{@html}` bypasses Svelte's XSS protection and renders raw HTML. This is intentional and correct when the HTML comes from your own remark/markdown pipeline (author-controlled content). It is dangerous when the source is user input or an external API.
 

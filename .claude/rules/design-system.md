@@ -16,14 +16,14 @@ editing Svelte components or CSS.
 17 semantic tokens in `--color-*` namespace defined in `@theme` in
 `src/app.css`. Dark overrides via `@plugin "daisyui/theme"`.
 
-**Never use DaisyUI v4 short vars** (`--bc`, `--p`, `--b1`, etc.)
-— renamed in v5, silently resolve to nothing.
+**Never use DaisyUI v4 short vars** (`--bc`, `--p`, `--b1`, etc.).
+Renamed in v5, they silently resolve to nothing.
 
-**Never hardcode `oklch()` values** in component styles — define new
+**Never hardcode `oklch()` values** in component styles. Define new
 tokens in the `@theme` block in `src/app.css` and reference via
 `var(--color-*)`.
 
-**Never use hex or `rgb()` colors** — `oklch()` throughout.
+**Never use hex or `rgb()` colors.** Use `oklch()` throughout.
 
 ## DaisyUI themes
 
@@ -46,7 +46,7 @@ Self-hosted woff2 in `static/fonts/`. Font faces declared in
 
 ## Shared CSS classes
 
-Defined globally in `src/app.css` — use these, don't re-declare:
+Defined globally in `src/app.css`. Use these; don't re-declare:
 `.post-body`, `.post-date`, `.post-tags`, `.post-tag`, `.page-title`,
 `.back-link`
 

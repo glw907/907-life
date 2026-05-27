@@ -38,7 +38,7 @@
       });
       initialized = true;
     } catch {
-      // dev mode — pagefind not built yet
+      // dev mode: pagefind not built yet
     }
   }
 

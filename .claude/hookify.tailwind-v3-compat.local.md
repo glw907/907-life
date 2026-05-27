@@ -33,4 +33,4 @@ conditions:
 | `rounded-sm` | `rounded-xs` | Wrong radius |
 | `outline-none` | `outline-hidden` | Breaks forced-colors accessibility mode |
 
-Also note: a bare `border` class with no `border-{color}` class defaults to `currentColor` in v4 (was gray-200 in v3) — may render invisible.
+Also note: a bare `border` class with no `border-{color}` class defaults to `currentColor` in v4 (was gray-200 in v3) and may render invisible.

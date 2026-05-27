@@ -21,7 +21,7 @@ This project uses DaisyUI v5 tokens and scoped `<style>` blocks. Arbitrary value
 If you need an arbitrary value repeatedly, add an `@theme` token in `app.css` instead.
 
 **2. Dynamic class construction** (e.g. `` `text-${color}-500` ``):
-Tailwind's scanner cannot detect dynamically-constructed class names — they will be purged from the production bundle and silently do nothing.
+Tailwind's scanner cannot detect dynamically-constructed class names. They will be purged from the production bundle and silently do nothing.
 
 ```js
 // WRONG — purged in production

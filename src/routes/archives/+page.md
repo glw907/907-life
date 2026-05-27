@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-  <title>Archives — 907.life</title>
+  <title>Archives · 907.life</title>
 </svelte:head>
 
 <div class="archives-page">

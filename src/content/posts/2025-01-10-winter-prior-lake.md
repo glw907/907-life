@@ -23,6 +23,6 @@ The temperature was around -15°F, cold enough that my breath crystallized insta
 - Camera: Still using the trusty old DSLR
 - Lens: 24-70mm
 - Extra batteries: Essential in the cold
-- Warm gloves with finger cutouts: Game changer
+- Warm gloves with finger cutouts: essential
 
 The photos turned out better than expected. There's something about the simplicity of snow, ice, and light that makes photography feel pure again.

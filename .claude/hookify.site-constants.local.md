@@ -22,9 +22,9 @@ This value should come from `src/lib/config.ts` or a helper in `src/lib/utils.ts
 | `'en-US'` | `SITE_LOCALE` from `$lib/config` |
 | `.year}/{...month}/{...` (post URL) | `postUrl(post)` from `$lib/utils` |
 | `/tags/{tag}/` inline | `tagUrl(tag)` from `$lib/utils` |
-| `posts.slice(1)` | `posts.slice(HOMEPAGE_FEATURED_COUNT)` — import `HOMEPAGE_FEATURED_COUNT` from `$lib/config` |
+| `posts.slice(1)` | `posts.slice(HOMEPAGE_FEATURED_COUNT)` (import `HOMEPAGE_FEATURED_COUNT` from `$lib/config`) |
 
-**Exception:** If you're editing `src/lib/config.ts`, these values belong here — no action needed.
+**Exception:** If you're editing `src/lib/config.ts`, these values belong here. No action needed.
 
 **Adapting for a new site:** Update the constants in `src/lib/config.ts` and the `pattern`
 line in this hookify rule to match the new site's values.

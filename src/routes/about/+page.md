@@ -5,8 +5,8 @@
 </script>
 
 <svelte:head>
-  <title>About — 907.life</title>
-  <meta name="description" content="Geoffrey L. Wright — technology professional in Alaska." />
+  <title>About · 907.life</title>
+  <meta name="description" content="Geoffrey L. Wright, technology professional in Alaska." />
 </svelte:head>
 
 <div class="about-page post-body">

@@ -1,7 +1,7 @@
 # AI Operational Rules
 
 Rules specific to how Claude Code executes in this environment. These reflect actual
-runtime behavior — not general best practices, but things that will silently break if
+runtime behavior, not general best practices, but things that will silently break if
 ignored.
 
 ---
@@ -24,7 +24,7 @@ echo "$CLOUDFLARE_API_TOKEN" | npx wrangler secret put ...
 **Working directory persists across Bash calls.** Track where you are and use absolute
 paths when in doubt.
 
-**Never run `node -e "..."` with CSS selectors** — dots in shell strings cause
+**Never run `node -e "..."` with CSS selectors.** Dots in shell strings cause
 interpretation issues. Write the script to a temp file with the Write tool, then run it.
 
 ---
@@ -58,10 +58,10 @@ npx wrangler secret put SECRET_NAME --name YOUR-WORKER-NAME
 
 ## Git Safety Rules
 
-- **Always stage specific files:** `git add path/to/file` — never `git add -A` or `git add .`
+- **Always stage specific files:** `git add path/to/file`, never `git add -A` or `git add .`
   (can accidentally stage `.env` files or unrelated changes)
 - **Never amend commits** unless the user explicitly asks. After a pre-commit hook failure,
-  create a NEW commit — `--amend` would modify the previous commit.
+  create a NEW commit. `--amend` would modify the previous commit.
 - **Never force push to `main`** without explicit user instruction.
 - **Never skip hooks** (`--no-verify`) without explicit instruction.
 

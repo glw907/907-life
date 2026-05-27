@@ -66,7 +66,7 @@
   --default-font-family: 'Spectral', Georgia, serif;
   --default-mono-font-family: 'Monaspace Neon', ui-monospace, monospace;
 
-  /* Color tokens — silk (light) defaults */
+  /* Color tokens: silk (light) defaults */
   --color-heading: oklch(18% 0.01 230);
   --color-body: oklch(28% 0.01 230);
   --color-muted: oklch(55% 0.008 230);
@@ -86,7 +86,7 @@
   --color-highlight: oklch(85% 0.06 80 / 0.35);
 }
 
-/* Silk theme — deepen base-content for reading contrast */
+/* Silk theme: deepen base-content for reading contrast */
 @plugin "daisyui/theme" {
   name: "silk";
   default: true;
@@ -94,7 +94,7 @@
   --color-base-content: oklch(22% 0.012 61);
 }
 
-/* Dim theme — inherit DaisyUI dim (dark bg, etc.) + custom token overrides */
+/* Dim theme: inherit DaisyUI dim (dark bg, etc.) with custom token overrides */
 @plugin "daisyui/theme" {
   name: "dim";
   prefersdark: true;
@@ -128,7 +128,7 @@ body {
 
 /* ─── Shared post chrome ──────────────────────────────────── */
 
-/* Date label — quiet uppercase stamp */
+/* Date label: quiet uppercase stamp */
 .post-date {
   display: block;
   font-size: 0.72rem;
@@ -139,7 +139,7 @@ body {
   margin-block-end: 0.65rem;
 }
 
-/* Tags — annotations, not labels */
+/* Tags: annotations, not labels */
 .post-tags {
   list-style: none;
   padding: 0;

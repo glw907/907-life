@@ -13,7 +13,7 @@ conditions:
 
 **DaisyUI v4 class name detected. This project uses DaisyUI v5.**
 
-These classes were removed or renamed in DaisyUI v5 — they silently do nothing.
+These classes were removed or renamed in DaisyUI v5. They silently do nothing.
 
 | v4 class | v5 replacement |
 |---|---|

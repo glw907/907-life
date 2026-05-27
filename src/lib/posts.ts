@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import remarkHtml from 'remark-html';
 import type { PostDetail, PostSummary } from './types.js';
 
-// Bundled at build time — no runtime filesystem access needed.
+// Bundled at build time; no runtime filesystem access needed.
 // Keys are absolute paths like "/src/content/posts/2026-03-06-early-march.md"
 const rawFiles = import.meta.glob<string>('/src/content/posts/*.md', {
   query: '?raw',

@@ -15,10 +15,10 @@ interface PostBase {
   tags: string[];
 }
 
-/** Post metadata without rendered HTML — returned by getAllPosts(). */
+/** Post metadata without rendered HTML, returned by getAllPosts(). */
 export type PostSummary = PostBase;
 
-/** Post with rendered HTML — returned by getPost(). */
+/** Post with rendered HTML, returned by getPost(). */
 export type PostDetail = PostBase & { html: string };
 
 /** Union type for contexts that accept either. */

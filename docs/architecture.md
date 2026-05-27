@@ -43,9 +43,9 @@ Slug derived from filename: `2026-03-06-early-march.md` → `/2026/03/06/early-m
 
 ## Content Pipeline
 
-### Posts — remark + remark-gfm
+### Posts (remark + remark-gfm)
 
-`src/content/posts/*.md` — loaded at build time via `import.meta.glob` with `?raw` +
+`src/content/posts/*.md` is loaded at build time via `import.meta.glob` with `?raw` +
 `eager: true`. All markdown is bundled as string constants at build time (required:
 Cloudflare Workers has no filesystem). Parsed at request time by gray-matter + remark.
 
@@ -53,26 +53,26 @@ Frontmatter: `title`, `date`, `draft`, `tags`, `description`
 
 **Type split:** `PostSummary` (metadata only, returned by `getAllPosts`) vs `PostDetail`
 (adds `html: string`, returned by `getPost`). Prevents callers from accidentally
-accessing `.html` on list results — it's a type error, not a runtime undefined.
+accessing `.html` on list results. It is a type error, not a runtime undefined.
 
-**`getAllPosts` is synchronous and memoized** — rawFiles is eagerly loaded, gray-matter
+**`getAllPosts` is synchronous and memoized.** rawFiles is eagerly loaded, gray-matter
 is sync, no awaits. The parsed+sorted result is cached in `_cachedPosts` (module-level)
 so repeated calls within a build/request don't re-parse. Only `getPost` is async
 (remark `.process()` returns a Promise).
 
 **Tagging:** `getAllTags()` derives tag counts from `getAllPosts()`. `getPostsByTag(tag)`
-filters `getAllPosts()`. Both benefit from the `_cachedPosts` memo — the underlying
+filters `getAllPosts()`. Both benefit from the `_cachedPosts` memo. The underlying
 parse work only happens once even when both are called in the same load function.
 
 **Tag routes:** `/tags/` index and `/tags/[tag]/` detail pages are fully pre-rendered.
 `entries()` in `[tag]/+page.server.ts` drives static generation of all tag pages at
 build time. Tags not present in any post return 404.
 
-### Special Pages — mdsvex
+### Special Pages (mdsvex)
 
 About and archives pages use mdsvex. A `.md` file holds editable prose; embedded Svelte
 components handle dynamic behavior (archive listing, contact form). These mdsvex route
-pages are edited in-repo — the cairn admin manages the `posts` collection only.
+pages are edited in-repo. The cairn admin manages the `posts` collection only.
 
 ---
 
@@ -97,7 +97,7 @@ JS API.
 
 ---
 
-## CMS — cairn-cms (magic-link admin)
+## CMS: cairn-cms (magic-link admin)
 
 907.life is **consumer #2** of cairn-cms (see `../cairn-cms/docs/PLAN.md`), onboarded in
 Pass F. It replaced the never-wired Sveltia config (removed with `static/admin/`).
@@ -106,10 +106,10 @@ Mounted at `/admin`, in 907.life's own Worker. Editors sign in by email (magic l
 GitHub account); the Carta editor edits raw markdown; saving commits to `main` via the
 shared GitHub App (committer `cairn-cms[bot]`, author = the editor), which auto-deploys.
 
-- **Adapter** (`src/lib/cairn.config.ts`): one **posts** collection — `src/content/posts/`,
+- **Adapter** (`src/lib/cairn.config.ts`): one **posts** collection at `src/content/posts/`,
   filename-based ids (`YYYY-MM-DD-slug`), fields title/date/description/draft, **free-form
   tags** (no controlled vocabulary). Preview is plain markdown (Carta's built-in
-  remark→rehype mirrors the live remark + remark-gfm + remark-html render — no directives).
+  remark→rehype mirrors the live remark + remark-gfm + remark-html render, no directives).
 - **Backend reads.** `glw907/907-life` is public (like ecnordic), but the admin reads (list +
   edit) authenticate with the GitHub App installation token (5000/hr): anonymous reads share
   GitHub's 60/hr-per-IP limit across Cloudflare's shared egress IPs and 403 in prod (fixed in
@@ -145,9 +145,9 @@ the built-in dim theme with dark overrides. Tokens use `--color-*` namespace to 
 collision with DaisyUI slots. Full token table in
 `docs/superpowers/specs/2026-04-07-css-token-system-design.md`.
 
-**Color:** `oklch()` throughout — no hex, no `rgb()`. Two hue anchors:
-- Hue 230 (cool blue-grey) — UI chrome: nav, borders, code blocks, date labels
-- Hue 61 (warm content) — body text via DaisyUI theme (`--color-base-content`)
+**Color:** `oklch()` throughout, no hex, no `rgb()`. Two hue anchors:
+- Hue 230 (cool blue-grey): UI chrome (nav, borders, code blocks, date labels)
+- Hue 61 (warm content): body text via DaisyUI theme (`--color-base-content`)
 
 **Theme persistence:** Cookie-based (`theme` cookie) with `hooks.server.ts` SSR injection.
 Inline `<script>` in app.html reads cookie → localStorage → prefers-color-scheme as
@@ -158,12 +158,12 @@ enables both themes. Custom overrides use `@plugin "daisyui/theme"` (NOT raw
 `[data-theme]` blocks) to inherit built-in theme variables like `base-100`.
 
 **Typography hierarchy:**
-- Body: Spectral 400/700 — warm serif, handles technical density without feeling clinical
-- Display: Karla 400–700 — used in nav logo only; provides sans contrast
-- Mono: Monaspace Neon — tight line-height (1.35) for terminal character
+- Body: Spectral 400/700. Warm serif, handles technical density without feeling clinical.
+- Display: Karla 400–700. Used in nav logo only; provides sans contrast.
+- Mono: Monaspace Neon. Tight line-height (1.35) for terminal character.
 
 **Homepage layout:** Featured post shown in full (most recent), followed by summary list
-("Earlier"). Rationale: the blog is read top-to-bottom — the newest thing is the point.
+("Earlier"). Rationale: the blog is read top-to-bottom. The newest thing is the point.
 
 **Shared CSS in `app.css`:** `.post-body`, `.post-date`, `.post-tags`/`.post-tag`,
 `.page-title`, and `.back-link` are global classes used across multiple routes.
@@ -181,8 +181,8 @@ dates. All date parsing uses a private `parseUtcDate(iso)` helper to avoid
 timezone-shift on bare YYYY-MM-DD strings.
 
 **Feeds:** RSS 2.0 at `/feed.xml`, JSON Feed 1.1 at `/feed.json`. Both use a shared
-`getFeedItems()` data layer in `src/lib/feed.ts`. The feed result is memoized at module
-level — post content is bundled at build time and never changes within a Worker isolate.
+`getFeedItems()` data layer in `src/lib/feed.ts`. The feed result is memoized at module level. Post content is bundled at build time and
+never changes within a Worker isolate.
 Autodiscovery `<link rel="alternate">` tags in `+layout.svelte` cover both formats.
 
 **Hookify quality rules:** Ten rules in `.claude/hookify.*.local.md` enforce Svelte 5
@@ -190,7 +190,7 @@ runes, oklch colors, color token usage, DaisyUI v5 class names, Tailwind v4 APIs
 SvelteKit patterns. Research-backed against official migration guides and community best
 practices.
 
-**Turnstile in dev:** Skipped gracefully — `verifyTurnstile` only runs when
+**Turnstile in dev:** Skipped gracefully. `verifyTurnstile` only runs when
 `platform.env.TURNSTILE_SECRET_KEY` is present. Always-pass test key
 (`1x00000000000000000000AA`) used for the widget in dev.
 

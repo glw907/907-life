@@ -8,7 +8,7 @@ AI-facing rules for writing custom CSS in a Hugo/PaperMod site. Enforced by the 
 ## Rule 1: Never use `!important`
 
 `custom.css` loads **after** the theme's compiled CSS. Equal-specificity rules win by load
-order — your rules win without `!important`.
+order, so your rules win without `!important`.
 
 ### How to win the cascade without `!important`
 
@@ -44,7 +44,7 @@ section .my-class { color: blue; }
 
 ---
 
-## Rule 2: Use theme CSS variables for colors — never hardcode values
+## Rule 2: Use theme CSS variables for colors, never hardcode values
 
 Find your theme's variable/scheme file and use its tokens. Pattern:
 `rgba(var(--color-xxx), opacity)` or `var(--color-xxx)` depending on the theme's format.
@@ -53,7 +53,7 @@ Find your theme's variable/scheme file and use its tokens. Pattern:
 
 Define a custom property in the `:root` block at the top of `custom.css`, then reference
 it everywhere via the variable. Never hardcode `rgb()`/`rgba()`/`#hex` values directly
-in rules — a hardcoded value is untraceable and breaks dark mode pairing.
+in rules. A hardcoded value is untraceable and breaks dark mode pairing.
 
 ```css
 /* WRONG */

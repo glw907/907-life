@@ -22,4 +22,4 @@ This line kept coming back to me. Powers doesn't lecture about environmental des
 
 ## Recommended?
 
-Yes, especially if you're patient with literary fiction. It's not a quick read, but it rewards attention.
+Yes, especially if you're patient with literary fiction. It's long and slow-moving, and it rewards attention.

@@ -24,7 +24,7 @@ declare global {
         BETTER_AUTH_URL: string;
         // Optional origin override; supersedes BETTER_AUTH_URL (set in dev, unset in prod).
         PUBLIC_ORIGIN?: string;
-        // GitHub App credentials — the commit signer (stays bespoke).
+        // GitHub App credentials for the commit signer (stays bespoke).
         GITHUB_APP_ID: string;
         GITHUB_APP_INSTALLATION_ID: string;
         GITHUB_APP_PRIVATE_KEY_B64: string;

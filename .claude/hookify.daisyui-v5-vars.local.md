@@ -26,4 +26,4 @@ DaisyUI v5 renamed all CSS variables. The old short names silently resolve to no
 | `var(--b3)` | `var(--color-base-300)` |
 | `var(--bc)` | `var(--color-base-content)` |
 
-Also flagged: `oklch(var(--...))` — this project uses fixed `oklch()` values (e.g. `oklch(55% 0.008 230)`) rather than CSS variable lookups, which were found to be too faint on the silk theme. Use fixed `oklch()` values for design-critical colors.
+Also flagged: `oklch(var(--...))`. This project uses fixed `oklch()` values (e.g. `oklch(55% 0.008 230)`) rather than CSS variable lookups, which were found to be too faint on the silk theme. Use fixed `oklch()` values for design-critical colors.

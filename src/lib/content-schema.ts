@@ -1,10 +1,10 @@
-// 907.life post frontmatter validation — the site half of the cairn adapter's `validate`.
+// 907.life post frontmatter validation, covering the site half of the cairn adapter's `validate`.
 //
 // Mirrors the loose shape posts.ts already reads (title, date, draft, description, tags),
 // but enforces it on save so the admin can't commit malformed frontmatter. Unlike ecnordic,
-// 907.life tags are FREE-FORM (no controlled vocabulary) — any non-empty strings.
+// 907.life tags are FREE-FORM (no controlled vocabulary): any non-empty strings.
 
-/** Validated post frontmatter — the on-disk object after type checks. */
+/** Validated post frontmatter (the on-disk object after type checks). */
 export interface PostFrontmatter {
   title: string;
   date: string;

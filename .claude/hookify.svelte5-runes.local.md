@@ -26,4 +26,4 @@ This project uses Svelte 5 runes throughout. The pattern that triggered this rul
 
 **Check:** `src/routes/+page.svelte` for correct rune usage examples.
 
-Note: `export let` is also used legitimately in `.svelte` for re-exporting constants from a module script — only flag if this is in a `<script>` (not `<script context="module">`) and it looks like a prop declaration.
+Note: `export let` is also used legitimately in `.svelte` for re-exporting constants from a module script. Only flag if this is in a `<script>` (not `<script context="module">`) and it looks like a prop declaration.

@@ -1,7 +1,7 @@
 # Documentation Standards
 
-Standards for technical documentation in this project. Drawn from production experience —
-these rules exist to prevent the most common failure modes: vague instructions, silent
+Standards for technical documentation in this project. Drawn from production experience.
+These rules exist to prevent the most common failure modes: vague instructions, silent
 stale content, and docs that describe the wrong thing.
 
 ---
@@ -30,8 +30,8 @@ procedural or reference content. Even one paragraph:
 
 - **What this system is** and its role in the stack
 - **How it connects** to other systems (data flows, triggers, auth)
-- **What it does not do** — explicit scope boundaries prevent confusion
-- **Key decisions and tradeoffs** — why this approach over alternatives
+- **What it does not do** (explicit scope boundaries prevent confusion)
+- **Key decisions and tradeoffs** (why this approach over alternatives)
 
 ---
 
@@ -46,7 +46,7 @@ When a document describes a significant design choice, record it explicitly inli
 **Date:** 2026-01-15
 ```
 
-No formal ADR template required — inline records in explanation documents are sufficient.
+No formal ADR template required. Inline records in explanation documents are sufficient.
 Include a date so future readers can evaluate whether circumstances have changed.
 
 ---
@@ -58,11 +58,11 @@ Be precise. Vague technical documentation is worse than no documentation.
 | Instead of | Write |
 |---|---|
 | Set up the environment | Run `source ~/.bashrc`; the Bash tool shell does not load profile files automatically |
-| Deploy the worker | `cd myproject && npx wrangler deploy` (specify the directory — wrong directory sets secrets on the wrong Worker) |
+| Deploy the worker | `cd myproject && npx wrangler deploy` (wrong directory sets secrets on the wrong Worker) |
 | The webhook validates the signature | Compute HMAC-SHA256 over the raw body using the full secret string as UTF-8 bytes |
 
 **Name things exactly.** Use the exact name of the Cloudflare Worker, GitHub Actions job,
-environment variable, or config key — not a generic description.
+environment variable, or config key, not a generic description.
 
 **Include the "why" for non-obvious choices.** If a config option has a specific value for
 a non-obvious reason, say so. If a workaround exists because of a third-party limitation,
@@ -73,32 +73,32 @@ say so.
 ## Page titles and filenames
 
 **Titles:** Include a type suffix ("Guide", "Reference") only when it does disambiguation
-work — when sibling pages cover the same system from different angles. Omit it when
+work, when sibling pages cover the same system from different angles. Omit it when
 the content type is already clear from context.
 
 **Filenames:** Reflect the subject, not the full title. Drop leading gerunds
-("Managing", "Configuring") — use the noun. Omit type suffixes from slugs.
+("Managing", "Configuring"); use the noun. Omit type suffixes from slugs.
 Short slugs are preferred when unambiguous in context.
 
 ---
 
 ## Code and configuration examples
 
-- Show complete, runnable examples — not pseudocode
+- Show complete, runnable examples, not pseudocode
 - Include context: file path, function name, working directory for CLI commands
 - Use fenced code blocks with language hints
 - For API calls: full URL, method, required headers, expected response shape
-- Use actual values from this project — not invented placeholders
+- Use actual values from this project, not invented placeholders
 
 ---
 
 ## Document structure (most stable → most volatile)
 
-1. **Overview / purpose** — what this system does
-2. **Architecture** — how it is built
-3. **Configuration and setup** — what values are set where
-4. **Operations** — how to deploy, debug, maintain
-5. **Reference tables** — routes, schema, env vars (put these last — they change most)
+1. **Overview / purpose**: what this system does
+2. **Architecture**: how it is built
+3. **Configuration and setup**: what values are set where
+4. **Operations**: how to deploy, debug, maintain
+5. **Reference tables**: routes, schema, env vars (put these last; they change most)
 
 ---
 
@@ -106,7 +106,7 @@ Short slugs are preferred when unambiguous in context.
 
 Update the relevant doc in the same commit as the code change it describes.
 
-If a document is known to be out of date, add a visible warning at the top — do not leave
+If a document is known to be out of date, add a visible warning at the top. Do not leave
 silent stale content. Readers trust what they read.
 
 ---
@@ -115,6 +115,6 @@ silent stale content. Readers trust what they read.
 
 - Describing code that already documents itself
 - Invented examples (use real Worker names, real env var names, real values)
-- Copying official docs — link instead
+- Copying official docs (link instead)
 - Version numbers without dates ("Hugo 0.155.1 (January 2026)" ages better than just a version)
-- One massive doc per subsystem — split reference from explanation
+- One massive doc per subsystem (split reference from explanation)

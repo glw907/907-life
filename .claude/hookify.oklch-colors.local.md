@@ -22,4 +22,4 @@ All colors in `.svelte` and `.css` files should use the `oklch()` color space fo
 
 The existing palette uses hue 230 (cool blue-grey) for UI chrome and 61 for warm content text. Match those anchors when adding new colors.
 
-Tool: https://oklch.com — paste a hex value to get the oklch equivalent.
+Tool: https://oklch.com. Paste a hex value to get the oklch equivalent.

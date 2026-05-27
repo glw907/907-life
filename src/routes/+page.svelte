@@ -66,7 +66,7 @@
     border-bottom: 1px solid var(--color-border);
   }
 
-  /* Featured title — the anchor of the page */
+  /* Featured title: the anchor of the page */
   .featured-title {
     font-family: var(--font-display);
     font-size: clamp(1.55rem, 4.5vw, 1.95rem);
@@ -143,7 +143,7 @@
     gap: 0.1rem 0.5rem;
   }
 
-  /* Description — quieter than the title, italic */
+  /* Description: quieter than the title, italic */
   .post-description {
     font-size: 0.88rem;
     font-style: italic;

@@ -31,7 +31,7 @@ This breaks down at scale for two reasons:
 |---------|----------|--------|-------|
 | FD limit | 1024 (FD_SETSIZE) | Unlimited | Unlimited |
 | Scan on return | Full list O(n) | Full list O(n) | Only ready FDs O(1) |
-| Kernel copy per call | Yes — full list | Yes — full list | No — registered once |
+| Kernel copy per call | Yes, full list | Yes, full list | No, registered once |
 | Level vs edge trigger | Level only | Level only | Both |
 
 Each `select()` call copies your entire watched set into the kernel, then copies it back. With 10,000 connections, most idle, you're copying and scanning 10,000 entries every time *any single socket* becomes readable. The kernel does O(n) work. Your userspace does O(n) work. None of it scales.
@@ -65,9 +65,9 @@ The kernel maintains a red-black tree of watched descriptors and an internal rea
 
 This is where most epoll bugs live.
 
-**Level-triggered (LT)** — default. `epoll_wait()` returns as long as the condition holds. If you don't read all available data, it fires again next call. Easier to use correctly.
+**Level-triggered (LT):** default. `epoll_wait()` returns as long as the condition holds. If you don't read all available data, it fires again next call. Easier to use correctly.
 
-**Edge-triggered (ET)** — fires once when the state *changes*. If 4KB arrives and you only read 1KB, you won't hear about the remaining 3KB until more data arrives. You must read in a loop until `EAGAIN`.
+**Edge-triggered (ET):** fires once when the state *changes*. If 4KB arrives and you only read 1KB, you won't hear about the remaining 3KB until more data arrives. You must read in a loop until `EAGAIN`.
 
 ```c
 // Edge-triggered: must drain completely
@@ -96,10 +96,10 @@ The tradeoff:
 
 A few things that trip people up:
 
-- [x] Regular files don't work with epoll — only sockets, pipes, and devices
+- [x] Regular files don't work with epoll (only sockets, pipes, and devices)
 - [x] `epoll_wait()` with timeout `-1` blocks indefinitely
-- [ ] `EPOLLONESHOT` removes the FD after one event — you must re-arm it
-- [ ] `EPOLLRDHUP` detects peer shutdown without reading — useful for connection tracking
+- [ ] `EPOLLONESHOT` removes the FD after one event; you must re-arm it
+- [ ] `EPOLLRDHUP` detects peer shutdown without reading, useful for connection tracking
 
 ### File descriptor exhaustion
 
@@ -134,4 +134,4 @@ If you're writing something that needs to run on Linux only and you control the 
 
 > The purpose of abstracting over epoll, kqueue, and IOCP is not to pretend they're the same. They're not. The purpose is to let you change your mind later.
 
-The C10K problem is solved. The C10M problem — 10 million connections — is harder, and it involves NUMA topology, interrupt affinity, and kernel bypass (DPDK, io_uring). But that's another article.
+The C10K problem is solved. The C10M problem (10 million connections) is harder, and it involves NUMA topology, interrupt affinity, and kernel bypass (DPDK, io_uring). But that's another article.
