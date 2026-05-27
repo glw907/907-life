@@ -6,7 +6,7 @@
 // ride the `freetags` field type (a comma-separated input → trimmed, de-duplicated list),
 // folded into the contract in Pass F2 so the shared admin shell handles them with no
 // per-site route code — distinct from ecnordic's controlled-vocabulary `tags` checkboxes.
-import type { CairnAdapter } from '@glw907/cairn-cms';
+import { type CairnAdapter, defineRegistry } from '@glw907/cairn-cms';
 import { validatePostFrontmatter } from './content-schema';
 
 export const cairn: CairnAdapter = {
@@ -17,6 +17,8 @@ export const cairn: CairnAdapter = {
   // mirrors the live remark + remark-gfm + remark-html render (907.life has no directives,
   // so no site plugins are injected).
   preview: { remarkPlugins: [], rehypePlugins: [] },
+  // No directive components — an empty registry (the editor palette will show none).
+  registry: defineRegistry({ components: [] }),
   collections: [
     {
       type: 'posts',
