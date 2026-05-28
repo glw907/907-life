@@ -3,6 +3,7 @@ export const prerender = false;
 import type { PageServerLoad, Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 import { createMimeMessage } from 'mimetext';
+import { siteConfig } from '$lib/config';
 
 export const load: PageServerLoad = () => ({});
 
@@ -51,13 +52,18 @@ export const actions: Actions = {
     }
 
     const msg = createMimeMessage();
-    msg.setSender({ name: 'Contact Form', addr: 'noreply@907.life' });
+    msg.setSender({
+      name: siteConfig.email?.senderName ?? 'Contact Form',
+      addr: siteConfig.email?.sender ?? 'noreply@907.life',
+    });
     msg.setRecipient(contactEmail);
     msg.setSubject(`Contact from ${name}`);
     msg.addMessage({ contentType: 'text/plain', data: `From: ${name} <${email}>\n\n${message}` });
 
     const { EmailMessage } = await import('cloudflare:email');
-    await sendEmail.send(new EmailMessage('noreply@907.life', contactEmail, msg.asRaw()));
+    await sendEmail.send(
+      new EmailMessage(siteConfig.email?.sender ?? 'noreply@907.life', contactEmail, msg.asRaw()),
+    );
 
     return { success: true };
   }

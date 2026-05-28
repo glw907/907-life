@@ -1,5 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment';
+  import { PRIMARY_NAV } from '$lib/config';
 
   let { onSearchOpen }: { onSearchOpen: () => void } = $props();
 
@@ -20,9 +21,9 @@
       <span class="logo-primary">907</span><span class="logo-secondary">.life</span>
     </a>
     <div class="nav-links">
-      <a href="/archives" class="nav-link">Archives</a>
-      <a href="/about" class="nav-link">About</a>
-      <a href="/about#contact" class="nav-link">Contact</a>
+      {#each PRIMARY_NAV as link}
+        <a href={link.url ?? '#'} class="nav-link">{link.label}</a>
+      {/each}
       <div class="nav-icons">
         <button
           onclick={onSearchOpen}

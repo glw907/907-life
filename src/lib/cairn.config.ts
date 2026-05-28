@@ -8,10 +8,11 @@
 // per-site route code, distinct from ecnordic's controlled-vocabulary `tags` checkboxes.
 import { type CairnAdapter, defineRegistry } from '@glw907/cairn-cms';
 import { validatePostFrontmatter } from './content-schema';
+import { siteConfig } from './config';
 
 export const cairn: CairnAdapter = {
-  siteName: '907.life',
-  sender: 'noreply@907.life',
+  siteName: siteConfig.siteName,
+  sender: siteConfig.email?.sender ?? 'noreply@907.life',
   backend: { owner: 'glw907', repo: '907-life', branch: 'main' },
   // Plain prose preview: Carta's built-in remarkParse → gfm → remark-rehype → stringify
   // mirrors the live remark + remark-gfm + remark-html render (907.life has no directives,
