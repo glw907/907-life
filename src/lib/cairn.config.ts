@@ -20,6 +20,8 @@ export const cairn: CairnAdapter = {
   preview: { remarkPlugins: [], rehypePlugins: [] },
   // No directive components. An empty registry (the editor palette will show none).
   registry: defineRegistry({ components: [] }),
+  // The header menu, managed from /admin/nav and committed to the site-config YAML (Pass L2).
+  navMenu: { configPath: 'src/lib/site.config.yaml', menuName: 'primary', label: 'Navigation', maxDepth: 2 },
   collections: [
     {
       type: 'posts',
