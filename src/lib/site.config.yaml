@@ -1,0 +1,19 @@
+siteName: 907.life
+description: A personal blog by Geoffrey L. Wright
+author: Geoffrey L. Wright
+url: https://907.life
+locale: en-US
+
+menus:
+  primary:
+    - { label: Archives, url: /archives }
+    - { label: About, url: /about }
+    - { label: Contact, url: /about#contact }
+
+email:
+  sender: noreply@907.life
+  senderName: Contact Form
+
+settings:
+  feedMaxItems: 20
+  homepageFeaturedCount: 1
