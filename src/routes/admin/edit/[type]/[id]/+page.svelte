@@ -6,4 +6,4 @@
   let { data }: { data: PageData } = $props();
 </script>
 
-<EditPage {data} preview={cairn.preview} />
+<EditPage {data} preview={cairn.preview} registry={cairn.registry} />
