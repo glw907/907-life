@@ -28,7 +28,7 @@
     "wrangler": "^4.93.1"
   },
   "dependencies": {
-    "@glw907/cairn-cms": "0.6.0-rc.0",
+    "@glw907/cairn-cms": "0.6.0",
     "better-auth": "^1.6",
     "carta-md": "4.11.2",
     "drizzle-orm": "^0.45",
