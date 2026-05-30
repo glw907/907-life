@@ -16,12 +16,10 @@ declare global {
         TURNSTILE_SECRET_KEY: string;
         // cairn-cms: Email Sending (transactional, arbitrary recipients) for magic links.
         EMAIL: NonNullable<AuthEnv['EMAIL']>;
-        // cairn-cms better-auth store + signing secret + base URL.
+        // cairn-cms self-owned auth store (editor allowlist, sessions, magic tokens).
         AUTH_DB: D1Database;
-        AUTH_SECRET: string;
-        BETTER_AUTH_URL: string;
-        // Optional origin override; supersedes BETTER_AUTH_URL (set in dev, unset in prod).
-        PUBLIC_ORIGIN?: string;
+        // Canonical origin for magic-link confirmation links (never from a request header).
+        PUBLIC_ORIGIN: string;
         // GitHub App credentials for the commit signer (stays bespoke).
         GITHUB_APP_ID: string;
         GITHUB_APP_INSTALLATION_ID: string;

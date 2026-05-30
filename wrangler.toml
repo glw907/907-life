@@ -25,16 +25,16 @@ remote = true
 binding = "AUTH_KV"
 id = "9dff7ea324db4d5db8ca0e8e54078e68"
 
-# cairn-cms: better-auth store — users (= editor allowlist), sessions, magic-link verifications.
+# cairn-cms: self-owned magic-link auth store — editor allowlist, sessions, magic tokens.
 [[d1_databases]]
 binding = "AUTH_DB"
 database_name = "cairn-907-auth"
 database_id = "93aa929d-0228-4f8b-8d1e-5e7e0d755617"
-migrations_dir = "drizzle/migrations"
 
 [vars]
-# better-auth base URL (prod origin). Dev overrides via PUBLIC_ORIGIN in .dev.vars.
-BETTER_AUTH_URL = "https://907.life"
+# Canonical origin for magic-link confirmation links, never read from a request header.
+# Dev overrides via PUBLIC_ORIGIN in .dev.vars.
+PUBLIC_ORIGIN = "https://907.life"
 
 [[routes]]
 pattern = "907.life"
