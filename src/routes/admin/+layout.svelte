@@ -1,11 +1,7 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
-  import { AdminLayout } from '@glw907/cairn-cms/components';
-  import type { LayoutData } from '@glw907/cairn-cms/sveltekit';
-
-  let { data, children }: { data: LayoutData; children: Snippet } = $props();
+  // Bare passthrough. The admin shell (sidebar, user menu) wraps only the authed (app) group;
+  // login and auth render without it.
+  let { children } = $props();
 </script>
 
-<AdminLayout {data}>
-  {@render children()}
-</AdminLayout>
+{@render children()}
