@@ -7,6 +7,7 @@
     "build": "vite build",
     "build:search": "vite build && npx pagefind --site .svelte-kit/cloudflare",
     "preview": "vite preview",
+    "test": "vitest run",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
   },
@@ -23,6 +24,7 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite": "^8",
+    "vitest": "^4.1.7",
     "wrangler": "^4.93.1"
   },
   "dependencies": {
