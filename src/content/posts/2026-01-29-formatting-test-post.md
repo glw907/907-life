@@ -83,5 +83,3 @@ Here is a footnote reference.[^1]
 ---
 
 End of test.
-
-<!-- cairn admin save smoke: 2026-05-30 -->
