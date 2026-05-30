@@ -1,8 +1,23 @@
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import remarkGfm from 'remark-gfm';
-import remarkHtml from 'remark-html';
+import remarkRehype from 'remark-rehype';
+import rehypeSanitize from 'rehype-sanitize';
+import rehypeStringify from 'rehype-stringify';
 import type { PostDetail, PostSummary } from './types.js';
+
+/** Render a post body to sanitized HTML for the public page and the admin preview.
+ *  The rehype-sanitize floor drops any raw HTML an editor could commit (scripts, event
+ *  handlers, unsafe URLs) while keeping ordinary markdown output. */
+export async function renderPostHtml(markdown: string): Promise<string> {
+  const file = await remark()
+    .use(remarkGfm)
+    .use(remarkRehype)
+    .use(rehypeSanitize)
+    .use(rehypeStringify)
+    .process(markdown);
+  return String(file);
+}
 
 // Bundled at build time; no runtime filesystem access needed.
 // Keys are absolute paths like "/src/content/posts/2026-03-06-early-march.md"
@@ -83,10 +98,9 @@ export async function getPost(
   if (!raw) return null;
 
   const { data, content } = matter(raw);
-  const processed = await remark().use(remarkGfm).use(remarkHtml).process(content);
 
   return {
     ...buildSummary({ year, month, day, slug }, data),
-    html: processed.toString()
+    html: await renderPostHtml(content)
   };
 }

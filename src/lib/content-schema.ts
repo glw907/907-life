@@ -1,64 +1,68 @@
-// 907.life post frontmatter validation, covering the site half of the cairn adapter's `validate`.
+// 907.life post frontmatter validation, the site half of the cairn adapter's `validate`.
 //
 // Mirrors the loose shape posts.ts already reads (title, date, draft, description, tags),
 // but enforces it on save so the admin can't commit malformed frontmatter. Unlike ecnordic,
 // 907.life tags are FREE-FORM (no controlled vocabulary): any non-empty strings.
-
-/** Validated post frontmatter (the on-disk object after type checks). */
-export interface PostFrontmatter {
-  title: string;
-  date: string;
-  draft: boolean;
-  description: string;
-  tags: string[];
-}
+//
+// The contract returns a `ValidationResult` and never throws: `{ ok: true, data }` on a clean
+// frontmatter, or `{ ok: false, errors }` with one message per offending field. The admin
+// surfaces the field errors inline rather than bouncing a single thrown message.
+import type { ValidationResult } from '@glw907/cairn-cms';
+import { dateInputValue } from '@glw907/cairn-cms';
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-/** Coerce a frontmatter date value to an ISO YYYY-MM-DD string (gray-matter yields a Date
- *  for unquoted YAML dates; a quoted/typed string passes straight through). */
-function isoFromValue(value: unknown): string {
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
-  return String(value ?? '');
+/** True when `date` is a real calendar day (round-trips through Date unchanged). */
+function isRealCalendarDate(date: string): boolean {
+  if (!ISO_DATE.test(date)) return false;
+  const parsed = new Date(`${date}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return false;
+  return parsed.toISOString().slice(0, 10) === date;
 }
 
 /**
- * Validate a post's raw frontmatter into the on-disk object, throwing on the first problem
- * so the admin bounces a clear message rather than committing bad content. `source` (the
- * filename) is named in every error to make the offending file obvious.
+ * Validate a post's raw frontmatter into the on-disk object. Preserves every prior rule:
+ * title and description required, draft a boolean when present, date a real YYYY-MM-DD day,
+ * tags an optional free-form list. Returns field-keyed errors instead of throwing.
  */
 export function validatePostFrontmatter(
-  data: Record<string, unknown>,
-  source: string,
-): PostFrontmatter {
-  const fail = (msg: string): never => {
-    throw new Error(`Invalid post frontmatter in ${source}: ${msg}`);
-  };
+  frontmatter: Record<string, unknown>,
+  _body: string,
+): ValidationResult {
+  const errors: Record<string, string> = {};
 
-  const title = data.title;
-  if (typeof title !== 'string' || title.trim() === '') fail('title is required');
+  const title = typeof frontmatter.title === 'string' ? frontmatter.title.trim() : '';
+  if (!title) errors.title = 'Title is required';
 
-  if (data.draft !== undefined && typeof data.draft !== 'boolean') fail('draft must be a boolean');
+  const description =
+    typeof frontmatter.description === 'string' ? frontmatter.description.trim() : '';
+  if (!description) errors.description = 'Description is required';
 
-  const description = data.description;
-  if (typeof description !== 'string' || description.trim() === '') fail('description is required');
-
-  const date = isoFromValue(data.date);
-  if (!ISO_DATE.test(date)) fail('date must be a YYYY-MM-DD string');
-  if (new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) !== date) {
-    fail(`date "${date}" is not a real calendar date`);
+  if (frontmatter.draft !== undefined && typeof frontmatter.draft !== 'boolean') {
+    errors.draft = 'Draft must be a boolean';
   }
 
-  // Free-form tags: any non-empty strings. Absent/empty is allowed.
-  const rawTags = data.tags ?? [];
-  if (!Array.isArray(rawTags)) fail('tags must be a list');
-  const tags = (rawTags as unknown[]).map((t) => String(t).trim()).filter(Boolean);
+  const date = dateInputValue(frontmatter.date); // '' when missing/unparseable
+  if (!date) {
+    errors.date = 'A valid date is required';
+  } else if (!isRealCalendarDate(date)) {
+    errors.date = `Date "${date}" is not a real calendar date`;
+  }
 
+  // Free-form tags: any non-empty strings. Absent is allowed; a non-list is an error.
+  const rawTags = frontmatter.tags;
+  let tags: string[] = [];
+  if (rawTags === undefined || rawTags === null) {
+    tags = [];
+  } else if (Array.isArray(rawTags)) {
+    tags = rawTags.map((t) => String(t).trim()).filter(Boolean);
+  } else {
+    errors.tags = 'Tags must be a list';
+  }
+
+  if (Object.keys(errors).length > 0) return { ok: false, errors };
   return {
-    title: title as string,
-    date,
-    draft: data.draft === true,
-    description: description as string,
-    tags,
+    ok: true,
+    data: { ...frontmatter, title, date, description, tags, draft: frontmatter.draft === true },
   };
 }

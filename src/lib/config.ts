@@ -9,8 +9,19 @@ export const SITE_TITLE              = siteConfig.siteName;
 export const SITE_DESCRIPTION        = siteConfig.description ?? '';
 export const SITE_AUTHOR             = siteConfig.author ?? '';
 export const SITE_LOCALE             = siteConfig.locale ?? 'en-US';
-export const FEED_MAX_ITEMS          = siteConfig.settings?.feedMaxItems ?? 20;  // 0 = include all posts
-export const HOMEPAGE_FEATURED_COUNT = siteConfig.settings?.homepageFeaturedCount ?? 1;
+// `settings` and `email` arrive through SiteConfig's index signature as `unknown`; read them
+// through narrow shapes rather than chaining off `unknown`.
+const settings = siteConfig.settings as
+  | { feedMaxItems?: number; homepageFeaturedCount?: number }
+  | undefined;
+
+/** The contact-form sender identity, read from the site config. */
+export const SITE_EMAIL = (siteConfig.email as
+  | { sender?: string; senderName?: string }
+  | undefined) ?? {};
+
+export const FEED_MAX_ITEMS          = settings?.feedMaxItems ?? 20;  // 0 = include all posts
+export const HOMEPAGE_FEATURED_COUNT = settings?.homepageFeaturedCount ?? 1;
 
 /** The primary header navigation, read from the site config (Pass L). */
 export const PRIMARY_NAV = extractMenu(siteConfig, 'primary', 2);

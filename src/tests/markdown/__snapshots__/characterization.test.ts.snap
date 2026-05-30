@@ -11,8 +11,7 @@ exports[`characterization: current 907 rendered HTML is preserved > renders 2024
 <h2>The Experiment</h2>
 <p>For the past month, I've been leaving my phone at home during morning walks. Simple change, but the effect has been noticeable. Without the option to check messages or take photos, I just... walk. And notice things.</p>
 <p>This morning: ice crystals on a dead fireweed stalk, catching the low sunlight. I would have missed it entirely with a screen in my pocket.</p>
-<p>No grand conclusions yet. Just noticing what happens when I remove one small source of distraction.</p>
-"
+<p>No grand conclusions yet. Just noticing what happens when I remove one small source of distraction.</p>"
 `;
 
 exports[`characterization: current 907 rendered HTML is preserved > renders 2024-12-01-favorite-albums-2024.md identically 1`] = `
@@ -43,8 +42,7 @@ Radiohead adjacent, but looser and more experimental.</p>
 <h2>Themes</h2>
 <p>Looking at this list, I realize I gravitated toward music that felt handmade and human this year. Less production gloss, more raw texture.</p>
 <p>Maybe that's a reaction to how much time I spent staring at screens. Music became a refuge from the algorithmic feed.</p>
-<p>What were your favorites this year?</p>
-"
+<p>What were your favorites this year?</p>"
 `;
 
 exports[`characterization: current 907 rendered HTML is preserved > renders 2024-12-15-book-notes-example.md identically 1`] = `
@@ -58,8 +56,7 @@ exports[`characterization: current 907 rendered HTML is preserved > renders 2024
 </blockquote>
 <p>This line kept coming back to me. Powers doesn't lecture about environmental destruction; he tells stories that make you see trees as characters with their own agency and narrative arcs.</p>
 <h2>Recommended?</h2>
-<p>Yes, especially if you're patient with literary fiction. It's not a quick read, but it rewards attention.</p>
-"
+<p>Yes, especially if you're patient with literary fiction. It's long and slow-moving, and it rewards attention.</p>"
 `;
 
 exports[`characterization: current 907 rendered HTML is preserved > renders 2025-01-10-winter-prior-lake.md identically 1`] = `
@@ -73,10 +70,9 @@ exports[`characterization: current 907 rendered HTML is preserved > renders 2025
 <li>Camera: Still using the trusty old DSLR</li>
 <li>Lens: 24-70mm</li>
 <li>Extra batteries: Essential in the cold</li>
-<li>Warm gloves with finger cutouts: Game changer</li>
+<li>Warm gloves with finger cutouts: essential</li>
 </ul>
-<p>The photos turned out better than expected. There's something about the simplicity of snow, ice, and light that makes photography feel pure again.</p>
-"
+<p>The photos turned out better than expected. There's something about the simplicity of snow, ice, and light that makes photography feel pure again.</p>"
 `;
 
 exports[`characterization: current 907 rendered HTML is preserved > renders 2025-01-23-testing-the-new-site.md identically 1`] = `
@@ -90,8 +86,7 @@ exports[`characterization: current 907 rendered HTML is preserved > renders 2025
 <li>RSS and JSON feeds</li>
 <li>Cloudflare hosting</li>
 </ul>
-<p>More posts coming soon!</p>
-"
+<p>More posts coming soon!</p>"
 `;
 
 exports[`characterization: current 907 rendered HTML is preserved > renders 2026-01-29-formatting-test-post.md identically 1`] = `
@@ -168,17 +163,15 @@ This should appear on the next line.</p>
 <p>This is the footnote text. <a href="#user-content-fnref-1" data-footnote-backref="" aria-label="Back to reference 1" class="data-footnote-backref">↩</a></p>
 </li>
 </ol>
-</section>
-"
+</section>"
 `;
 
 exports[`characterization: current 907 rendered HTML is preserved > renders 2026-03-06-early-march.md identically 1`] = `
-"<p>There's a week or two every year when Anchorage can't decide what it's doing. The sun has climbed back up to somewhere meaningful — you notice it now in late afternoon, slanting gold across the snowpack — but the temperatures haven't gotten the message yet. It dropped to nine below on Tuesday. Wednesday I was walking without a hat.</p>
-<p>I've come to think of early March as its own season here, separate from either winter or spring. The snow is still deep but it's changed character: it's denser now, with a crust that holds your weight until it doesn't. The birches are still bare but something in the color of the bark has shifted, gone more bronze than gray. You can't point to any single thing and say <em>there</em>, that's it, that's the change — it's more that the light comes from a different angle and makes everything feel slightly rearranged.</p>
+"<p>There's a week or two every year when Anchorage can't decide what it's doing. The sun has climbed back up to somewhere meaningful (you notice it now in late afternoon, slanting gold across the snowpack), but the temperatures haven't gotten the message yet. It dropped to nine below on Tuesday. Wednesday I was walking without a hat.</p>
+<p>I've come to think of early March as its own season here, separate from either winter or spring. The snow is still deep but it's changed character: it's denser now, with a crust that holds your weight until it doesn't. The birches are still bare but something in the color of the bark has shifted, gone more bronze than gray. You can't point to any single thing and say <em>there</em>, that's it, that's the change. It's more that the light comes from a different angle and makes everything feel slightly rearranged.</p>
 <p>I took the dog out along the greenbelt this morning before the temperature had risen above fifteen. We had the trail mostly to ourselves. She found something under a spruce tree that required extensive investigation while I stood and watched my breath and thought about nothing in particular, which is harder than it sounds and also one of the few things I'm reliably good at in the morning.</p>
-<p>There's a red squirrel that lives in the woodpile off the back deck and reappears every March like a small, aggressive sign of life. He was back yesterday, scolding from the top of the stack. I took this as a good omen. By the time he quieted down the sun had moved behind the ridge and the temperature dropped two degrees in about ten minutes, which is the other thing March does — remind you not to get comfortable.</p>
-<p>Spring here doesn't arrive so much as it negotiates. But March is when you know, in some provisional way, that it's coming.</p>
-"
+<p>There's a red squirrel that lives in the woodpile off the back deck and reappears every March like a small, aggressive sign of life. He was back yesterday, scolding from the top of the stack. I took this as a good omen. By the time he quieted down the sun had moved behind the ridge and the temperature dropped two degrees in about ten minutes, which is the other thing March does: it won't let you get comfortable.</p>
+<p>Spring here doesn't arrive so much as it negotiates. But March is when you know, in some provisional way, that it's coming.</p>"
 `;
 
 exports[`characterization: current 907 rendered HTML is preserved > renders 2026-04-06-understanding-epoll.md identically 1`] = `
@@ -220,9 +213,9 @@ if (ready > 0 &#x26;&#x26; FD_ISSET(sockfd, &#x26;readfds)) {
 </tr>
 <tr>
 <td>Kernel copy per call</td>
-<td>Yes — full list</td>
-<td>Yes — full list</td>
-<td>No — registered once</td>
+<td>Yes, full list</td>
+<td>Yes, full list</td>
+<td>No, registered once</td>
 </tr>
 <tr>
 <td>Level vs edge trigger</td>
@@ -255,8 +248,8 @@ for (int i = 0; i &#x3C; nready; i++) {
 <p>The kernel maintains a red-black tree of watched descriptors and an internal ready list. When a descriptor becomes ready, the kernel adds it to the ready list directly. <code>epoll_wait()</code> drains that list. No scanning, no copying the full set.</p>
 <h2>Edge-triggered vs level-triggered</h2>
 <p>This is where most epoll bugs live.</p>
-<p><strong>Level-triggered (LT)</strong> — default. <code>epoll_wait()</code> returns as long as the condition holds. If you don't read all available data, it fires again next call. Easier to use correctly.</p>
-<p><strong>Edge-triggered (ET)</strong> — fires once when the state <em>changes</em>. If 4KB arrives and you only read 1KB, you won't hear about the remaining 3KB until more data arrives. You must read in a loop until <code>EAGAIN</code>.</p>
+<p><strong>Level-triggered (LT):</strong> default. <code>epoll_wait()</code> returns as long as the condition holds. If you don't read all available data, it fires again next call. Easier to use correctly.</p>
+<p><strong>Edge-triggered (ET):</strong> fires once when the state <em>changes</em>. If 4KB arrives and you only read 1KB, you won't hear about the remaining 3KB until more data arrives. You must read in a loop until <code>EAGAIN</code>.</p>
 <pre><code class="language-c">// Edge-triggered: must drain completely
 while (1) {
     ssize_t n = read(fd, buf, sizeof(buf));
@@ -299,10 +292,10 @@ while (1) {
 <h2>Practical limits</h2>
 <p>A few things that trip people up:</p>
 <ul class="contains-task-list">
-<li class="task-list-item"><input type="checkbox" checked disabled> Regular files don't work with epoll — only sockets, pipes, and devices</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Regular files don't work with epoll (only sockets, pipes, and devices)</li>
 <li class="task-list-item"><input type="checkbox" checked disabled> <code>epoll_wait()</code> with timeout <code>-1</code> blocks indefinitely</li>
-<li class="task-list-item"><input type="checkbox" disabled> <code>EPOLLONESHOT</code> removes the FD after one event — you must re-arm it</li>
-<li class="task-list-item"><input type="checkbox" disabled> <code>EPOLLRDHUP</code> detects peer shutdown without reading — useful for connection tracking</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>EPOLLONESHOT</code> removes the FD after one event; you must re-arm it</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>EPOLLRDHUP</code> detects peer shutdown without reading, useful for connection tracking</li>
 </ul>
 <h3>File descriptor exhaustion</h3>
 <p>The OS limit on open file descriptors is a separate constraint from epoll's scalability. Check and raise it:</p>
@@ -327,6 +320,5 @@ epoll_ctl(epfd, EPOLL_CTL_ADD, sockfd, &#x26;ev);
 <blockquote>
 <p>The purpose of abstracting over epoll, kqueue, and IOCP is not to pretend they're the same. They're not. The purpose is to let you change your mind later.</p>
 </blockquote>
-<p>The C10K problem is solved. The C10M problem — 10 million connections — is harder, and it involves NUMA topology, interrupt affinity, and kernel bypass (DPDK, io_uring). But that's another article.</p>
-"
+<p>The C10K problem is solved. The C10M problem (10 million connections) is harder, and it involves NUMA topology, interrupt affinity, and kernel bypass (DPDK, io_uring). But that's another article.</p>"
 `;

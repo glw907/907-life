@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { AdminLayout } from '@glw907/cairn-cms/components';
-
-  let { data, children } = $props();
+  // Bare passthrough. The admin shell (sidebar, user menu) wraps only the authed (app) group;
+  // login and auth render without it.
+  let { children } = $props();
 </script>
 
-<AdminLayout {data}>{@render children()}</AdminLayout>
+{@render children()}
