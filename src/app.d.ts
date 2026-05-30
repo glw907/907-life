@@ -1,15 +1,13 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
 import type { SendEmail, D1Database } from '@cloudflare/workers-types';
-import type { EmailSender } from '@glw907/cairn-cms';
-import type { Auth, CairnUser } from '@glw907/cairn-cms/auth';
+import type { Editor, AuthEnv } from '@glw907/cairn-cms';
 
 declare global {
   namespace App {
     interface Locals {
-      // Per-request better-auth instance + resolved session (set in hooks.server.ts).
-      auth: Auth;
-      user: CairnUser | null;
+      // The session the cairn auth guard resolved for /admin (set in hooks.server.ts).
+      editor: Editor | null;
     }
     interface Platform {
       env: {
@@ -17,7 +15,7 @@ declare global {
         CONTACT_EMAIL: string;
         TURNSTILE_SECRET_KEY: string;
         // cairn-cms: Email Sending (transactional, arbitrary recipients) for magic links.
-        EMAIL: EmailSender;
+        EMAIL: NonNullable<AuthEnv['EMAIL']>;
         // cairn-cms better-auth store + signing secret + base URL.
         AUTH_DB: D1Database;
         AUTH_SECRET: string;

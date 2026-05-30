@@ -1,7 +1,13 @@
 import { json } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
+import type { RequestHandler } from './$types.js';
 import { healthLoad } from '@glw907/cairn-cms/sveltekit';
+import { runtime } from '$lib/cairn.server.js';
 
-// Deploy-time health check (M2). Behind the /admin guard, so a signed-in editor can confirm the
-// GitHub App key still signs before relying on save. Returns ok/fail JSON, no secret in the body.
-export const GET: RequestHandler = async (event) => json(await healthLoad(event));
+export const GET: RequestHandler = async (event) => {
+  try {
+    return json(await healthLoad(event, runtime));
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    return json({ ok: false, checks: { githubAppSigning: { ok: false, detail } } });
+  }
+};

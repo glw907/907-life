@@ -1,8 +1,7 @@
 <script lang="ts">
   import { LoginPage } from '@glw907/cairn-cms/components';
-  import type { PageData } from './$types';
 
-  let { data }: { data: PageData } = $props();
+  let { data, form } = $props();
 </script>
 
-<LoginPage {data} />
+<LoginPage {data} {form} />

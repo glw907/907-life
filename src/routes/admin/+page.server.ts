@@ -1,5 +1,3 @@
-import type { PageServerLoad } from './$types';
-import { adminIndexRedirect } from '@glw907/cairn-cms/sveltekit';
-import { cairn } from '$lib/cairn.config';
+import { content } from '$lib/cairn.server.js';
 
-export const load: PageServerLoad = () => adminIndexRedirect(cairn);
+export const load = content.indexRedirect;

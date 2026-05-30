@@ -1,8 +1,7 @@
 <script lang="ts">
   import { ConfirmPage } from '@glw907/cairn-cms/components';
-  import type { PageData } from './$types';
 
-  let { data }: { data: PageData } = $props();
+  let { data }: { data: { token: string; siteName: string; error: string | null } } = $props();
 </script>
 
 <ConfirmPage {data} />

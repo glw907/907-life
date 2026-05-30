@@ -1,4 +1,4 @@
-import type { RequestHandler } from './$types';
-import { signOut } from '@glw907/cairn-cms/auth';
+import type { RequestHandler } from './$types.js';
+import { auth } from '$lib/cairn.server.js';
 
-export const POST: RequestHandler = (event) => signOut(event);
+export const POST: RequestHandler = (event) => auth.logoutAction(event);
