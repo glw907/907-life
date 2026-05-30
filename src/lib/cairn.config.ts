@@ -35,7 +35,7 @@ export const cairn: CairnAdapter = {
     installationId: '135372268',
   },
   sender: { from: SITE_EMAIL.sender ?? 'noreply@907.life' },
-  renderPreview: (md) => renderPostHtml(md),
+  renderPreview: renderPostHtml,
   // The header menu, managed from /admin/nav and committed to the site-config YAML (Pass L2).
   navMenu: { configPath: 'src/lib/site.config.yaml', menuName: 'primary', label: 'Navigation', maxDepth: 2 },
 };
