@@ -1,11 +1,11 @@
 ---
-title: "Formatting Test Post"
-date: 2026-01-29
+title: Formatting Test Post
+date: '2026-01-29'
+description: A comprehensive test of all available Markdown formatting elements
+tags:
+  - test
 draft: false
-tags: ["test"]
-description: "A comprehensive test of all available Markdown formatting elements"
 ---
-
 This post is a comprehensive **Markdown formatting test** intended to reveal how a Micro.blog theme renders common elements, edge cases, and inline HTML. It contains both typical content and awkward cases.
 
 ## Headings
@@ -83,3 +83,5 @@ Here is a footnote reference.[^1]
 ---
 
 End of test.
+
+<!-- cairn admin save smoke: 2026-05-30 -->
