@@ -22,6 +22,7 @@ design is the functional spec under `../cairn-cms/docs/superpowers/specs/`. The 
 | 10 | Claude infrastructure: pass ritual skill, BACKLOG, STATUS, rules | ✓ Done |
 | 11–15 | Multi-repo engine roadmap | ✗ Superseded |
 | 16 | Migrate onto cairn-cms ^0.24.0 (full surface) | ▶ Planned, ready to execute |
+| 17 | Convert public chrome to DaisyUI components | ◇ Designed, plan after Pass 16 |
 
 ---
 
@@ -31,18 +32,30 @@ design is the functional spec under `../cairn-cms/docs/superpowers/specs/`. The 
 > (engine render, delivery read model, public routes, content graph, SEO head), keeping URLs and
 > design intact.
 >
-> **Status.** Brainstormed and planned. The spec is
-> `docs/superpowers/specs/2026-06-03-cairn-cms-0.24-migration-design.md`. The task-by-task plan is
-> `docs/superpowers/plans/2026-06-03-cairn-cms-0.24-migration.md`. Both open decisions are resolved
-> in the spec (posts-only concept, about and archives stay mdsvex routes; content graph wired
-> full and fail-closed).
+> **Status.** Brainstormed and planned, ready to execute. The spec is
+> `docs/superpowers/specs/2026-06-03-cairn-cms-0.24-migration-design.md` and the plan is
+> `docs/superpowers/plans/2026-06-03-cairn-cms-0.24-migration.md`. Decisions are resolved in the spec
+> (posts-only concept, about and archives stay mdsvex routes, content graph wired full and fail-closed,
+> render via the engine `createRenderer`, `[...path]` catch-all).
 >
-> **Settled (do not re-brainstorm):** render moves to the engine `createRenderer`; the catch-all
-> `[...path]` serves posts; `summaryFields: ['description']`; the prerender fails closed on a 5xx.
+> **Approach.** Execute the plan with `superpowers:subagent-driven-development`, one subagent per
+> task, launched from `~/Projects/cairn/907-life/`. Run the install as a full root install from
+> `~/Projects/cairn/` (the `@types/node` hoist). The pass-end `site-pass` ritual then corrects the
+> stale `AUTH_KV` and Carta facts in `architecture.md` and `CLAUDE.md` (now D1 `AUTH_DB` and
+> CodeMirror) and marks the pass done.
+
+### Pass 17: public chrome on DaisyUI
+
+> **Goal.** Rebuild 907's chrome on DaisyUI v5 components for clean, maintainable mapping. The look
+> stays recognizably 907, not pixel-identical. Clean DaisyUI beats perfect reproduction.
 >
-> **Approach.** Execute the plan with `superpowers:subagent-driven-development`, one implementer
-> subagent per task. Launch the session from `~/Projects/cairn/907-life/`. Run the dependency
-> install as a full root install from `~/Projects/cairn/` (the `@types/node` hoist). The pass-end
-> `site-pass` ritual then refreshes `architecture.md` and `CLAUDE.md` (both still describe the
-> Pass-F `AUTH_KV` auth and the Carta editor; the truth is self-owned D1 `AUTH_DB` and CodeMirror)
-> and marks this pass done.
+> **Status.** Designed. Spec is `docs/superpowers/specs/2026-06-03-daisyui-chrome-conversion-design.md`.
+> Settled: `silk`/`dim` near as-shipped, keep the three fonts, trim the 17 custom tokens to DaisyUI
+> slots; post body moves to the Tailwind Typography `prose` plugin; chrome to navbar/menu, modal,
+> badge, input/textarea/btn/alert, swap, and card or list per surface. Admin is engine-owned, out of
+> scope.
+>
+> **Approach.** Runs after Pass 16 (look-preserving migration ships first, giving a known-good
+> baseline). Write the implementation plan after the migration lands, against the final files, then
+> execute with `superpowers:subagent-driven-development`. Review gate fans out `daisyui-a11y-reviewer`
+> and `svelte-reviewer` on Opus.
