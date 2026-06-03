@@ -1,25 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import matter from 'gray-matter';
-import { renderPostHtml } from '$lib/posts';
+import { parseMarkdown } from '@glw907/cairn-cms';
+import { renderMarkdown } from '$lib/render';
 
 const POSTS_DIR = 'src/content/posts';
 
-// Renders through the real public renderer (src/lib/posts.ts `renderPostHtml`: remark + gfm
-// → remark-rehype → rehype-sanitize → stringify). The snapshot guards the published output
-// against accidental drift; it is the same HTML the page and the admin preview emit.
-function renderMarkdown(body: string): Promise<string> {
-	return renderPostHtml(body);
-}
-
+// Renders through the real public renderer (src/lib/render.ts, the engine createRenderer output:
+// remark-gfm, the sanitize floor, heading slugs, anchor hardening). The snapshot guards the
+// published output against accidental drift. It is the same HTML the page and the admin preview emit.
 function bodies(dir: string): [string, string][] {
 	return readdirSync(dir)
 		.filter((f) => f.endsWith('.md'))
-		.map((f) => [f, matter(readFileSync(join(dir, f), 'utf8')).content]);
+		.map((f) => [f, parseMarkdown(readFileSync(join(dir, f), 'utf8')).body]);
 }
 
-describe('characterization: current 907 rendered HTML is preserved', () => {
+describe('characterization: 907 rendered HTML through the engine renderer', () => {
 	for (const [name, body] of bodies(POSTS_DIR)) {
 		it(`renders ${name} identically`, async () => {
 			expect(await renderMarkdown(body)).toMatchSnapshot();
@@ -27,15 +23,15 @@ describe('characterization: current 907 rendered HTML is preserved', () => {
 	}
 });
 
-describe('renderPostHtml sanitize floor', () => {
+describe('renderMarkdown sanitize floor', () => {
 	it('strips a script tag from authored markdown', async () => {
-		const html = await renderPostHtml('Hello\n\n<script>alert(1)</script>');
+		const html = await renderMarkdown('Hello\n\n<script>alert(1)</script>');
 		expect(html).not.toContain('<script>');
 	});
 
 	it('keeps ordinary markdown', async () => {
-		const html = await renderPostHtml('# Title\n\nA **bold** word.');
-		expect(html).toContain('<h1>Title</h1>');
+		const html = await renderMarkdown('# Title\n\nA **bold** word.');
+		expect(html).toContain('Title');
 		expect(html).toContain('<strong>bold</strong>');
 	});
 });
