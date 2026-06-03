@@ -115,9 +115,10 @@ shared GitHub App (committer `cairn-cms[bot]`, author = the editor), which auto-
   GitHub's 60/hr-per-IP limit across Cloudflare's shared egress IPs and 403 in prod (fixed in
   cairn-cms 0.3.1). The same token mints the commit path; reads fall back to anonymous if the App
   is unconfigured.
-- **Bindings/secrets.** `AUTH_KV` (allowlist + magic-link nonces + sessions) and the `EMAIL`
-  send binding in `wrangler.toml`; `MAGIC_LINK_SECRET`, `SESSION_SECRET`, and the
-  `GITHUB_APP_*` creds via `wrangler secret put` / `.dev.vars`.
+- **Bindings/secrets.** `AUTH_DB` (self-owned D1: editor allowlist, sessions, single-use magic
+  tokens) and the `EMAIL` send binding in `wrangler.toml`; the `GITHUB_APP_*` creds via
+  `wrangler secret put` / `.dev.vars`. The 0.6.0 cutover moved auth off the Pass-F `AUTH_KV` to D1.
+  The self-owned auth uses opaque D1 session rows, so it needs no magic-link or session signing secret.
 - **Guard.** `/admin/**` is gated in `hooks.server.ts` (session cookie → `locals.editor`);
   the admin layout sets `prerender = false` + `data-pagefind-ignore` so it's never indexed.
 

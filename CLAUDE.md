@@ -18,8 +18,9 @@ plan under `docs/superpowers/plans/`, and usually a spec under
 The phrases "continue development," "next pass," "finish pass," and "ship
 pass" invoke the `site-pass` skill (this repo's own roadmap), which covers
 both starting a pass (read STATUS, read plan, execute) and ending one (the
-consolidation ritual). For cairn-cms library work (passes 0/A–F, tracked in
-`cairn-cms/docs/PLAN.md`), use `cairn-pass` instead.
+consolidation ritual). For cairn-cms library work (tracked in
+`../cairn-cms/docs/STATUS.md`, with locked design in its functional spec under
+`../cairn-cms/docs/superpowers/specs/`), use `cairn-pass` instead.
 
 **On-demand reading:**
 - `docs/STATUS.md`: current pass, pass table, next starter prompt. Open at the start of every pass.
@@ -60,14 +61,15 @@ tags: ["tag1", "tag2"]
 ## cairn-cms admin
 
 907.life is **consumer #2** of cairn-cms (the embedded magic-link, GitHub-committing CMS;
-see `../cairn-cms/docs/PLAN.md`). Editors sign in by email at `/admin` (no GitHub account)
+see `../cairn-cms/docs/STATUS.md`). Editors sign in by email at `/admin` (no GitHub account)
 and edit raw markdown in a Carta editor; saving commits to `main` via the shared GitHub App
-(`cairn-cms[bot]`), which auto-deploys.
+(`cairn-cms[bot]`), which auto-deploys. (907 runs cairn-cms `0.6.0`; the editor becomes
+CodeMirror after the `^0.24.0` migration. See `docs/STATUS.md` for the queued migration.)
 
 - **Adapter:** `src/lib/cairn.config.ts` configures the posts collection (filename-based ids, plain remark-html-equivalent preview, **free-form tags**), backend `glw907/907-life`.
 - **Validator:** `src/lib/content-schema.ts`. Reads use the GitHub App installation token (5000/hr) when configured. Without it, anonymous reads 403 from Cloudflare's shared egress IPs hitting GitHub's 60/hr limit (fixed in cairn-cms 0.3.1); the same token also commits.
 - **Routes:** `src/routes/admin/**`. **Guard:** `/admin/**` in `hooks.server.ts`.
-- **Bindings:** `AUTH_KV` (allowlist `editor:<email>` → name) + `EMAIL` in `wrangler.toml`.
+- **Bindings:** `AUTH_DB` (self-owned D1: editor allowlist, sessions, single-use magic tokens) + `EMAIL` in `wrangler.toml`. The 0.6.0 cutover moved auth off the old `AUTH_KV` to D1.
 - **Replaces Sveltia** (removed in Pass F; the dead `static/admin/` is gone).
 
 ## Worker & Secrets
