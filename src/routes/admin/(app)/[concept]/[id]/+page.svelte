@@ -6,4 +6,4 @@
   let { data }: { data: EditData } = $props();
 </script>
 
-<EditPage data={{ ...data, siteName: cairn.siteName }} renderPreview={cairn.renderPreview} />
+<EditPage data={{ ...data, siteName: cairn.siteName }} render={cairn.render} />
