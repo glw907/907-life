@@ -11,7 +11,10 @@ export const GET: RequestHandler = () => {
     { loc: SITE_URL + '/about' },
     { loc: SITE_URL + '/archives' },
     { loc: SITE_URL + '/tags' },
-    ...site.all().map((s) => (s.date ? { loc: SITE_URL + s.permalink, lastmod: s.date } : { loc: SITE_URL + s.permalink })),
+    ...site.all().map((s) => {
+      const loc = SITE_URL + s.permalink;
+      return s.date ? { loc, lastmod: s.date } : { loc };
+    }),
     ...posts.allTags().map(({ tag }) => ({ loc: `${SITE_URL}/tags/${tag}/` })),
   ];
 

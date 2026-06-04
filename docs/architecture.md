@@ -13,7 +13,7 @@ Design decisions for the SvelteKit rebuild.
 |---|---|---|
 | Framework | SvelteKit + TypeScript | Modern, first-class Cloudflare support, Svelte 5 runes |
 | Styling | Tailwind CSS v4 + DaisyUI v5 | CSS-first config, no tailwind.config.js needed |
-| Markdown (posts) | remark + remark-gfm | Pure data pipeline, GFM support, no magic |
+| Markdown (posts) | cairn-cms engine render (`createRenderer`) | One shared remark/rehype pipeline: GFM, a sanitize floor, heading slugs, anchor hardening |
 | Markdown (special pages) | mdsvex | Svelte components inside markdown for pages with interactive sections |
 | Search | Pagefind | Post-build static index, zero runtime JS cost |
 | CMS | cairn-cms (magic-link admin) | Embedded, passwordless, GitHub-committing; per-site adapter (replaced Sveltia in Pass F) |
@@ -23,7 +23,7 @@ Design decisions for the SvelteKit rebuild.
 | Fonts | Spectral + Karla + Monaspace Neon (woff2, self-hosted) | Scholar's study aesthetic: Spectral for prose warmth, Monaspace Neon for terminal-precise code |
 
 **Reusable core (the pattern):**
-SvelteKit + TS + adapter-cloudflare · Tailwind v4 + DaisyUI v5 · remark/mdsvex pipeline
+SvelteKit + TS + adapter-cloudflare · Tailwind v4 + DaisyUI v5 · cairn-cms engine render / mdsvex pipeline
 · Pagefind · cairn-cms magic-link admin (per-site adapter) · Cloudflare Email Workers contact form
 · GitHub Actions → Cloudflare Workers deployment
 
@@ -33,40 +33,51 @@ SvelteKit + TS + adapter-cloudflare · Tailwind v4 + DaisyUI v5 · remark/mdsvex
 
 ## Routing
 
-URL structure preserved from Hugo: `/:year/:month/:day/:slug/`
+URL structure carried over from Hugo: `/:year/:month/:day/:slug`. An engine permalink drops
+the Hugo trailing slash. A request to the old `/.../slug/` form 307-redirects to the
+canonical no-slash URL, so no existing link breaks.
 
-SvelteKit route: `src/routes/[year]/[month]/[day]/[slug]/+page.svelte`
+One catch-all route serves every post. `src/routes/[...path]/+page.server.ts` calls the
+engine's `createPublicRoutes`: its `entries()` enumerates the post permalinks for prerender,
+and its `entryLoad` returns the rendered HTML plus the SEO head.
 
-Slug derived from filename: `2026-03-06-early-march.md` → `/2026/03/06/early-march/`
+Permalink shape lives in `src/lib/site.config.yaml` under `content.posts`
+(`permalink: /:year/:month/:day/:slug`, `datePrefix: day`). Slug still derives from the
+filename: `2026-03-06-early-march.md` → `/2026/03/06/early-march`.
 
 ---
 
 ## Content Pipeline
 
-### Posts (remark + remark-gfm)
+### Posts (cairn-cms delivery layer)
 
-`src/content/posts/*.md` is loaded at build time via `import.meta.glob` with `?raw` +
-`eager: true`. All markdown is bundled as string constants at build time (required:
-Cloudflare Workers has no filesystem). Parsed at request time by gray-matter + remark.
+`src/content/posts/*.md` is bundled at build time via `import.meta.glob` with `?raw` +
+`eager: true`, because Cloudflare Workers has no filesystem. One delivery layer,
+`src/lib/content.ts`, sits in front of every public route. It hands the bundled corpus and
+the adapter to the engine's `createSiteIndexes`, which returns a typed content index
+(`all`, `byId`, `byTag`, `allTags`) and a site resolver for permalinks, adjacency, and the
+content graph.
 
-Frontmatter: `title`, `date`, `draft`, `tags`, `description`
+Frontmatter stays `title`, `date`, `draft`, `tags`, `description`. A single `defineFields`
+declaration in `src/lib/cairn.config.ts` is the source of truth for the editor form, the
+on-save validator, and the inferred frontmatter type.
 
-**Type split:** `PostSummary` (metadata only, returned by `getAllPosts`) vs `PostDetail`
-(adds `html: string`, returned by `getPost`). Prevents callers from accidentally
-accessing `.html` on list results. It is a type error, not a runtime undefined.
+**Committed manifest backstop.** `src/content/.cairn/index.json` records each post's
+structural and graph fields: id, title, date, permalink, draft, and outbound `cairn:` links.
+At module load `content.ts` rebuilds the manifest from the corpus and calls the engine's
+`verifyManifest`. A drift throws and fails the build, so a stale manifest never ships.
+Regenerate it with `npm run cairn:manifest` (the `scripts/build-manifest.mjs` script) and
+commit the result. Note that the manifest tracks structure and graph edges, not prose, so a
+body-only edit does not drift it.
 
-**`getAllPosts` is synchronous and memoized.** rawFiles is eagerly loaded, gray-matter
-is sync, no awaits. The parsed+sorted result is cached in `_cachedPosts` (module-level)
-so repeated calls within a build/request don't re-parse. Only `getPost` is async
-(remark `.process()` returns a Promise).
+**Content graph, fail-closed.** The render threads the engine's `buildLinkResolver`, so a
+`cairn:` link resolves to a live permalink at build time. A dangling target throws out of the
+render, and `svelte.config.js` rethrows any 5xx during prerender, so the first broken link
+reddens the build instead of shipping.
 
-**Tagging:** `getAllTags()` derives tag counts from `getAllPosts()`. `getPostsByTag(tag)`
-filters `getAllPosts()`. Both benefit from the `_cachedPosts` memo. The underlying
-parse work only happens once even when both are called in the same load function.
-
-**Tag routes:** `/tags/` index and `/tags/[tag]/` detail pages are fully pre-rendered.
-`entries()` in `[tag]/+page.server.ts` drives static generation of all tag pages at
-build time. Tags not present in any post return 404.
+**Tag routes:** `/tags/` and `/tags/[tag]/` prerender from the engine index. `entries()` in
+`[tag]/+page.server.ts` drives static generation, `posts.byTag` filters, and a tag absent
+from every post returns 404.
 
 ### Special Pages (mdsvex)
 
@@ -99,17 +110,20 @@ JS API.
 
 ## CMS: cairn-cms (magic-link admin)
 
-907.life is **consumer #2** of cairn-cms (see `../cairn-cms/docs/PLAN.md`), onboarded in
-Pass F. It replaced the never-wired Sveltia config (removed with `static/admin/`).
+907.life is **consumer #2** of cairn-cms (see `../cairn-cms/docs/STATUS.md`), onboarded in
+Pass F and migrated to the full `^0.24.0` public surface in Pass 16. It replaced the
+never-wired Sveltia config (removed with `static/admin/`).
 
 Mounted at `/admin`, in 907.life's own Worker. Editors sign in by email (magic link, no
-GitHub account); the Carta editor edits raw markdown; saving commits to `main` via the
+GitHub account); a CodeMirror editor edits raw markdown; saving commits to `main` via the
 shared GitHub App (committer `cairn-cms[bot]`, author = the editor), which auto-deploys.
 
-- **Adapter** (`src/lib/cairn.config.ts`): one **posts** collection at `src/content/posts/`,
-  filename-based ids (`YYYY-MM-DD-slug`), fields title/date/description/draft, **free-form
-  tags** (no controlled vocabulary). Preview is plain markdown (Carta's built-in
-  remark→rehype mirrors the live remark + remark-gfm + remark-html render, no directives).
+- **Adapter** (`src/lib/cairn.config.ts`): `defineAdapter` with one **posts** concept at
+  `src/content/posts/`, filename-based ids (`YYYY-MM-DD-slug`), a `defineFields` schema for
+  title/date/description/draft and **free-form tags** (no controlled vocabulary). The editor
+  preview calls the same engine `createRenderer` (`src/lib/render.ts`) that the published page
+  and the feeds use, so the preview matches the live render. 907 ships no directive
+  components, so its component registry is empty.
 - **Backend reads.** `glw907/907-life` is public (like ecnordic), but the admin reads (list +
   edit) authenticate with the GitHub App installation token (5000/hr): anonymous reads share
   GitHub's 60/hr-per-IP limit across Cloudflare's shared egress IPs and 403 in prod (fixed in
@@ -176,15 +190,18 @@ Everything else is scoped per route.
 hardcoded drift in `.svelte` and `.ts` files. Adapting for a new site = update
 `config.ts` + hookify pattern.
 
-**URL helpers in `src/lib/utils.ts`:** `postUrl(post)` and `tagUrl(tag)` produce
-canonical relative URLs. `toRFC822(iso)` and `toISODateTime(iso)` produce feed-format
-dates. All date parsing uses a private `parseUtcDate(iso)` helper to avoid
-timezone-shift on bare YYYY-MM-DD strings.
+**URL helpers in `src/lib/utils.ts`:** posts now carry an engine `permalink`, so the old
+`postUrl` helper is gone. `tagUrl(tag)` produces the tag URL. `formatDate` and
+`formatShortDate` render display dates through a private `parseUtcDate(iso)` helper that
+avoids timezone-shift on bare YYYY-MM-DD strings. Feed-date formatting moved into the engine,
+so the `toRFC822` and `toISODateTime` helpers are gone too.
 
-**Feeds:** RSS 2.0 at `/feed.xml`, JSON Feed 1.1 at `/feed.json`. Both use a shared
-`getFeedItems()` data layer in `src/lib/feed.ts`. The feed result is memoized at module level. Post content is bundled at build time and
-never changes within a Worker isolate.
-Autodiscovery `<link rel="alternate">` tags in `+layout.svelte` cover both formats.
+**Feeds, sitemap, robots:** RSS 2.0 at `/feed.xml`, JSON Feed 1.1 at `/feed.json`, plus
+`/sitemap.xml` and `/robots.txt`. Both feeds render from one `feedItems()` list in
+`src/lib/content.ts` through the engine's `rssResponse` and `jsonFeedResponse`, so the two
+formats never drift. Sitemap and robots routes use the engine's `sitemapResponse` and
+`robotsResponse`. Autodiscovery `<link rel="alternate">` tags in `+layout.svelte` cover both
+feed formats.
 
 **Hookify quality rules:** Ten rules in `.claude/hookify.*.local.md` enforce Svelte 5
 runes, oklch colors, color token usage, DaisyUI v5 class names, Tailwind v4 APIs, and

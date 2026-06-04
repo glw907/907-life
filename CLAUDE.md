@@ -55,19 +55,19 @@ tags: ["tag1", "tag2"]
 
 ## Content Pipeline
 
-- **Posts** (`src/content/posts/*.md`): remark + remark-gfm. Straight prose only.
+- **Posts** (`src/content/posts/*.md`): rendered through the cairn-cms engine (`createRenderer`) via the `src/lib/content.ts` delivery layer. Straight prose, no directive components.
 - **Special pages** (`src/routes/about/`, `src/routes/archives/`): mdsvex. Svelte components handle form and archive listing; prose is edited in-repo.
 
 ## cairn-cms admin
 
 907.life is **consumer #2** of cairn-cms (the embedded magic-link, GitHub-committing CMS;
 see `../cairn-cms/docs/STATUS.md`). Editors sign in by email at `/admin` (no GitHub account)
-and edit raw markdown in a Carta editor; saving commits to `main` via the shared GitHub App
-(`cairn-cms[bot]`), which auto-deploys. (907 runs cairn-cms `0.6.0`; the editor becomes
-CodeMirror after the `^0.24.0` migration. See `docs/STATUS.md` for the queued migration.)
+and edit raw markdown in a CodeMirror editor; saving commits to `main` via the shared GitHub App
+(`cairn-cms[bot]`), which auto-deploys. (907 runs cairn-cms `^0.24.0` since the Pass 16 migration;
+the editor preview calls the same engine render as the published page.)
 
-- **Adapter:** `src/lib/cairn.config.ts` configures the posts collection (filename-based ids, plain remark-html-equivalent preview, **free-form tags**), backend `glw907/907-life`.
-- **Validator:** `src/lib/content-schema.ts`. Reads use the GitHub App installation token (5000/hr) when configured. Without it, anonymous reads 403 from Cloudflare's shared egress IPs hitting GitHub's 60/hr limit (fixed in cairn-cms 0.3.1); the same token also commits.
+- **Adapter:** `src/lib/cairn.config.ts` uses `defineAdapter`/`defineFields` for the posts concept (filename-based ids, **free-form tags**, engine `createRenderer` preview), backend `glw907/907-life`.
+- **Validator:** the adapter's `defineFields` schema in `src/lib/cairn.config.ts` (the hand-rolled `content-schema.ts` is gone). Reads use the GitHub App installation token (5000/hr) when configured. Without it, anonymous reads 403 from Cloudflare's shared egress IPs hitting GitHub's 60/hr limit (fixed in cairn-cms 0.3.1); the same token also commits.
 - **Routes:** `src/routes/admin/**`. **Guard:** `/admin/**` in `hooks.server.ts`.
 - **Bindings:** `AUTH_DB` (self-owned D1: editor allowlist, sessions, single-use magic tokens) + `EMAIL` in `wrangler.toml`. The 0.6.0 cutover moved auth off the old `AUTH_KV` to D1.
 - **Replaces Sveltia** (removed in Pass F; the dead `static/admin/` is gone).
