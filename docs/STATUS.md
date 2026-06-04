@@ -9,10 +9,11 @@ engine feed/sitemap/robots helpers. URLs and design held. The engine's rolling s
 `../cairn-cms/docs/STATUS.md`; its locked design is the functional spec under
 `../cairn-cms/docs/superpowers/specs/`. The older `../cairn-cms/docs/PLAN.md` is history only.
 
-> **Architecture note (2026-05-24).** The earlier "Cairn multi-repo engine" direction (old passes
-> 11–15) is **SUPERSEDED.** cairn is a meta-workspace (`~/Projects/cairn/`) where **cairn-cms** is an
-> embedded magic-link CMS library and each site is its own repo consuming it via a per-site adapter.
-> 907.life is consumer #2. Superseded specs and plans under `docs/superpowers/` are history only.
+> **Architecture note (2026-05-24, updated 2026-06-04).** The earlier "Cairn multi-repo engine"
+> direction (old passes 11–15) is **SUPERSEDED.** **cairn-cms** is an embedded magic-link CMS library,
+> published to npm as `@glw907/cairn-cms`, and each site is its own standalone repo consuming it via a
+> per-site adapter. 907.life is consumer #2. Superseded specs and plans under `docs/superpowers/` are
+> history only.
 
 ---
 
