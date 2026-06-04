@@ -1,31 +1,27 @@
 <script lang="ts">
   import type { PageData } from './$types';
-  import { formatDate, tagUrl } from '$lib/utils';
+  import { CairnHead } from '@glw907/cairn-cms/delivery/head';
   import { SITE_TITLE } from '$lib/config';
+  import { formatDate, tagUrl } from '$lib/utils';
 
   let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head>
-  <title>{data.post.title} — {SITE_TITLE}</title>
-  {#if data.post.description}
-    <meta name="description" content={data.post.description} />
-  {/if}
-</svelte:head>
+<CairnHead seo={data.seo} title={`${data.title} — ${SITE_TITLE}`} />
 
 <article class="post-detail">
   <header class="post-header">
-    <time class="post-date" datetime={data.post.date}>{formatDate(data.post.date)}</time>
-    <h1 class="post-title">{data.post.title}</h1>
+    <time class="post-date" datetime={data.date}>{formatDate(data.date)}</time>
+    <h1 class="post-title">{data.title}</h1>
   </header>
 
   <div class="post-body">
-    {@html data.post.html}
+    {@html data.html}
   </div>
 
-  {#if data.post.tags.length > 0}
+  {#if data.tags.length > 0}
     <ul class="post-tags" aria-label="Tags">
-      {#each data.post.tags as tag}
+      {#each data.tags as tag (tag)}
         <li><a href={tagUrl(tag)} class="post-tag">{tag}</a></li>
       {/each}
     </ul>
@@ -62,5 +58,4 @@
     padding-block-start: 1.75rem;
     border-top: 1px solid var(--color-border-subtle);
   }
-
 </style>

@@ -1,12 +1,13 @@
 <script lang="ts">
-  import type { PostSummary } from '$lib/types';
-  import { formatShortDate, postUrl, tagUrl } from '$lib/utils';
+  import type { PostListItem } from '$lib/content';
+  import { formatShortDate, tagUrl } from '$lib/utils';
 
-  let { posts }: { posts: PostSummary[] } = $props();
+  let { posts }: { posts: PostListItem[] } = $props();
 
   const byYear = $derived(
-    posts.reduce<Record<string, PostSummary[]>>((acc, post) => {
-      (acc[post.year] ??= []).push(post);
+    posts.reduce<Record<string, PostListItem[]>>((acc, post) => {
+      const year = post.date.slice(0, 4);
+      (acc[year] ??= []).push(post);
       return acc;
     }, {})
   );
@@ -23,7 +24,7 @@
           <li class="archive-entry">
             <time class="entry-date" datetime={post.date}>{formatShortDate(post.date)}</time>
             <div class="entry-content">
-              <a class="entry-title" href={postUrl(post)}>
+              <a class="entry-title" href={post.permalink}>
                 {post.title}
               </a>
               {#if post.tags.length > 0}

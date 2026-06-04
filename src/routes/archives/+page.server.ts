@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
-import { getAllPosts, getAllTags } from '$lib/posts';
+import { postList, posts } from '$lib/content';
 
 export const load: PageServerLoad = () => {
-  return { posts: getAllPosts(), tags: getAllTags() };
+  return { posts: postList(), tags: posts.allTags() };
 };

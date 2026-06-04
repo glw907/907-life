@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
-  import { formatDate, postUrl, tagUrl } from '$lib/utils';
+  import { formatDate, tagUrl } from '$lib/utils';
   import { HOMEPAGE_FEATURED_COUNT } from '$lib/config';
 
   let { data }: { data: PageData } = $props();
@@ -11,7 +11,7 @@
     <article class="featured-post">
       <time class="post-date" datetime={data.featured.date}>{formatDate(data.featured.date)}</time>
       <h2 class="featured-title">
-        <a href={postUrl(data.featured)}>{data.featured.title}</a>
+        <a href={data.featured.permalink}>{data.featured.title}</a>
       </h2>
       <div class="post-body">
         {@html data.featured.html}
@@ -42,7 +42,7 @@
             {/if}
           </div>
           <h2 class="post-title">
-            <a href={postUrl(post)}>{post.title}</a>
+            <a href={post.permalink}>{post.title}</a>
           </h2>
           {#if post.description}
             <p class="post-description">{post.description}</p>
