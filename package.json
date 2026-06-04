@@ -30,17 +30,7 @@
   },
   "dependencies": {
     "@glw907/cairn-cms": "^0.24.0",
-    "better-auth": "^1.6",
-    "carta-md": "4.11.2",
-    "drizzle-orm": "^0.45",
-    "gray-matter": "^4",
-    "mimetext": "^3",
-    "rehype-sanitize": "^6.0.0",
-    "rehype-stringify": "^10.0.1",
-    "remark": "^15",
-    "remark-gfm": "^4",
-    "remark-html": "^16",
-    "remark-rehype": "^11.1.2"
+    "mimetext": "^3"
   },
   "type": "module"
 }
