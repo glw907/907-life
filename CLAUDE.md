@@ -18,9 +18,8 @@ plan under `docs/superpowers/plans/`, and usually a spec under
 The phrases "continue development," "next pass," "finish pass," and "ship
 pass" invoke the `site-pass` skill (this repo's own roadmap), which covers
 both starting a pass (read STATUS, read plan, execute) and ending one (the
-consolidation ritual). For cairn-cms library work (tracked in
-`../cairn-cms/docs/STATUS.md`, with locked design in its functional spec under
-`../cairn-cms/docs/superpowers/specs/`), use `cairn-pass` instead.
+consolidation ritual). cairn-cms is a separate standalone repo; this site
+consumes `@glw907/cairn-cms` from the npm registry by version range.
 
 **On-demand reading:**
 - `docs/STATUS.md`: current pass, pass table, next starter prompt. Open at the start of every pass.
@@ -60,8 +59,8 @@ tags: ["tag1", "tag2"]
 
 ## cairn-cms admin
 
-907.life is **consumer #2** of cairn-cms (the embedded magic-link, GitHub-committing CMS;
-see `../cairn-cms/docs/STATUS.md`). Editors sign in by email at `/admin` (no GitHub account)
+907.life is **consumer #2** of cairn-cms (the embedded magic-link, GitHub-committing CMS,
+a separate standalone repo). Editors sign in by email at `/admin` (no GitHub account)
 and edit raw markdown in a CodeMirror editor; saving commits to `main` via the shared GitHub App
 (`cairn-cms[bot]`), which auto-deploys. (907 runs cairn-cms `^0.24.0` since the Pass 16 migration;
 the editor preview calls the same engine render as the published page.)
