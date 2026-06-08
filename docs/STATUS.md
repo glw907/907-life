@@ -33,6 +33,48 @@ engine feed/sitemap/robots helpers. URLs and design held. The engine's rolling s
 
 ---
 
+## Queued: cairn-cms 0.33.0 upgrade (coordinate with Pass 17)
+
+cairn-cms published `0.33.0` on 2026-06-08 (registry `latest`), folding the admin-stands-alone initiative
+across `0.30.0` through `0.33.0` over the prior `0.29.0`. 907 pins `^0.24.0`, and a caret on a `0.x`
+version locks the minor, so the range will not pull `0.33.0` on its own. The full per-version action list
+is in `../cairn-cms/docs/guides/upgrade-cairn.md`; the items below are the ones that touch this site,
+verified against its code on 2026-06-08.
+
+**This overlaps Pass 17.** Pass 17 rebuilds the public chrome on DaisyUI and edits the same root layout.
+The cairn `(site)`-group restructure (item 3) moves that chrome, so do it once: fold item 3 into Pass 17.
+Items 1 and 2 are independent and small, so land them first or at the start of Pass 17. Item 2 in
+particular unblocks building against `0.25.0` and later, which the current pin already fails.
+
+1. **Bump the dependency.** Set `@glw907/cairn-cms` to `^0.33.0` in `package.json`, reinstall, and
+   regenerate the committed manifest (`npm run cairn:manifest`). Confirm `scripts/build-manifest.mjs`
+   still resolves its engine imports: the `0.27.0` surface-narrowing moved the delivery read surface off
+   the root barrel, and the `0.26.0` DX-B pass added a `cairnManifest()` Vite plugin that can replace the
+   hand-rolled script. Repoint the imports or adopt the plugin if the script breaks.
+
+2. **Fix the `composeRuntime` call.** `src/lib/cairn.server.ts:14` uses the old positional form
+   `composeRuntime(cairn, [], urlPolicyFrom(siteConfig))`. The object form landed at `0.25.0`. Change it
+   to `composeRuntime({ adapter: cairn, siteConfig })` and drop the now-unused `urlPolicyFrom` import. This
+   break is already latent against the current `^0.24.0` pin.
+
+3. **Move host chrome out of `/admin`** (fold into Pass 17). The root `src/routes/+layout.svelte` imports
+   `../app.css` and renders `<Nav>`, `<SearchModal>`, a width-constraining `<main class="container ...
+   max-w-3xl">`, and a `<footer>`, all wrapping `/admin`. Create a `src/routes/(site)/+layout.svelte` group
+   holding that chrome and move the public routes into it: `+page.svelte`, `+page.server.ts`, `[...path]`,
+   `about`, `archives`, `tags` (and `+layout.server.ts` if it loads chrome data). Leave the root layout
+   bare. Keep `admin/` and the endpoints (`feed.xml`, `feed.json`, `sitemap.xml`, `robots.txt`, `healthz`)
+   at the route root. Group folders do not change any URL. A dev-only guard in the admin logs a console
+   error until the root layout is chrome-free.
+
+**Not affected, skip:** the `0.30.0` render-authoring import moves and the `rehypeDispatch` removal (907
+imports neither and uses no `defaultIconByRole`). `0.31.0` and `0.32.0` are additive.
+
+**Verify:** `npm run check` 0/0, `npm run build` exit 0, and the admin smoke already on the Pass 16
+checklist (sign in at `/admin`, create a dated post, confirm the URL resolves and the admin renders
+full-bleed with no 907 chrome around it).
+
+---
+
 ### Next starter prompt (Pass 17)
 
 > **Goal.** Rebuild 907's public chrome on DaisyUI v5 components for a clean, maintainable mapping.
