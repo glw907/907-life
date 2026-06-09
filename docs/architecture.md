@@ -111,8 +111,31 @@ JS API.
 ## CMS: cairn-cms (magic-link admin)
 
 907.life is **consumer #2** of cairn-cms (see `../cairn-cms/docs/STATUS.md`), onboarded in
-Pass F and migrated to the full `^0.24.0` public surface in Pass 16. It replaced the
-never-wired Sveltia config (removed with `static/admin/`).
+Pass F, migrated to the full `^0.24.0` public surface in Pass 16, and retrofitted to `^0.36.0`
+in the cairn-0.36.0 upgrade (2026-06-09). It replaced the never-wired Sveltia config (removed
+with `static/admin/`).
+
+**cairn-0.36.0 retrofit (the `0.24.0` → `0.36.0` window).** Four required consumer actions, plus
+the additive logging:
+- **Runtime composition** (`src/lib/cairn.server.ts`): `composeRuntime` takes the object form
+  `composeRuntime({ adapter: cairn, siteConfig })` from `0.25.0`. The runtime derives the per-concept
+  URL policy from the site config, so the old positional `urlPolicy` argument is gone.
+- **Chrome isolation** (`0.33.0`): the admin must render with no host chrome around it. The root
+  `+layout.svelte` is bare, and 907's public chrome (`Nav`, `SearchModal`, the `max-w-3xl` main, the
+  footer, `app.css`, and the feed-autodiscovery head links) lives in a `src/routes/(site)/` route
+  group. Group folders are URL-transparent, so every public path is unchanged. `/admin` and the
+  endpoints (`feed.xml`, `feed.json`, `sitemap.xml`, `robots.txt`, `healthz`) sit at the route root
+  outside the group and inherit only the bare layout. The `prerender = true` default moved into
+  `(site)/+layout.server.ts`; every endpoint and the admin already set `prerender` explicitly, so the
+  root no longer needs a default.
+- **CSRF ownership** (`0.35.0`): `svelte.config.js` sets `csrf: { checkOrigin: false }`, handing
+  cairn's auth guard sole CSRF authority for `/admin`. The guard validates a `__Host-cairn_csrf`
+  double-submit token on every admin form POST and keeps a strict `Origin` check for this site's own
+  non-admin forms (the contact form), so disabling the framework's global check is not a net loss. The
+  zone already forces HTTPS (Always Use HTTPS + HSTS), which the magic-link sign-in needs.
+- **Observability** (`0.36.0`): `wrangler.toml` enables `[observability]`, so Workers Logs ingests
+  cairn's structured diagnostic events (auth, commit, guard) for this site. Query them by `event` or
+  `editor` in the dashboard Logs tab.
 
 Mounted at `/admin`, in 907.life's own Worker. Editors sign in by email (magic link, no
 GitHub account); a CodeMirror editor edits raw markdown; saving commits to `main` via the

@@ -17,6 +17,11 @@ const config = {
     // wrangler dev still honors it, but without this the CI prerender (no Cloudflare auth) fails
     // with "Failed to start the remote proxy session".
     adapter: adapter({ platformProxy: { remoteBindings: false } }),
+    // cairn-cms owns CSRF for /admin from 0.35.0: its auth guard validates a __Host-cairn_csrf
+    // double-submit token on every admin form POST and keeps a strict Origin check for this site's
+    // own non-admin form POSTs. Disable SvelteKit's global check so the JS-free magic-link sign-in,
+    // which can arrive without an Origin header, is not rejected by the framework first.
+    csrf: { checkOrigin: false },
     prerender: {
       // A 5xx during prerender means a page actually crashed, so fail the build. This makes the
       // content graph fail-closed: a dangling cairn: link target throws "cairn link target not

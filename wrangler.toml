@@ -5,6 +5,12 @@ compatibility_flags = ["nodejs_compat"]
 
 main = ".svelte-kit/cloudflare/_worker.js"
 
+# Workers Logs ingests and indexes every console record, including cairn-cms's structured
+# diagnostic events (auth, commit, guard) from 0.36.0. Query them by `event` or `editor` in the
+# dashboard Logs tab. See ../cairn-cms/docs/guides/read-cairn-logs.md.
+[observability]
+enabled = true
+
 [assets]
 directory = ".svelte-kit/cloudflare"
 binding = "ASSETS"
