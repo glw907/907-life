@@ -1,18 +1,11 @@
-// The server-side engine wiring: compose the runtime once and build every admin route handler from
-// it. Each +page.server.ts re-exports from here, so the engine is composed a single time per worker
-// and the route files stay one line each.
+// The one server-side composition point. The runtime composes once here, and every server
+// route that needs it (the /admin catch-all mount, /healthz) imports it instead of re-running
+// composeRuntime per route. createCairnAdmin defaults the magic-link branding from the
+// runtime's siteName and sender, which match the adapter's, so no override is passed.
 import { composeRuntime } from '@glw907/cairn-cms';
-import {
-  createContentRoutes,
-  createAuthRoutes,
-  createEditorRoutes,
-  createNavRoutes,
-} from '@glw907/cairn-cms/sveltekit';
+import { createCairnAdmin } from '@glw907/cairn-cms/sveltekit';
 import { cairn } from './cairn.config.js';
 import { siteConfig } from './config.js';
 
 export const runtime = composeRuntime({ adapter: cairn, siteConfig });
-export const content = createContentRoutes(runtime);
-export const auth = createAuthRoutes({ branding: { siteName: cairn.siteName, from: cairn.sender.from } });
-export const editors = createEditorRoutes();
-export const nav = createNavRoutes(runtime);
+export const admin = createCairnAdmin(runtime);

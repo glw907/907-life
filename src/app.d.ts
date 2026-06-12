@@ -1,14 +1,13 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
 import type { SendEmail, D1Database } from '@cloudflare/workers-types';
-import type { Editor, AuthEnv } from '@glw907/cairn-cms';
+import type { AuthEnv } from '@glw907/cairn-cms/sveltekit';
+
+// App.Locals.editor (set by the engine's auth guard) ships with the engine.
+import '@glw907/cairn-cms/ambient';
 
 declare global {
   namespace App {
-    interface Locals {
-      // The session the cairn auth guard resolved for /admin (set in hooks.server.ts).
-      editor: Editor | null;
-    }
     interface Platform {
       env: {
         SEND_EMAIL: SendEmail;
