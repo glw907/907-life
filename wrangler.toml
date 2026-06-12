@@ -1,5 +1,7 @@
 # 907.life — Cloudflare Workers (SvelteKit adapter-cloudflare)
 name = "907-life"
+# Lets cairn-doctor derive the account for its D1 auth-store check.
+account_id = "120c269ad6d3dfbe6d63a0bb53758ca0"
 compatibility_date = "2025-05-05"
 compatibility_flags = ["nodejs_compat"]
 
