@@ -21,6 +21,7 @@ is `../cairn-cms/docs/STATUS.md`.
 | 11–15 | Multi-repo engine roadmap | ✗ Superseded |
 | 16 | Migrate onto cairn-cms ^0.24.0 (full surface) | ✓ Done |
 | 16.1 | cairn-0.36.0 retrofit (0.35.0 CSRF + 0.36.0 logging window) | ✓ Done (2026-06-09) |
+| 16.2 | cairn ^0.51.0 crossing (single-mount admin + iframed preview) | ⟳ In progress; plan `docs/superpowers/plans/2026-06-12-cairn-0.51-crossing.md` |
 | 17 | Convert public chrome to DaisyUI components | ◇ Designed, plan next |
 
 > **cairn-0.36.0 retrofit (done).** Bumped `@glw907/cairn-cms` to `^0.36.0` and applied the window's
