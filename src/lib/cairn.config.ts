@@ -39,11 +39,12 @@ export const cairn = defineAdapter({
   navMenu: { configPath: 'src/lib/site.config.yaml', menuName: 'primary', label: 'Navigation', maxDepth: 2 },
   // The preview knob. The (site) content region nests main.container.mx-auto.px-4.max-w-3xl.py-8
   // > article.post-detail > div.post-body, and every content rule in app.css is a flat .post-body
-  // descendant selector, so the frame flattens the chain onto body (the main classes plus
-  // post-detail) over one post-body container. Posts is the only concept, so no byConcept.
+  // descendant selector, so the frame needs only the main's classes on body over one post-body
+  // container. The post-detail rules are component-scoped to the route and would not match here,
+  // so the class is deliberately not reproduced. Posts is the only concept, so no byConcept.
   preview: {
     stylesheets: [appCss],
-    bodyClass: 'container mx-auto px-4 max-w-3xl py-8 post-detail',
+    bodyClass: 'container mx-auto px-4 max-w-3xl py-8',
     containerClass: 'post-body',
   },
 });

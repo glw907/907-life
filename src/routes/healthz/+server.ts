@@ -11,7 +11,9 @@ export const GET: RequestHandler = async (event) => {
   try {
     return json(await healthLoad(event, runtime));
   } catch (err) {
-    const detail = err instanceof Error ? err.message : String(err);
-    return json({ ok: false, checks: { githubAppSigning: { ok: false, detail } } });
+    // The endpoint is unauthenticated, so the raw message (import and config error strings,
+    // recon-grade) stays in the log; callers get only the boolean.
+    console.error('healthz signing check failed:', err);
+    return json({ ok: false, checks: { githubAppSigning: { ok: false, detail: 'unavailable' } } });
   }
 };

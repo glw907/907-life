@@ -1,5 +1,10 @@
 <script lang="ts">
-  import '../../app.css';
+  // app.css is referenced only through ?url imports (here and in the adapter's preview knob),
+  // never statically. A static import would fold the sheet into this layout's CSS chunk, whose
+  // basename differs between the client and server builds, so the server-resolved URL the
+  // editor's preview frame links would 404. As a ?url asset both builds emit app.<hash>.css
+  // under one content hash, and the URL holds.
+  import appCss from '../../app.css?url';
   import Nav from '$lib/components/Nav.svelte';
   import SearchModal from '$lib/components/SearchModal.svelte';
   import Icon from '$lib/components/Icon.svelte';
@@ -10,6 +15,7 @@
 </script>
 
 <svelte:head>
+  <link rel="stylesheet" href={appCss} />
   <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/feed.xml" />
   <link rel="alternate" type="application/feed+json" title={SITE_TITLE} href="/feed.json" />
 </svelte:head>

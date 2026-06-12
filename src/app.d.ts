@@ -1,7 +1,9 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
 import type { SendEmail, D1Database } from '@cloudflare/workers-types';
-import type { AuthEnv } from '@glw907/cairn-cms/sveltekit';
+// AuthEnv lives on the package root, not the /sveltekit subpath; the subpath import typechecks
+// only because skipLibCheck swallows the missing-member error inside this declaration file.
+import type { AuthEnv } from '@glw907/cairn-cms';
 
 // App.Locals.editor (set by the engine's auth guard) ships with the engine.
 import '@glw907/cairn-cms/ambient';
