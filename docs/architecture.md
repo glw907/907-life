@@ -137,6 +137,24 @@ the additive logging:
   cairn's structured diagnostic events (auth, commit, guard) for this site. Query them by `event` or
   `editor` in the dashboard Logs tab.
 
+**cairn-0.51.0 crossing (the `0.36.0` → `0.51.0` window, Pass 16.2, 2026-06-12).** The admin seam
+became the single mount: the old per-route shim tree under `src/routes/admin/` is gone, replaced
+by one catch-all pair (`src/routes/admin/[...path]/`) re-exporting `admin.load`/`admin.actions`
+from the composer, which now builds `createCairnAdmin(runtime)` instead of the four 0.36-era route
+factories. Action-adding engine releases are additive for this site from here on. `app.d.ts`
+imports `@glw907/cairn-cms/ambient` for `App.Locals` (and `AuthEnv` from the package root; the
+`/sveltekit` subpath does not export it). Floors rose to svelte `^5.56.3` and kit `^2.12`. The
+editor preview renders in the engine's sandboxed iframe wired to this site's real styling through
+the adapter's `preview` knob: `app.css` is referenced only through `?url` imports (the `(site)`
+layout links it in `svelte:head`; a static import would fold the sheet into a CSS chunk and the
+preview's server-resolved URL would 404), `bodyClass` carries the `(site)` main's classes, and the
+rendered markdown sits in one `post-body` container, which every content rule in `app.css` targets
+as a flat descendant. Both build pipelines emit their own hashed copy of the sheet (the page links
+the client copy, the frame the server copy); ecxc ships the same shape. The review fold-in also
+allowlisted the `theme` cookie before it reaches the `data-theme` attribute (an injection sink the
+admin shared), scoped `prerender = false` over the `/admin` subtree by layout, and made `/healthz`
+log its error detail instead of echoing it to anonymous callers.
+
 Mounted at `/admin`, in 907.life's own Worker. Editors sign in by email (magic link, no
 GitHub account); a CodeMirror editor edits raw markdown; saving commits to `main` via the
 shared GitHub App (committer `cairn-cms[bot]`, author = the editor), which auto-deploys.
@@ -157,7 +175,8 @@ shared GitHub App (committer `cairn-cms[bot]`, author = the editor), which auto-
   `wrangler secret put` / `.dev.vars`. The 0.6.0 cutover moved auth off the Pass-F `AUTH_KV` to D1.
   The self-owned auth uses opaque D1 session rows, so it needs no magic-link or session signing secret.
 - **Guard.** `/admin/**` is gated in `hooks.server.ts` (session cookie → `locals.editor`);
-  the admin layout sets `prerender = false` + `data-pagefind-ignore` so it's never indexed.
+  `src/routes/admin/+layout.server.ts` sets `prerender = false` over the subtree, so no admin
+  path is ever baked or reachable by Pagefind's post-build index.
 
 Local editing + git push still works for any content; the admin is the no-git path for posts.
 
