@@ -30,12 +30,17 @@ engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 > Review fold-in: theme cookie allowlisted before the `data-theme` attribute, `/admin` subtree
 > `prerender = false` by layout, healthz error detail moved to the log. Details in
 > `docs/architecture.md`; archived plan `docs/superpowers/archive/plans/2026-06-12-cairn-0.51-crossing.md`.
-> **Post-deploy check (Geoff):** sign in at `/admin` (magic-link click), publish-workflow round trip,
-> preview-fidelity eyeball on a real post.
+> Live-proven after deploy: `cairn-doctor --probe https://907.life` 12/12 (with `--from`/`--repo`;
+> the D1 check ran via the new wrangler `account_id`), a real login POST returned `sent`, the
+> back-to-back POST returned `throttled` (the 0.38 states), and both logged `auth.link.requested`
+> in Workers Logs. **Post-deploy check (Geoff):** sign in at `/admin` (a fresh magic link is in the
+> inbox from the proof), publish-workflow round trip, preview-fidelity eyeball on a real post.
 
 > **Follow-ups.** `scripts/mint-session.mjs` is stale (it targets the retired better-auth model);
 > rewrite or drop it for the self-owned D1 session smoke. The kit `csrf.checkOrigin` deprecation
-> (kit#15992) stays on the cairn watch list.
+> (kit#15992) stays on the cairn watch list. The site does not wire the `cairnManifest` Vite
+> plugin, so `cairn-doctor` cannot self-derive `--from`/`--repo` here (four checks skip without
+> flags); wire the plugin in a later touch, the ecxc setup is the model.
 
 ---
 
