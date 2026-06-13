@@ -1,8 +1,8 @@
 # 907.life: Project Status
 
 **Current state:** Site rebuilt and deployed (SvelteKit + adapter-cloudflare, Spectral/Karla/Monaspace,
-CSS token system). Passes 1–16.2 done. **A cairn-cms site**, consumer #2, magic-link admin at `/admin`
-(posts concept, free-form tags, single-mount admin since the cairn-0.51.0 crossing, 2026-06-12). The
+CSS token system). Passes 1–16.3 done. **A cairn-cms site**, consumer #2, magic-link admin at `/admin`
+(posts concept, free-form tags, single-mount admin, on cairn `^0.54.0` since the 2026-06-13 bump). The
 engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 
 > **Architecture note.** cairn-cms is an embedded magic-link CMS library published as
@@ -21,6 +21,7 @@ engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 | 16 | Migrate onto cairn-cms ^0.24.0 (full surface) | ✓ Done |
 | 16.1 | cairn-0.36.0 retrofit (CSRF + logging window) | ✓ Done (2026-06-09) |
 | 16.2 | cairn ^0.51.0 crossing (single-mount admin + iframed preview) | ✓ Done (2026-06-12) |
+| 16.3 | cairn ^0.54.0 bump (editor-takes-the-shell window, additive) | ✓ Done (2026-06-13) |
 | 17 | Convert public chrome to DaisyUI components | ◇ Designed, plan next |
 
 > **cairn-0.51.0 crossing (done).** The whole `0.36.0` → `0.51.0` window in one pass: the admin shim
