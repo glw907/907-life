@@ -10,6 +10,11 @@ import { siteConfig, SITE_EMAIL } from './config.js';
 // build), so the editor's preview frame can link the same sheet the (site) layout loads.
 import appCss from '../app.css?url';
 
+// The cairnManifest() Vite plugin, the cairn-manifest bin, and cairn-doctor read the adapter and
+// the parsed site config off one module, so re-export siteConfig here to make this file that single
+// configModule.
+export { siteConfig };
+
 export const cairn = defineAdapter({
   siteName: siteConfig.siteName,
   content: {
