@@ -33,6 +33,12 @@ binding = "AUTH_DB"
 database_name = "cairn-907-auth"
 database_id = "93aa929d-0228-4f8b-8d1e-5e7e0d755617"
 
+# cairn-cms 0.57+: R2 bucket backing the media library. The /media delivery route streams
+# content-addressed image bytes from here; the adapter's assets block names this binding.
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "907-life-media"
+
 [vars]
 # Canonical origin for magic-link confirmation links, never read from a request header.
 # Dev overrides via PUBLIC_ORIGIN in .dev.vars.

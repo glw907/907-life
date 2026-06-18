@@ -4,16 +4,30 @@
 // and the inferred frontmatter type. 907 uses free-form tags (the open `freetags` field), plain
 // prose, and a day-granular dated slug.
 import { defineAdapter, defineFields } from '@glw907/cairn-cms';
+import { normalizeAssets, makeMediaResolver } from '@glw907/cairn-cms/media';
 import { renderMarkdown } from './render.js';
 import { siteConfig, SITE_EMAIL } from './config.js';
 // The ?url import resolves the compiled stylesheet to its served URL (the hashed asset in a
 // build), so the editor's preview frame can link the same sheet the (site) layout loads.
 import appCss from '../app.css?url';
+// The committed media manifest backs the public media resolver below, so a media: reference resolves
+// to its /media delivery URL on the live site. The file starts as {} and the admin upload pipeline
+// commits rows into it.
+import mediaManifest from '../content/.cairn/media.json';
 
 // The cairnManifest() Vite plugin, the cairn-manifest bin, and cairn-doctor read the adapter and
 // the parsed site config off one module, so re-export siteConfig here to make this file that single
 // configModule.
 export { siteConfig };
+
+// The default public media resolver. The render path and the public route both inject it so a
+// committed media: reference rewrites to its content-addressed /media URL on the live site. The
+// admin preview injects its own resolver from the edit page's mediaTargets, so this only backs the
+// public build.
+export const publicMediaResolver = makeMediaResolver(
+  mediaManifest,
+  normalizeAssets({ bucketBinding: 'MEDIA_BUCKET' }),
+);
 
 export const cairn = defineAdapter({
   siteName: siteConfig.siteName,
@@ -39,7 +53,13 @@ export const cairn = defineAdapter({
     installationId: '135372268',
   },
   sender: { from: SITE_EMAIL.sender ?? 'noreply@907.life' },
-  render: (md, opts) => renderMarkdown(md, opts),
+  // Media on: the R2 bucket binding (wrangler.toml) the upload, storage, delivery, and resolver
+  // paths read. Cloudflare Images transforms stay off (the default), so the site serves full-size
+  // bytes until the zone opts in.
+  assets: { bucketBinding: 'MEDIA_BUCKET' },
+  // Thread the public media resolver as the default, so a published media: reference resolves on the
+  // live site. A per-call resolver (the admin preview's) still wins when supplied.
+  render: (md, opts) => renderMarkdown(md, { ...opts, resolveMedia: opts?.resolveMedia ?? publicMediaResolver }),
   // The header menu, managed from /admin/nav and committed to the site-config YAML.
   navMenu: { configPath: 'src/lib/site.config.yaml', menuName: 'primary', label: 'Navigation', maxDepth: 2 },
   // The preview knob. The (site) content region nests main.container.mx-auto.px-4.max-w-3xl.py-8
