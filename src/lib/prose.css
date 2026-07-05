@@ -56,11 +56,19 @@
        the rare token that cannot fit otherwise; ordinary prose never notices it. */
     overflow-wrap: anywhere;
   }
+  /* The browser-default paragraph margin, reset before the owl selector below supplies the real
+     flow rhythm. Wrapped in :where() so this reset carries zero specificity from the `p` type
+     selector: an unwrapped `.prose p` is (0,1,1), which always outranks `.prose > * + *`'s (0,1,0)
+     regardless of source order, so every paragraph's margin-top stayed 0 no matter what the owl
+     selector tried to set, collapsing the flow rhythm between two paragraphs, after a blockquote,
+     or after a code block or table (anywhere the following element is a bare `<p>` with no
+     heading-specific override to out-rank the reset the same way `.prose h2 + *` does). Tied at
+     (0,1,0) with the owl rule below, source order decides, so this reset must stay ABOVE it. */
+  .prose :where(p) {
+    margin-block: 0;
+  }
   .prose > * + * {
     margin-top: var(--flow-space);
-  }
-  .prose p {
-    margin-block: 0;
   }
 
   /* The article title on the display face: large space below it is unnecessary
@@ -112,8 +120,19 @@
   .prose strong {
     font-weight: 650;
   }
+  /* The old body-link idiom: an underline that stays transparent until hover, when it reveals in a
+     quiet, muted tone rather than the link's own color. */
   .prose a {
     font-weight: 500;
+    color: var(--color-primary);
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color 0.15s ease;
+  }
+  .prose a:hover {
+    text-decoration-color: var(--color-muted);
   }
   /* The reading-surface focus ring, matching the chrome and the styleguide (2px primary, 2px offset).
      A tinted callout ground shares the primary hue, so the same-hue ring can wash out against it; a
@@ -127,18 +146,19 @@
   }
 
   /* --------------------------------------------------------------------------
-     Blockquote: a 3px accent left rule, italic, slightly recessed ink. The
-     optional <cite> reads as muted meta on its own line.
+     Blockquote: the old modest treatment, a 2px muted left rule, italic, set a
+     touch below body size (not the pull-quote's step-up). The optional <cite>
+     reads as muted meta on its own line.
      -------------------------------------------------------------------------- */
   .prose blockquote {
     margin-inline: 0;
     padding-left: var(--spacing-m);
-    border-left: 3px solid var(--color-primary);
+    border-left: 2px solid var(--color-muted);
     color: color-mix(in oklab, var(--color-base-content) 88%, transparent);
     font-style: italic;
   }
   .prose blockquote p {
-    font-size: var(--text-step-1);
+    font-size: 0.95em;
     line-height: var(--leading-snug);
   }
   .prose blockquote cite {
@@ -177,16 +197,18 @@
   }
 
   /* --------------------------------------------------------------------------
-     Code. Inline code is a tinted bordered chip (base-200 ground, base-300
-     border). The fenced block reads its colors from theme.css's pre.shiki +
-     .cairn-tok-* bindings; this only sets the block's measure, spacing, leading,
-     and horizontal overflow. The :not(pre) guard keeps the chip off block code.
+     Code. Inline code is a quiet, small chip, the old smaller ratio (not the
+     louder 0.88em): a faint tinted ground and a hairline border rather than the
+     base-300 solid one. The fenced block reads its colors from theme.css's
+     pre.shiki + .cairn-tok-* bindings; this only sets the block's measure,
+     spacing, leading, and horizontal overflow. The :not(pre) guard keeps the
+     chip off block code.
      -------------------------------------------------------------------------- */
   .prose :not(pre) > code {
     font-family: var(--font-mono);
-    font-size: 0.88em;
-    background: var(--color-base-200);
-    border: var(--border) solid var(--color-base-300);
+    font-size: 0.76em;
+    background: color-mix(in oklab, var(--color-base-200) 70%, transparent);
+    border: var(--border) solid var(--color-card-border);
     border-radius: var(--radius-selector);
     padding: 0.1em 0.36em;
   }

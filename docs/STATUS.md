@@ -1,12 +1,14 @@
 # 907.life: Project Status
 
 **Current state:** Rebuilt from scratch on the Waymark starter template and `@glw907/cairn-cms
-^0.80.0` (Pass 18, 2026-07-05). Fresh scaffold, DaisyUI v5 public chrome, a `907-theme.css` identity
-layer over neutral Waymark, and every permalink the pre-rebuild sitemap listed reproduced exactly.
-**The production deploy is HELD for Geoff's go**; the rebuild is fully gated and verified locally but
-not pushed or deployed. **A cairn-cms site**, consumer #2, magic-link admin at `/admin` (posts
-concept, curated tag vocabulary, single-mount admin). The engine's rolling status is
-`../cairn-cms/docs/STATUS.md`.
+^0.80.0` (Pass 18, 2026-07-05), then polished against the site's original typographic audit (Pass
+19, 2026-07-05). Fresh scaffold, DaisyUI v5 public chrome, a `907-theme.css` identity layer over
+neutral Waymark (now Spectral/Karla/Monaspace Neon, not et-book) restoring the site's original
+wordmark, nav, date-stamp, tag, blockquote, and code idioms, and every permalink the pre-rebuild
+sitemap listed reproduced exactly. **The production deploy is HELD for Geoff's go**; the rebuild
+is fully gated and verified locally but not pushed or deployed. **A cairn-cms site**, consumer #2,
+magic-link admin at `/admin` (posts concept, curated tag vocabulary, single-mount admin). The
+engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 
 > **Architecture note.** cairn-cms is an embedded magic-link CMS library published as
 > `@glw907/cairn-cms`, and each site is a standalone repo consuming it via a per-site adapter. 907.life
@@ -27,6 +29,25 @@ concept, curated tag vocabulary, single-mount admin). The engine's rolling statu
 | 16.3 | cairn ^0.54.0 bump (editor-takes-the-shell window, additive) | ✓ Done (2026-06-13) |
 | 17 | Convert public chrome to DaisyUI components | ✗ Superseded by Pass 18 |
 | 18 | Rebuild from Waymark on cairn-cms ^0.80.0 | ✓ Done (2026-07-05), deploy HELD |
+| 19 | Typographic-audit polish (Spectral/Karla/Monaspace, old idioms) | ✓ Done (2026-07-05), deploy HELD |
+
+> **Pass 19: typographic-audit polish (done, deploy held).** Restored the pre-rebuild pairing
+> (Spectral body, Karla display, Monaspace Neon mono, self-hosted; et-book retired) and thirteen
+> of the site's original devices the Waymark rebuild had dropped or genericized: the split
+> `907`/`.life` wordmark (header and footer), the uppercase-eyebrow nav idiom, restored date/tag/
+> back-link chrome on post pages, the underline-on-hover body link, long-format uppercase date
+> stamps everywhere a post is listed, the hash-prefixed archive tag versus the bordered post-page
+> tag pill, italic entry excerpts, the lowercase footer labels, and a dialed-back blockquote and
+> inline-code treatment. Also root-caused and fixed a real defect along the way: `.prose p {
+> margin-block: 0 }`'s type-selector specificity (0,1,1) always out-ranked the owl selector
+> `.prose > * + *` (0,1,0) regardless of source order, so every paragraph following a paragraph,
+> blockquote, code block, or table rendered with no top margin site-wide (most visible in the
+> `understanding-epoll` post's back-to-back non-heading blocks). The fix (`:where(p)` to drop the
+> reset's specificity to the owl selector's own) landed here and, since the bug is copied verbatim
+> from the cairn-cms showcase template, in `cairn-cms` itself as a separate fix commit. Verified:
+> side-by-side crops against a `97827da` worktree of the pre-rebuild site for every device, the
+> live sitemap's 23 permalinks still serving 200 at their exact canonical path, and no horizontal
+> overflow at 320/1440/2560.
 
 > **Pass 18: rebuild from Waymark (done, deploy held).** Plan:
 > `docs/superpowers/plans/2026-07-05-rebuild-from-waymark.md`. Five tasks: (1) retired the 0.59-era

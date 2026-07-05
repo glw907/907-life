@@ -4,6 +4,7 @@
      index grid, and the hairlines a utility cannot express. -->
 <script lang="ts">
   import type { PageData } from './$types';
+  import { formatDate } from '$lib/format-date';
 
   let { data }: { data: PageData } = $props();
 
@@ -24,18 +25,6 @@
 
   const featured = $derived(selected === '' ? filtered[0] : undefined);
   const rest = $derived(selected === '' ? filtered.slice(1) : filtered);
-
-  const dateFmt = new Intl.DateTimeFormat('en-US', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  });
-
-  /** Render an ISO `YYYY-MM-DD` date as a short tabular label, e.g. "15 Jan 2026". */
-  function formatDate(iso: string): string {
-    return dateFmt.format(new Date(iso));
-  }
 </script>
 
 <svelte:head>
@@ -123,12 +112,14 @@
     margin-bottom: var(--spacing-l);
     border-bottom: var(--border) solid var(--color-card-border);
   }
+  /* The old date-stamp idiom: a quiet uppercase letterspaced label, not the fluid type scale (no
+     step matches 0.72rem). */
   .lead__date {
     margin-bottom: var(--spacing-3xs);
-    font-size: var(--text-step--1);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--color-muted);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.01em;
   }
   .lead__title {
     margin: 0 0 var(--spacing-2xs);
@@ -150,6 +141,7 @@
     max-width: 38rem;
     font-size: var(--text-step-1);
     line-height: var(--leading-snug);
+    font-style: italic;
     color: var(--color-muted);
   }
   .lead__link {
@@ -212,7 +204,7 @@
 
   .entry {
     display: grid;
-    grid-template-columns: 7.5rem 1fr;
+    grid-template-columns: 9rem 1fr;
     gap: var(--spacing-m);
     align-items: start;
     padding: var(--spacing-m) 0;
@@ -222,12 +214,14 @@
     grid-template-columns: 1fr;
   }
 
+  /* The old date-stamp idiom: a quiet uppercase letterspaced label, not the fluid type scale (no
+     step matches 0.72rem). */
   .entry__date {
     padding-top: 0.5rem;
-    font-size: var(--text-step--1);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--color-muted);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.01em;
   }
 
   .entry__title {
@@ -250,6 +244,7 @@
     margin: 0;
     font-size: var(--text-step-0);
     line-height: var(--leading-snug);
+    font-style: italic;
     color: var(--color-muted);
   }
 

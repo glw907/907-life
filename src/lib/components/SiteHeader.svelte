@@ -3,7 +3,9 @@
 theme.css). A sticky band over a translucent `base-100` with a hairline bottom, carrying the
 wordmark on the left and the primary nav (read from site.config.yaml's `primary` menu, so the
 `/admin/nav` editor stays the one place that manages it), the search trigger, and the theme toggle
-on the right. Every colour and size reads a DaisyUI role utility or a cairn token, never a literal.
+on the right. Every colour reads a DaisyUI role utility or a cairn token, never a literal; the
+wordmark (Wordmark.svelte) and the nav link's size/tracking are the two exceptions, carrying the
+site's original type-audit numbers verbatim since no step in the fluid type scale matches them.
 The current route's nav link gets `aria-current="page"` and the accent colour. The inner content
 caps at `--container-measure`, the same width as the article and home reading column (`.site-main`),
 so the wordmark's left edge lines up with the body copy below it. The layout is no-JS-first
@@ -25,6 +27,7 @@ blocks pick the system scheme live, with no JS at all.
   import { extractMenu } from '@glw907/cairn-cms';
   import { siteConfig } from '$lib/cairn.config';
   import SearchModal from './SearchModal.svelte';
+  import Wordmark from './Wordmark.svelte';
 
   const nav = extractMenu(siteConfig, 'primary', 2);
 
@@ -68,12 +71,10 @@ blocks pick the system scheme live, with no JS at all.
 
 <header class="site-header sticky top-0 z-20 border-b border-card-border">
   <div class="mx-auto flex max-w-measure flex-wrap items-center justify-between gap-m px-m py-xs">
-    <a href="/" class="whitespace-nowrap font-display text-step-1 font-semibold tracking-tight text-base-content no-underline">
-      907.life
-    </a>
+    <Wordmark />
 
     <div class="flex flex-wrap items-center gap-s">
-      <nav class="site-nav flex flex-wrap items-center gap-s text-step--1" aria-label="Primary">
+      <nav class="site-nav flex flex-wrap items-center gap-s" aria-label="Primary">
         {#each nav as item (item.url ?? item.label)}
           {@const current = item.url ? isCurrent(item.url) : false}
           <a
@@ -130,8 +131,12 @@ blocks pick the system scheme live, with no JS at all.
     background: color-mix(in oklab, var(--color-base-100) 88%, transparent);
     backdrop-filter: saturate(1.4) blur(8px);
   }
+  /* The old nav idiom: a small uppercase eyebrow label, not the fluid type scale (no step matches
+     0.75rem). */
   .site-nav a {
-    letter-spacing: 0.01em;
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
     border-radius: 2px;
     transition: color 0.15s;
   }

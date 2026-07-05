@@ -5,6 +5,7 @@ home page keeps its own bespoke markup, since it also carries a lead treatment a
 this row does not need). -->
 <script lang="ts">
   import type { ContentSummary } from '@glw907/cairn-cms/delivery';
+  import { formatDate } from '$lib/format-date';
 
   let {
     post,
@@ -14,18 +15,6 @@ this row does not need). -->
     /** Tag value to its curated display label; a tag missing from the map falls back to its raw value. */
     labels: Record<string, string>;
   } = $props();
-
-  const dateFmt = new Intl.DateTimeFormat('en-US', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  });
-
-  /** Render an ISO `YYYY-MM-DD` date as a short tabular label, e.g. "15 Jan 2026". */
-  function formatDate(iso: string): string {
-    return dateFmt.format(new Date(iso));
-  }
 </script>
 
 <article class="row" class:row--undated={!post.date}>
@@ -47,7 +36,7 @@ this row does not need). -->
 <style>
   .row {
     display: grid;
-    grid-template-columns: 7.5rem 1fr;
+    grid-template-columns: 9rem 1fr;
     gap: var(--spacing-m);
     align-items: start;
     padding: var(--spacing-s) 0;
@@ -57,12 +46,14 @@ this row does not need). -->
     grid-template-columns: 1fr;
   }
 
+  /* The old date-stamp idiom: a quiet uppercase letterspaced label, not the fluid type scale (no
+     step matches 0.72rem). */
   .row__date {
     padding-top: 0.35rem;
-    font-size: var(--text-step--1);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--color-muted);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.01em;
   }
 
   .row__title {
@@ -87,10 +78,18 @@ this row does not need). -->
     gap: 0.6rem;
     margin: 0.3rem 0 0;
   }
+  /* The old archive-tag idiom: a hash-prefixed label on the display face (Karla), fainter than the
+     label itself, not a bordered chip (that treatment belongs to the post page's tag pills). */
   .row__tag {
-    font-size: var(--text-step--1);
+    font-family: var(--font-display);
+    font-size: 0.68rem;
     color: var(--color-muted);
     text-decoration: none;
+  }
+  .row__tag::before {
+    content: '#';
+    color: color-mix(in oklab, var(--color-muted) 65%, transparent);
+    margin-inline-end: 0.06em;
   }
   .row__tag:hover {
     color: var(--color-base-content);
