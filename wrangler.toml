@@ -39,14 +39,18 @@ database_id = "93aa929d-0228-4f8b-8d1e-5e7e0d755617"
 binding = "MEDIA_BUCKET"
 bucket_name = "907-life-media"
 
-# The about page's contact form (Turnstile spam check + the SEND_EMAIL destination). Both are
-# Worker secrets, never committed here: `npx wrangler secret put TURNSTILE_SECRET_KEY` and
-# `npx wrangler secret put CONTACT_EMAIL`.
+# The about page's contact form (Turnstile spam check + the SEND_EMAIL destination). The secret
+# check and the destination address are Worker secrets, never committed here:
+# `npx wrangler secret put TURNSTILE_SECRET_KEY` and `npx wrangler secret put CONTACT_EMAIL`.
 
 [vars]
 # Canonical origin for magic-link confirmation links, never read from a request header.
 # Dev overrides via PUBLIC_ORIGIN in .dev.vars.
 PUBLIC_ORIGIN = "https://907.life"
+# The contact form's Turnstile site key: public by design (it ships in the served HTML), so it is
+# a plain var, not a secret. Cloudflare's published always-passes test key until Geoff swaps in
+# the real 907.life site key.
+PUBLIC_TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
 
 [[routes]]
 pattern = "907.life"
