@@ -93,6 +93,13 @@
    at the foot of this file, so they resolve in the documented cascade order. */
 @import './prose.css';
 
+/* 907's identity layer, the second proof of the theme-layer pattern after the cairn theme
+   (examples/cairn-theme/cairn.css in cairn-cms): et-book type and 907's own warm palette, both light
+   and dark. Kept in its own file, chained here (the guide's "one import line directly after your
+   theme.css import") so it ships through the single stylesheet the (site) layout and the editor
+   preview both already link, with no markup change. See 907-theme.css for the full recipe. */
+@import './907-theme.css';
+
 /* themes: false drops DaisyUI's built-in light/dark themes so they do not claim :root; the two
    cairn themes below are the only ones, exactly as the admin sheet runs only its own. */
 @plugin "daisyui" {
@@ -254,9 +261,13 @@
    DaisyUI roles where relevant, so a re-skin of the roles carries them too.
 
    Constant tokens and the LIGHT on-surface inks sit on :root; the DARK siblings
-   sit under the same prefers-color-scheme query DaisyUI uses for `cairn-dark`, so
-   the inks switch in lockstep with the roles. (A manual dark toggle in a later
-   pass adds a [data-theme] scope for these.)
+   sit under the same prefers-color-scheme query DaisyUI uses for `cairn-dark`,
+   guarded by `:not([data-theme])` so an explicit choice wins over the system
+   scheme, exactly the guard DaisyUI's own compiled `cairn-dark` block uses. The
+   header's theme toggle (`SiteHeader.svelte`) sets `data-theme="cairn-dark"` on
+   `<html>` for an explicit dark choice, which the `[data-theme='cairn-dark']`
+   block below matches unconditionally, so the roles and these customs switch in
+   lockstep whether the scheme comes from the OS or from the toggle.
    ---------------------------------------------------------------------------- */
 :root {
   /* The design-scale tokens (the faces, the type and space scales, the leading, tracking, and
@@ -307,8 +318,15 @@
   --cairn-cta-btn-content: var(--color-base-content);
 }
 
+/* The dark custom-token values, applied two ways: as the system-scheme default (media-guarded, and
+   only when no explicit `data-theme` overrides it) and as the explicit toggle choice (the plain
+   `[data-theme='cairn-dark']` selector, unconditional). The declaration body is intentionally
+   identical in both blocks; DaisyUI's own compiled `@plugin "daisyui/theme"` output duplicates a
+   theme's declarations the same way, across a media-guarded selector and a plain `[data-theme]`
+   one (see node_modules/daisyui/theme/index.js), because plain CSS has no mixin to share a
+   declaration block across two different selector contexts. Keep both blocks in sync by hand. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     /* On-surface inks (dark) lift with the surface, keeping AA on the dark bases. */
     --color-muted: oklch(70% 0.012 76);
     --cairn-success-ink: oklch(78% 0.11 150);
@@ -329,6 +347,22 @@
     --cairn-cta-btn-bg: var(--color-primary);
     --cairn-cta-btn-content: var(--color-primary-content);
   }
+}
+
+:root[data-theme='cairn-dark'] {
+  --color-muted: oklch(70% 0.012 76);
+  --cairn-success-ink: oklch(78% 0.11 150);
+  --cairn-warning-ink: oklch(82% 0.12 76);
+  --cairn-error-ink: oklch(76% 0.14 27);
+  --cairn-info-ink: oklch(80% 0.1 235);
+  --color-card-border: color-mix(in oklab, var(--color-base-content) 16%, transparent);
+  --cairn-shadow: 0 1px 2px color-mix(in oklab, black 40%, transparent),
+    0 8px 24px -10px color-mix(in oklab, black 55%, transparent);
+  --cairn-cta-bg: var(--color-base-200);
+  --cairn-cta-content: var(--color-base-content);
+  --cairn-cta-border: var(--color-base-300);
+  --cairn-cta-btn-bg: var(--color-primary);
+  --cairn-cta-btn-content: var(--color-primary-content);
 }
 
 @layer components {

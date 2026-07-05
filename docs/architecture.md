@@ -102,9 +102,14 @@ Secrets: `TURNSTILE_SECRET_KEY`, `CONTACT_EMAIL`
 
 ## Search
 
-`npx pagefind --site .svelte-kit/cloudflare` runs post-build. Generates static index in
-`.svelte-kit/cloudflare/pagefind/`. Search UI is a Svelte component wrapping the Pagefind
-JS API.
+`npm run build:search` (`vite build && npx pagefind --site .svelte-kit/cloudflare`) runs the normal
+build, then crawls the prerendered output and writes a static index plus a runtime module to
+`.svelte-kit/cloudflare/pagefind/`, so it deploys as ordinary static assets alongside everything
+else `[assets]` in `wrangler.toml` already serves. `src/lib/components/SearchModal.svelte` is the
+UI: a header-triggered DaisyUI modal (also opens on Cmd/Ctrl+K) calling Pagefind's low-level JS API
+directly, not its bundled default UI, so results render on the same token layer as the rest of the
+chrome. The full pattern write-up (the runtime-only-import mechanics, the dev-vs-built-index
+fallback) is [`docs/pagefind-search-pattern.md`](pagefind-search-pattern.md).
 
 ---
 

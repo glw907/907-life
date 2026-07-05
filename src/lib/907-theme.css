@@ -1,0 +1,103 @@
+/* ============================================================================
+   907's identity: the second worked theme layer over Waymark, after the cairn theme
+   (examples/cairn-theme/cairn.css in cairn-cms). Chained from theme.css (see the import comment
+   there); no markup change, no engine change, the same promise the cairn theme makes.
+
+   This layer sets two things: the type (et-book, self-hosted from the site's own long-carried
+   webfont files, moved to static/fonts ahead of this task) and the palette (a warm cream paper and
+   near-black ink in place of Waymark's neutral hue-free ladder, plus an aurora-green accent in
+   place of the default ink-blue). It leaves secondary/accent/neutral and the on-surface inks alone,
+   the same restraint the cairn theme's worked example uses: most re-skins touch only the base
+   ladder, the accent, and the face.
+
+   TOGGLE COMPATIBILITY. Both the base-ladder dark override and the accent's dark override are
+   applied two ways: media-guarded (`:not([data-theme])`, the system-scheme default) and as an
+   unconditional `[data-theme='cairn-dark']` block (the explicit choice from SiteHeader.svelte's
+   toggle). A site that never adopts the toggle sees no difference; `data-theme` is then never set,
+   so the guard always matches and the media query alone decides.
+   ============================================================================ */
+
+/* et-book: the site's long-carried identity face, vendored since well before this rebuild (the
+   commit that moved these files out of a vendored font-repo clone into static/fonts flagged this
+   theme layer as the reason). Regular and italic at 400, one bold weight at 700; no bold-italic
+   file exists, so a browser synthesizes it from the italic face, the same fallback Tufte-CSS itself
+   accepts. `font-display: swap` matches Waymark's own Fontsource imports in theme.css. */
+@font-face {
+  font-family: 'et-book';
+  src: url('/fonts/EtBook-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'et-book';
+  src: url('/fonts/EtBook-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'et-book';
+  src: url('/fonts/EtBook-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* One serif voice for both display and body, et-book's own convention (Tufte-CSS never pairs it
+   with a separate display face). A plain, unlayered custom-property declaration always beats
+   Waymark's own `@theme`-layered `--font-display`/`--font-body` regardless of specificity or
+   source order (the cairn theme's own recipe note applies here unchanged), so this needs no
+   `!important` and no import-order care. */
+:root {
+  --font-display: 'et-book', Palatino, 'Palatino Linotype', Georgia, serif;
+  --font-body: 'et-book', Palatino, 'Palatino Linotype', Georgia, serif;
+}
+
+/* The warm paper and near-black ink. DaisyUI compiles the `cairn`/`cairn-dark` base ladder to a
+   plain, unlayered rule, so specificity and source order both matter here, unlike the token-layer
+   faces above; `!important` makes the override unconditional regardless of exactly how a future
+   DaisyUI or Tailwind version compiles that rule. See the file header for the toggle-guard shape. */
+:root {
+  --color-base-100: oklch(98.2% 0.012 90) !important;
+  --color-base-200: oklch(95.8% 0.016 88) !important;
+  --color-base-300: oklch(89.5% 0.02 85) !important;
+  --color-base-content: oklch(21% 0.018 70) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-base-100: oklch(23% 0.014 75) !important;
+    --color-base-200: oklch(19% 0.012 75) !important;
+    --color-base-300: oklch(31% 0.014 75) !important;
+    --color-base-content: oklch(91% 0.012 85) !important;
+  }
+}
+
+:root[data-theme='cairn-dark'] {
+  --color-base-100: oklch(23% 0.014 75) !important;
+  --color-base-200: oklch(19% 0.012 75) !important;
+  --color-base-300: oklch(31% 0.014 75) !important;
+  --color-base-content: oklch(91% 0.012 85) !important;
+}
+
+/* The brand accent: an aurora-green in place of Waymark's ink-blue, an Alaska reference (907 is the
+   state's area code). Contrast-stable per the re-skin recipe: only the hue rotates (248 to 165),
+   lightness and chroma hold at both the light and dark step, so the AA pairs the neutral theme
+   already cleared stay cleared. */
+:root {
+  --color-primary: oklch(45% 0.1 165) !important;
+  --color-primary-content: oklch(99% 0.01 165) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-primary: oklch(74% 0.1 165) !important;
+    --color-primary-content: oklch(22% 0.03 165) !important;
+  }
+}
+
+:root[data-theme='cairn-dark'] {
+  --color-primary: oklch(74% 0.1 165) !important;
+  --color-primary-content: oklch(22% 0.03 165) !important;
+}
