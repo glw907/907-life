@@ -13,7 +13,6 @@ import {
 } from '@glw907/cairn-cms';
 import { normalizeAssets, makeMediaResolver, readCommittedManifest } from '@glw907/cairn-cms/media';
 import { renderMarkdown } from './render.js';
-import { wrapScrollableTables } from './render/table-scroll.js';
 import siteYaml from './site.config.yaml?raw';
 // The ?url import resolves the compiled stylesheets to their served URLs (the hashed assets in a
 // build), so the editor's preview frame links the same sheets the (site) layout loads. They must
@@ -79,14 +78,11 @@ export const cairn = defineAdapter({
   media: { bucketBinding: 'MEDIA_BUCKET' },
   rendering: {
     // The entry-aware render: the editor preview and every public page call this one function.
-    // The default media resolver backs the public build; the preview path injects its own. Render
-    // through the engine, then run 907's own rehype step (wrapScrollableTables) over the result:
-    // createRenderer keeps its internal plugin ordering closed, so a site adds its own post-render
-    // behavior at the HTML-string boundary instead (the cairn showcase's table-scroll pattern).
-    render: async ({ body, resolve, resolveMedia }) => {
-      const html = await renderMarkdown(body, { resolve, resolveMedia: resolveMedia ?? publicMediaResolver });
-      return wrapScrollableTables(html);
-    },
+    // The default media resolver backs the public build; the preview path injects its own.
+    // 907's own table-scroll rehype step is wired into render.ts's createRenderer call (the
+    // engine's rehypePlugins seam), so this delegates straight to renderMarkdown.
+    render: ({ body, resolve, resolveMedia }) =>
+      renderMarkdown(body, { resolve, resolveMedia: resolveMedia ?? publicMediaResolver }),
     components: defineRegistry({ components: [] }),
   },
   editor: {
