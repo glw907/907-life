@@ -3,6 +3,34 @@ description: A personal blog by Geoffrey L. Wright
 author: Geoffrey L. Wright
 locale: en-US
 
+# The curated tag vocabulary (0.78's {value,label} model): value is the frozen frontmatter
+# token every post already carries, label is the editable display name shown in the admin
+# and the home page's tag filter. Sourced from the eleven tags actually in use across the
+# migrated posts.
+vocabulary:
+  - value: alaska
+    label: Alaska
+  - value: books
+    label: Books
+  - value: linux
+    label: Linux
+  - value: music
+    label: Music
+  - value: musings
+    label: Musings
+  - value: networking
+    label: Networking
+  - value: photography
+    label: Photography
+  - value: seasons
+    label: Seasons
+  - value: systems
+    label: Systems
+  - value: technology
+    label: Technology
+  - value: test
+    label: Test
+
 menus:
   primary:
     - { label: Archives, url: /archives }

@@ -37,6 +37,3 @@ Thumbs.db
 
 # Playwright
 test-results/
-
-# Font experiments (not the active stack)
-et-book-gh-pages/
