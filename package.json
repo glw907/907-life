@@ -14,6 +14,9 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260405.1",
+    "@fontsource-variable/figtree": "^5.2.10",
+    "@fontsource-variable/source-code-pro": "^5.2.5",
+    "@fontsource-variable/source-sans-3": "^5.2.5",
     "@sveltejs/adapter-cloudflare": "^7.2.8",
     "@sveltejs/kit": "^2.12",
     "@sveltejs/vite-plugin-svelte": "^7",
@@ -30,8 +33,7 @@
     "wrangler": "^4.93.1"
   },
   "dependencies": {
-    "@glw907/cairn-cms": "^0.59.0",
-    "mimetext": "^3"
+    "@glw907/cairn-cms": "^0.80.0"
   },
   "type": "module"
 }

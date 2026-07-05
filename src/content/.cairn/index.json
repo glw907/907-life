@@ -9,7 +9,10 @@
       "permalink": "/2024/11/20/quick-thoughts",
       "summary": "Some scattered observations about focus, distraction, and modern life.",
       "draft": false,
-      "links": []
+      "links": [],
+      "tags": [
+        "musings"
+      ]
     },
     {
       "id": "2024-12-01-favorite-albums-2024",
@@ -19,7 +22,10 @@
       "permalink": "/2024/12/01/favorite-albums-2024",
       "summary": "A handful of albums that got me through the year.",
       "draft": false,
-      "links": []
+      "links": [],
+      "tags": [
+        "music"
+      ]
     },
     {
       "id": "2024-12-15-book-notes-example",
@@ -29,7 +35,10 @@
       "permalink": "/2024/12/15/book-notes-example",
       "summary": "Reflections on Richard Powers' novel about trees, time, and interconnection.",
       "draft": false,
-      "links": []
+      "links": [],
+      "tags": [
+        "books"
+      ]
     },
     {
       "id": "2025-01-10-winter-prior-lake",
@@ -39,7 +48,11 @@
       "permalink": "/2025/01/10/winter-prior-lake",
       "summary": "Capturing the quiet beauty of an Alaskan winter morning.",
       "draft": false,
-      "links": []
+      "links": [],
+      "tags": [
+        "alaska",
+        "photography"
+      ]
     },
     {
       "id": "2025-01-23-testing-the-new-site",
@@ -49,7 +62,10 @@
       "permalink": "/2025/01/23/testing-the-new-site",
       "summary": "First post on the new Hugo-powered 907.life blog.",
       "draft": false,
-      "links": []
+      "links": [],
+      "tags": [
+        "technology"
+      ]
     },
     {
       "id": "2026-01-29-formatting-test-post",
@@ -59,7 +75,10 @@
       "permalink": "/2026/01/29/formatting-test-post",
       "summary": "A comprehensive test of all available Markdown formatting elements",
       "draft": false,
-      "links": []
+      "links": [],
+      "tags": [
+        "test"
+      ]
     },
     {
       "id": "2026-03-06-early-march",
@@ -69,7 +88,11 @@
       "permalink": "/2026/03/06/early-march",
       "summary": "The particular quality of light that shows up in early March, before you're sure winter is done with you.",
       "draft": false,
-      "links": []
+      "links": [],
+      "tags": [
+        "alaska",
+        "seasons"
+      ]
     },
     {
       "id": "2026-04-06-understanding-epoll",
@@ -79,7 +102,12 @@
       "permalink": "/2026/04/06/understanding-epoll",
       "summary": "How Linux's epoll solves the C10K problem, and why select() wasn't enough.",
       "draft": false,
-      "links": []
+      "links": [],
+      "tags": [
+        "linux",
+        "networking",
+        "systems"
+      ]
     }
   ]
 }

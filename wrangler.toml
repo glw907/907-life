@@ -39,6 +39,10 @@ database_id = "93aa929d-0228-4f8b-8d1e-5e7e0d755617"
 binding = "MEDIA_BUCKET"
 bucket_name = "907-life-media"
 
+# The about page's contact form (Turnstile spam check + the SEND_EMAIL destination). Both are
+# Worker secrets, never committed here: `npx wrangler secret put TURNSTILE_SECRET_KEY` and
+# `npx wrangler secret put CONTACT_EMAIL`.
+
 [vars]
 # Canonical origin for magic-link confirmation links, never read from a request header.
 # Dev overrides via PUBLIC_ORIGIN in .dev.vars.

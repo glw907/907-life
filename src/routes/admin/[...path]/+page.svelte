@@ -1,8 +1,9 @@
 <!--
 @component
 The single-mount admin page: CairnAdmin switches on data.view, so this one component renders
-every /admin view. The adapter's render threads through for the editor's preview pane; 907 has
-no directive registry or icon set, so only render is passed.
+every /admin view. The adapter's render and registry thread through for the editor's preview pane
+and insert palette; 907 registers no directive components, so the registry is empty and no icons
+are passed.
 -->
 <script lang="ts">
   import { CairnAdmin } from '@glw907/cairn-cms/components';
@@ -20,4 +21,4 @@ no directive registry or icon set, so only render is passed.
   let { data, form }: Props = $props();
 </script>
 
-<CairnAdmin {data} {form} render={cairn.render} />
+<CairnAdmin {data} {form} render={cairn.rendering.render} registry={cairn.rendering.components} />
