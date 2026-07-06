@@ -14,7 +14,7 @@
   );
 </script>
 
-<CairnHead seo={data.seo} />
+<CairnHead seo={data.seo} titleTemplate={(title) => `${title} · ${siteConfig.siteName}`} />
 
 <article class="post">
   {#if data.entry.date}
