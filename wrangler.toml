@@ -13,9 +13,15 @@ main = ".svelte-kit/cloudflare/_worker.js"
 [observability]
 enabled = true
 
+# not_found_handling = "none" (the schema's own default, set here explicitly) passes an unmatched
+# request through to the Worker instead of serving a static 404 straight from the edge, so
+# SvelteKit's built-in default-404 handling renders the themed root src/routes/+error.svelte
+# through a real SSR response. See ../cairn-cms/examples/showcase/src/chassis/README.md's "The
+# themed-404 pattern".
 [assets]
 directory = ".svelte-kit/cloudflare"
 binding = "ASSETS"
+not_found_handling = "none"
 
 [[send_email]]
 name = "SEND_EMAIL"
