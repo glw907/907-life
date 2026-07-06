@@ -2,6 +2,6 @@
 // binding, validating the hash and extension before any read and carrying its own security headers
 // (it sits outside /admin). The route is off until the adapter declares a `media` block.
 import { createMediaRoute } from '@glw907/cairn-cms/sveltekit';
-import { runtime } from '$lib/cairn.server.js';
+import { runtime } from '$chassis/cairn.server.js';
 
 export const GET = createMediaRoute(runtime);

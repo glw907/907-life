@@ -30,6 +30,46 @@ engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 | 17 | Convert public chrome to DaisyUI components | ✗ Superseded by Pass 18 |
 | 18 | Rebuild from Waymark on cairn-cms ^0.80.0 | ✓ Done (2026-07-05), deploy HELD |
 | 19 | Typographic-audit polish (Spectral/Karla/Monaspace, old idioms) | ✓ Done (2026-07-05), deploy HELD |
+| 20 | Chassis restructure (Task 3 of cairn-cms's chassis-restructure plan) | ✓ Done (2026-07-05), deploy HELD |
+
+> **Pass 20: chassis restructure (done, deploy held).** Task 3 of
+> `cairn-cms/docs/superpowers/plans/2026-07-05-chassis-restructure.md`. Split `src/lib` into
+> `src/chassis/` (the genre-free plumbing: `content.ts`, `feed.ts`, `cairn.server.ts`,
+> `theme-toggle.ts`, `tokens.css`, `prose.css`, `composition.css`, verbatim from cairn-cms's
+> showcase where genuinely site-agnostic) and `src/theme/` (907's own adapter config, chrome
+> components, `theme.css`/`907-theme.css` values, `site-routes.ts`), with `$chassis`/`$theme`
+> SvelteKit aliases mirroring the showcase's own. Deliberately omitted from the chassis copy:
+> `dev-gate.ts` (no dev backend here) and `render.ts`'s icon wiring (907 registers no directive
+> components); see `src/chassis/README.md` for the full boundary and the omission note.
+> `SiteHeader.svelte`'s theme toggle now calls the shared `$chassis/theme-toggle` mechanism
+> instead of carrying its own copy. The three old-idiom prose overrides (link underline,
+> blockquote rule, inline-code chip) that Pass 19 had baked directly into `prose.css` move to
+> `907-theme.css` as unlayered overrides of the chassis's `@layer components` defaults (the same
+> layer-priority mechanism the font and color overrides already use), so `chassis/prose.css`
+> stays the pure showcase copy. `tokens.css`'s generic design-scale/code-ramp/CTA defaults now
+> live in the chassis; `theme.css` keeps only Waymark's real numbers plus the redundant blocks
+> that duplicated chassis defaults were dropped (907 never actually overrode them).
+>
+> **Verification.** All 13 of Pass 19's restored devices re-verified by computed style against a
+> local preview (wordmark faces, nav eyebrow case, entry-excerpt italics, footer-label case,
+> post date/tag/back-link chrome, the blockquote's 2px muted rule, the inline-code chip's 0.76em/
+> translucent/hairline treatment, and the link's transparent-to-muted underline reveal): all
+> match Pass 19's values exactly. The sitemap still serves 23 URLs. `npm run check` (0/0),
+> `npm test` (18/18, exit 0), and `npm run build` all pass when verified against cairn-cms's
+> current (unreleased) source; see the carried note below for why the currently-committed
+> `^0.80.0` dependency cannot yet reproduce that locally.
+>
+> **Carried (pre-existing, not introduced by this pass).** Three commits already on `main` before
+> this pass (`67b8f0d`, `9b89745`, `bb69cc9`, plus `56e46cb`) consume `sitemapView`'s 4th
+> `extraRoutes` argument, `unlistedRoutes`, `CairnHead.titleTemplate`, and the `rehypePlugins`/
+> `tableScroll` engine defaults — all real on cairn-cms's `main` (cairn-cms's own
+> `## Unreleased` changelog window, from its Harvest Pass 1) but not yet published to the
+> `^0.80.0` npm release this site's `package.json` pins. Confirmed via `git stash` against the
+> pre-pass commit that this gap pre-dates this pass: `npm run check` already failed with the
+> same 4 errors before any chassis-restructure edit. Verified against a local tarball built from
+> cairn-cms's current source (temporary, `--no-save`, reverted after) that every gate is green
+> once that release lands; nothing else is blocking. Unblocks when cairn-cms cuts the release
+> its own `docs/STATUS.md` already has queued ("the release Geoff ordered before aksailingclub").
 
 > **Pass 19: typographic-audit polish (done, deploy held).** Restored the pre-rebuild pairing
 > (Spectral body, Karla display, Monaspace Neon mono, self-hosted; et-book retired) and thirteen

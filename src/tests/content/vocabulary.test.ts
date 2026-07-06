@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseMarkdown, extractVocabulary } from '@glw907/cairn-cms';
-import { siteConfig } from '$lib/cairn.config';
+import { siteConfig } from '$theme/cairn.config';
 
 const POSTS_DIR = 'src/content/posts';
 

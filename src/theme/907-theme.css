@@ -130,3 +130,40 @@
   --color-primary: oklch(74% 0.1 165) !important;
   --color-primary-content: oklch(22% 0.03 165) !important;
 }
+
+/* The old reading-surface idioms, restored over chassis/prose.css's generic look (Task 5 of the
+   Waymark rebuild). prose.css's rules all sit in `@layer components`; every rule below is plain,
+   unlayered CSS, which the cascade always ranks above any layered declaration regardless of
+   specificity or source order, so these three overrides need no `!important` and no ordering care
+   (the same mechanism the font and color overrides above rely on). */
+
+/* The old body-link idiom: an underline that stays transparent until hover, when it reveals in a
+   quiet, muted tone rather than the link's own color. */
+.prose a {
+  color: var(--color-primary);
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 0.15s ease;
+}
+.prose a:hover {
+  text-decoration-color: var(--color-muted);
+}
+
+/* The old blockquote idiom: a 2px muted left rule, set a touch below body size (not chassis's 3px
+   accent rule at the pull-quote's step-up). */
+.prose blockquote {
+  border-left: 2px solid var(--color-muted);
+}
+.prose blockquote p {
+  font-size: 0.95em;
+}
+
+/* The old inline-code idiom: a quiet, small chip, a smaller ratio than chassis's default 0.88em, a
+   faint tinted ground, and a hairline border rather than chassis's solid base-300 one. */
+.prose :not(pre) > code {
+  font-size: 0.76em;
+  background: color-mix(in oklab, var(--color-base-200) 70%, transparent);
+  border: var(--border) solid var(--color-card-border);
+}

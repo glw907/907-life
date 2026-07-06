@@ -1,7 +1,7 @@
 <!-- @component One tag's posts, newest first, grouped by year. -->
 <script lang="ts">
   import type { PageData } from './$types';
-  import PostList from '$lib/components/PostList.svelte';
+  import PostList from '$theme/components/PostList.svelte';
 
   let { data }: { data: PageData } = $props();
 </script>

@@ -11,7 +11,7 @@ export default defineConfig({
     // cairn-manifest regenerate bin, and expose the adapter so cairn-doctor self-derives the
     // sending domain, HTTPS/HSTS, and GitHub App checks. Posts is the only concept.
     cairnManifest({
-      configModule: '/src/lib/cairn.config.ts',
+      configModule: '/src/theme/cairn.config.ts',
       content: { posts: '/src/content/posts/*.md' },
       manifestPath: '/src/content/.cairn/index.json',
     }),

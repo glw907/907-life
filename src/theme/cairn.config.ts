@@ -87,7 +87,7 @@ export const cairn = defineAdapter({
   },
   editor: {
     // The header menu, managed from /admin/nav and committed to the site-config YAML.
-    nav: { configPath: 'src/lib/site.config.yaml', menuName: 'primary', label: 'Navigation', maxDepth: 2 },
+    nav: { configPath: 'src/theme/site.config.yaml', menuName: 'primary', label: 'Navigation', maxDepth: 2 },
     // The preview knob: the (site) layout renders entries inside <main class="site-main">
     // (site.css), so the frame links the same theme/site sheets and reproduces that container.
     // Posts is the only concept, so no byConcept.

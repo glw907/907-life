@@ -1,7 +1,7 @@
 <!-- @component 907's about page: a static bio (not cairn content) plus the contact form. -->
 <script lang="ts">
   import type { ActionData } from './$types';
-  import ContactForm from '$lib/components/ContactForm.svelte';
+  import ContactForm from '$theme/components/ContactForm.svelte';
 
   let { form }: { form: ActionData } = $props();
 </script>

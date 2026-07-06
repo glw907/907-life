@@ -8,7 +8,7 @@ are passed.
 <script lang="ts">
   import { CairnAdmin } from '@glw907/cairn-cms/components';
   import type { AdminData } from '@glw907/cairn-cms/sveltekit';
-  import { cairn } from '$lib/cairn.config.js';
+  import { cairn } from '$theme/cairn.config.js';
   import type { ActionData } from './$types';
 
   interface Props {

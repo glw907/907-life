@@ -2,11 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseMarkdown } from '@glw907/cairn-cms';
-import { renderMarkdown } from '$lib/render';
+import { renderMarkdown } from '$theme/render';
 
 const POSTS_DIR = 'src/content/posts';
 
-// Renders through the real public renderer (src/lib/render.ts, the engine createRenderer output:
+// Renders through the real public renderer (src/theme/render.ts, the engine createRenderer output:
 // remark-gfm, the sanitize floor, heading slugs, anchor hardening). The snapshot guards the
 // published output against accidental drift. It is the same HTML the page and the admin preview emit.
 function bodies(dir: string): [string, string][] {

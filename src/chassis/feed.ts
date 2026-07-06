@@ -1,9 +1,9 @@
-// The one place that maps 907's posts index into cairn-cms/delivery's FeedItem shape. feed.xml and
-// feed.json both call this, so the two feed formats read the same permalinks, excerpts, and
-// rendered bodies and can never drift from each other.
+// The chassis: the one place that maps 907's posts index into cairn-cms/delivery's FeedItem shape.
+// feed.xml and feed.json both call this, so the two feed formats read the same permalinks,
+// excerpts, and rendered bodies and can never drift from each other.
 import { buildLinkResolver, type FeedItem } from '@glw907/cairn-cms/delivery';
-import { site, ORIGIN } from '$lib/content';
-import { cairn } from '$lib/cairn.config';
+import { site, ORIGIN } from '$chassis/content';
+import { cairn } from '$theme/cairn.config';
 
 /** The feed's item cap; 0 would mean "all posts," but the feed always trims to the newest handful. */
 const FEED_MAX_ITEMS = 20;

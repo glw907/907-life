@@ -4,8 +4,8 @@
   import type { PageData } from './$types';
   import { CairnHead } from '@glw907/cairn-cms/delivery/head';
   import { extractVocabulary } from '@glw907/cairn-cms';
-  import { siteConfig } from '$lib/cairn.config';
-  import { formatDate } from '$lib/format-date';
+  import { siteConfig } from '$theme/cairn.config';
+  import { formatDate } from '$theme/format-date';
 
   let { data }: { data: PageData } = $props();
 

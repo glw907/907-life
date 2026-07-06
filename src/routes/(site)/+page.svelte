@@ -4,7 +4,7 @@
      index grid, and the hairlines a utility cannot express. -->
 <script lang="ts">
   import type { PageData } from './$types';
-  import { formatDate } from '$lib/format-date';
+  import { formatDate } from '$theme/format-date';
 
   let { data }: { data: PageData } = $props();
 

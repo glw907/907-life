@@ -5,7 +5,7 @@ home page keeps its own bespoke markup, since it also carries a lead treatment a
 this row does not need). -->
 <script lang="ts">
   import type { ContentSummary } from '@glw907/cairn-cms/delivery';
-  import { formatDate } from '$lib/format-date';
+  import { formatDate } from '$theme/format-date';
 
   let {
     post,

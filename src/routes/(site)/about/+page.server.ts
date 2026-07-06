@@ -4,7 +4,7 @@
 import type { Actions, PageServerLoad } from './$types';
 import { fail } from '@sveltejs/kit';
 import { createMimeMessage } from 'mimetext';
-import { cairn, siteConfig } from '$lib/cairn.config';
+import { cairn, siteConfig } from '$theme/cairn.config';
 
 export const prerender = false;
 

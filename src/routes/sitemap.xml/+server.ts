@@ -1,7 +1,8 @@
 import type { RequestHandler } from './$types';
 import { sitemapResponse, sitemapView, siteDescriptors, type SitemapUrl } from '@glw907/cairn-cms/delivery';
-import { site, posts, ORIGIN, EXTRA_ROUTES } from '$lib/content';
-import { cairn, siteConfig } from '$lib/cairn.config';
+import { site, posts, ORIGIN } from '$chassis/content';
+import { EXTRA_ROUTES } from '$theme/site-routes';
+import { cairn, siteConfig } from '$theme/cairn.config';
 
 export const prerender = true;
 
