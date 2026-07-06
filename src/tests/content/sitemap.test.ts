@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { unlistedRoutes } from '@glw907/cairn-cms/delivery';
-import { GET, EXTRA_ROUTES } from '../../routes/sitemap.xml/+server';
-import { posts, site } from '$lib/content';
+import { GET } from '../../routes/sitemap.xml/+server';
+import { posts, site, EXTRA_ROUTES } from '$lib/content';
 
 /** Pull every `<loc>` value out of a sitemap XML document, in document order. */
 function locsOf(xml: string): string[] {

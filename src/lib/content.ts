@@ -22,3 +22,10 @@ export const posts = indexes.posts;
 export const ORIGIN = 'https://907.life';
 
 export const SITE_DESCRIPTION = siteConfig.description ?? '';
+
+// The four bare site-owned routes the site resolver cannot see, since none is a concept entry:
+// /, /about, /archives, /tags. sitemapView folds these in ahead of every concept url, and the
+// unlisted-route test (src/tests/content/sitemap.test.ts) fails the build if a route directory
+// under (site) ever drifts out of sync with this list. Lives here, not in the sitemap route
+// module, since a +server.ts export must be one of SvelteKit's own recognized route exports.
+export const EXTRA_ROUTES = ['/', '/about', '/archives', '/tags'];
