@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { GET } from '../../routes/sitemap.xml/+server';
+import { unlistedRoutes } from '@glw907/cairn-cms/delivery';
+import { GET, EXTRA_ROUTES } from '../../routes/sitemap.xml/+server';
 import { posts, site } from '$lib/content';
 
 /** Pull every `<loc>` value out of a sitemap XML document, in document order. */
@@ -33,5 +34,19 @@ describe('the sitemap', () => {
     const tagLocs = locsOf(xml).filter((loc) => loc.includes('/tags/') && loc !== 'https://907.life/tags');
     expect(tagLocs.length).toBeGreaterThan(0);
     for (const loc of tagLocs) expect(loc.endsWith('/')).toBe(true);
+  });
+});
+
+describe('the unlisted-route build check', () => {
+  it('finds every static page route already accounted for in EXTRA_ROUTES', () => {
+    // Globs every +page.svelte in the project, not just the (site) group: parentheses are a glob
+    // metacharacter, so a pattern naming the group literally (e.g. /src/routes/(site)/**) matches
+    // nothing. Scoping is unnecessary anyway, since the only route outside (site) is
+    // /admin/[...path], a dynamic id unlistedRoutes already excludes.
+    const pageModules = import.meta.glob('/src/routes/**/+page.svelte');
+    const routeIds = Object.keys(pageModules).map((path) =>
+      path.replace(/^\/src\/routes/, '').replace(/\/\+page\.svelte$/, ''),
+    );
+    expect(unlistedRoutes(routeIds, EXTRA_ROUTES)).toEqual([]);
   });
 });
