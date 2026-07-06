@@ -79,8 +79,8 @@ export const cairn = defineAdapter({
   rendering: {
     // The entry-aware render: the editor preview and every public page call this one function.
     // The default media resolver backs the public build; the preview path injects its own.
-    // 907's own table-scroll rehype step is wired into render.ts's createRenderer call (the
-    // engine's rehypePlugins seam), so this delegates straight to renderMarkdown.
+    // The engine's table-scroll wrap runs by default (render.ts's createRenderer call), so this
+    // delegates straight to renderMarkdown.
     render: ({ body, resolve, resolveMedia }) =>
       renderMarkdown(body, { resolve, resolveMedia: resolveMedia ?? publicMediaResolver }),
     components: defineRegistry({ components: [] }),
