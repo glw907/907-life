@@ -1,59 +1,58 @@
 ---
-description: Design system binding facts for cairn-cms
+description: Design system binding facts for 907.life's chassis/theme token layers
 paths:
   - "src/**/*.svelte"
   - "src/**/*.css"
-  - "src/app.css"
 ---
 
-# Cairn CMS Design System
+# 907.life Design System
 
-Binding facts for the cairn-cms design system. Auto-loads when
-editing Svelte components or CSS.
+Binding facts for the Waymark chassis/theme design system. Auto-loads when editing Svelte
+components or CSS. Full detail: `docs/architecture.md`'s Design System section and
+`src/chassis/README.md`.
 
 ## Color tokens
 
-17 semantic tokens in `--color-*` namespace defined in `@theme` in
-`src/app.css`. Dark overrides via `@plugin "daisyui/theme"`.
+Design-scale keys (`--color-*`, `--text-step-*`, `--spacing-*`, `--font-*`) are declared with
+generic defaults in `src/chassis/tokens.css`, redeclared with Waymark's real numbers in
+`src/theme/theme.css`, then overridden again with 907's own values in `src/theme/907-theme.css`.
+Two named DaisyUI themes: `cairn` (light) and `cairn-dark`.
 
-**Never use DaisyUI v4 short vars** (`--bc`, `--p`, `--b1`, etc.).
-Renamed in v5, they silently resolve to nothing.
+**Never use DaisyUI v4 short vars** (`--bc`, `--p`, `--b1`, etc.). Renamed in v5, they
+silently resolve to nothing.
 
-**Never hardcode `oklch()` values** in component styles. Define new
-tokens in the `@theme` block in `src/app.css` and reference via
+**Never hardcode `oklch()` values** in component styles. Add or override a token in
+`src/theme/theme.css` (or `907-theme.css` for 907's own identity layer) and reference it via
 `var(--color-*)`.
 
 **Never use hex or `rgb()` colors.** Use `oklch()` throughout.
 
 ## DaisyUI themes
 
-- Light: `silk` (default)
-- Dark: `dim` (prefers-dark)
+- Light: `cairn` (default)
+- Dark: `cairn-dark` (`prefersdark`, plus the explicit toggle)
 
-Theme names are referenced in `@plugin "daisyui"` in `src/app.css`.
-Overrides use `@plugin "daisyui/theme"`, not raw `[data-theme]` blocks.
+Theme blocks live in `src/theme/theme.css` via `@plugin "daisyui/theme"` (never a raw
+`[data-theme]` block, which loses the built-in theme variables DaisyUI's own block inherits).
 
 ## Typography
 
 | Role | Font | Usage |
 |---|---|---|
 | Body | Spectral 400/700 | Prose, post content |
-| Display | Karla 400–700 | Nav logo only |
+| Display | Karla 400–700 | Wordmark, headings |
 | Mono | Monaspace Neon | Code blocks |
 
-Self-hosted woff2 in `static/fonts/`. Font faces declared in
-`src/app.css`.
+Self-hosted woff2 in `static/fonts/`; `@font-face` declarations in `src/theme/907-theme.css`.
 
-## Shared CSS classes
+## Shared components
 
-Defined globally in `src/app.css`. Use these; don't re-declare:
-`.post-body`, `.post-date`, `.post-tags`, `.post-tag`, `.page-title`,
-`.back-link`
+`src/theme/components/`: `SiteHeader.svelte`, `SiteFooter.svelte`, `Wordmark.svelte`,
+`PostRow.svelte`/`PostList.svelte` (the shared dated-post-row markup), `SearchModal.svelte`,
+`ContactForm.svelte`. Reuse these; don't re-declare their markup in a route.
 
-Everything else: scoped `<style>` per component.
+## Site config
 
-## Site constants
-
-All site-specific values live in `src/lib/config.ts` (and per-site
-configs once multi-site is wired). Never hardcode `SITE_URL`,
-`SITE_TITLE`, etc. in components.
+Site-specific values (`siteName`, `description`, `author`, `locale`, the tag `vocabulary`,
+`menus.primary`) live in `src/theme/site.config.yaml`, read through
+`$theme/cairn.config.ts`'s `siteConfig`. Never hardcode them in a component.

@@ -1,32 +1,25 @@
-// Dev-only: mint a valid better-auth session cookie for smoke-testing the /admin guard
-// without the email loop. Inserts a session row into the LOCAL D1 (the one `wrangler dev`
-// uses) for an owner user, then prints the signed `better-auth.session_token` cookie.
+// Dev-only: mint a valid cairn-cms admin session cookie for smoke-testing the /admin guard
+// without the magic-link email loop. Inserts a session row into the D1 auth store for a seeded
+// editor, then prints the Cookie header to send with it.
 //
-// Usage (from the site repo, with `wrangler dev` having created the local D1 at least once):
-//   node scripts/mint-session.mjs            # picks the first owner; prints a Cookie header line
-//   node scripts/mint-session.mjs editor     # picks the first editor instead of an owner
+// Usage (from the site repo):
+//   node scripts/mint-session.mjs                  # local D1, first owner
+//   node scripts/mint-session.mjs editor           # local D1, first editor
+//   node scripts/mint-session.mjs owner --remote   # the deployed https Worker's D1
 //   CK=$(node scripts/mint-session.mjs | tail -1); curl -H "$CK" http://localhost:8787/admin
 //
-// Why this exists: Pass AUTH replaced the hand-rolled HMAC session with better-auth (D1 +
-// signed cookies). better-auth stores magic-link tokens hashed, so the email round-trip is not
-// locally replayable; the session cookie, though, is a standard signed cookie we forge from
-// AUTH_SECRET. The cookie format (better-call signCookieValue) is
-//   encodeURIComponent( token + "." + base64( HMAC-SHA256(AUTH_SECRET, token) ) )
-// and better-auth looks the session up by the raw token in the `session` table, so we insert a
-// row with a known token and sign that token. See cairn-cms/docs/admin-smoke-test.md.
+// Why this exists: cairn-cms's own auth is self-owned on D1 (no better-auth, no signed
+// cookie, no AUTH_SECRET). A session is a plain row: `session(id, email, expires_at,
+// created_at)`. The cookie value is that opaque `id` itself, so minting one is an INSERT, not
+// a signature. See cairn-cms/docs/internal/admin-smoke-test.md for the full manual procedure
+// and the custom-domain caveat (this site's `wrangler.toml` declares a `custom_domain` route,
+// so `wrangler dev` resolves every request to the production https origin regardless of the
+// local host; smoke the deployed Worker with `--remote` rather than local http).
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { webcrypto as crypto } from 'node:crypto';
 
 const root = new URL('../', import.meta.url);
-
-function readDevVar(name) {
-  const vars = readFileSync(new URL('.dev.vars', root), 'utf8');
-  return vars
-    .match(new RegExp(`^${name}=(.*)$`, 'm'))?.[1]
-    ?.trim()
-    .replace(/^["']|["']$/g, '');
-}
 
 function readD1Name() {
   const toml = readFileSync(new URL('wrangler.toml', root), 'utf8');
@@ -35,44 +28,43 @@ function readD1Name() {
   return name;
 }
 
-function d1(dbName, sql) {
+function d1(dbName, sql, remote) {
   const out = execFileSync(
     'npx',
-    ['wrangler', 'd1', 'execute', dbName, '--local', '--json', '--command', sql],
+    ['wrangler', 'd1', 'execute', dbName, remote ? '--remote' : '--local', '--json', '--command', sql],
     { cwd: root.pathname, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
   );
   // wrangler may print a non-JSON notice (e.g. the agent-skills prompt) before the JSON array.
   return JSON.parse(out.slice(out.indexOf('[')));
 }
 
-const role = process.argv[2] === 'editor' ? 'editor' : 'owner';
-const secret = readDevVar('AUTH_SECRET');
-if (!secret) throw new Error('AUTH_SECRET not found in .dev.vars');
+const args = process.argv.slice(2);
+const remote = args.includes('--remote');
+const role = args.includes('editor') ? 'editor' : 'owner';
 const dbName = readD1Name();
 
-const users = d1(dbName, `SELECT id, email FROM user WHERE role = '${role}' ORDER BY created_at LIMIT 1;`);
-const user = users?.[0]?.results?.[0];
-if (!user) {
+const editors = d1(dbName, `SELECT email, role FROM editor WHERE role = '${role}' ORDER BY created_at LIMIT 1;`, remote);
+const editor = editors?.[0]?.results?.[0];
+if (!editor) {
   throw new Error(
-    `No ${role} user in the local D1 (${dbName}). Run \`wrangler dev\` once to apply migrations, ` +
-      `then seed one, e.g.\n  npx wrangler d1 execute ${dbName} --local --command "INSERT INTO user ` +
-      `(id, name, email, email_verified, role) VALUES ('dev-owner','Dev Owner','you@example.com',1,'${role}');"`,
+    `No editor with role '${role}' in the D1 (${dbName}${remote ? ', --remote' : ', --local'}). Seed one, e.g.\n` +
+      `  npx wrangler d1 execute ${dbName} ${remote ? '--remote' : '--local'} --command "INSERT INTO editor ` +
+      `(email, display_name, role, created_at) VALUES ('you@example.com', 'Dev Owner', '${role}', 0);"`,
   );
 }
 
-const token = `smoke${Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString('hex')}`;
+const id = `smoke${Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString('hex')}`;
 const now = Date.now();
 d1(
   dbName,
-  `INSERT INTO session (id, token, user_id, expires_at, created_at, updated_at) ` +
-    `VALUES ('${token}','${token}','${user.id}',${now + 3600_000},${now},${now});`,
+  `INSERT INTO session (id, email, expires_at, created_at) VALUES ('${id}','${editor.email}',${now + 3600_000},${now});`,
+  remote,
 );
 
-const enc = new TextEncoder();
-const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-const sig = await crypto.subtle.sign('HMAC', key, enc.encode(token));
-// better-call signs with standard base64, joins token.sig, then encodeURIComponent's the value.
-const value = encodeURIComponent(`${token}.${Buffer.from(new Uint8Array(sig)).toString('base64')}`);
+// __Host- requires Secure, so it only applies to the deployed https Worker; a local
+// `wrangler dev` request over http drops the prefix.
+const cookieName = remote ? '__Host-cairn_session' : 'cairn_session';
 
-process.stderr.write(`Minted ${role} session for ${user.email} (expires in 1h) in ${dbName}.\n`);
-process.stdout.write(`Cookie: better-auth.session_token=${value}\n`);
+process.stderr.write(`Minted ${role} session for ${editor.email} (expires in 1h) in ${dbName}${remote ? ' (remote)' : ' (local)'}.\n`);
+process.stderr.write(`Clean up with: npx wrangler d1 execute ${dbName} ${remote ? '--remote' : '--local'} --command "DELETE FROM session WHERE id = '${id}';"\n`);
+process.stdout.write(`Cookie: ${cookieName}=${id}\n`);

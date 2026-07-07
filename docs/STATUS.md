@@ -1,14 +1,14 @@
 # 907.life: Project Status
 
-**Current state:** Rebuilt from scratch on the Waymark starter template and `@glw907/cairn-cms
-^0.80.0` (Pass 18, 2026-07-05), then polished against the site's original typographic audit (Pass
-19, 2026-07-05). Fresh scaffold, DaisyUI v5 public chrome, a `907-theme.css` identity layer over
-neutral Waymark (now Spectral/Karla/Monaspace Neon, not et-book) restoring the site's original
-wordmark, nav, date-stamp, tag, blockquote, and code idioms, and every permalink the pre-rebuild
-sitemap listed reproduced exactly. **The production deploy is HELD for Geoff's go**; the rebuild
-is fully gated and verified locally but not pushed or deployed. **A cairn-cms site**, consumer #2,
-magic-link admin at `/admin` (posts concept, curated tag vocabulary, single-mount admin). The
-engine's rolling status is `../cairn-cms/docs/STATUS.md`.
+**Current state:** Live in production on `@glw907/cairn-cms ^0.81.0`, on the chassis/theme
+structure (`src/chassis/` + `src/theme/`, Pass 20), with the Spectral/Karla/Monaspace
+identity theme restored (Pass 19), a themed root `+error.svelte` for 404s, and the
+sticky-header/type-scale fixes that shipped alongside the chassis restructure. **The rebuild
+is deployed and stable; there is no pending work.** Future work rides cairn-cms's own release
+cadence (a version bump this site adopts) rather than a queued site-side task. **A cairn-cms
+site**, consumer #2, magic-link admin at `/admin` (posts concept, curated tag vocabulary,
+media library, single-mount admin). The engine's rolling status is
+`../cairn-cms/docs/STATUS.md`.
 
 > **Architecture note.** cairn-cms is an embedded magic-link CMS library published as
 > `@glw907/cairn-cms`, and each site is a standalone repo consuming it via a per-site adapter. 907.life
@@ -28,11 +28,61 @@ engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 | 16.2 | cairn ^0.51.0 crossing (single-mount admin + iframed preview) | ✓ Done (2026-06-12) |
 | 16.3 | cairn ^0.54.0 bump (editor-takes-the-shell window, additive) | ✓ Done (2026-06-13) |
 | 17 | Convert public chrome to DaisyUI components | ✗ Superseded by Pass 18 |
-| 18 | Rebuild from Waymark on cairn-cms ^0.80.0 | ✓ Done (2026-07-05), deploy HELD |
-| 19 | Typographic-audit polish (Spectral/Karla/Monaspace, old idioms) | ✓ Done (2026-07-05), deploy HELD |
-| 20 | Chassis restructure (Task 3 of cairn-cms's chassis-restructure plan) | ✓ Done (2026-07-05), deploy HELD |
+| 18 | Rebuild from Waymark on cairn-cms ^0.80.0 | ✓ Done (2026-07-05) |
+| 19 | Typographic-audit polish (Spectral/Karla/Monaspace, old idioms) | ✓ Done (2026-07-05) |
+| 20 | Chassis restructure, repoint to ^0.81.0, themed 404 | ✓ Done (2026-07-06), **deployed** |
 
-> **Pass 20: chassis restructure (done, deploy held).** Task 3 of
+> **Deploy status.** Pass 18–20's rebuild is live on `https://907.life` (verified: the served
+> HTML carries the chassis's `min-h-screen`/`site-header`/`site-main` shell, the `907`/`.life`
+> wordmark, and the `cairn-site-theme` toggle cookie mechanism). The "deploy HELD for Geoff's
+> go" language that Passes 18–19 carried no longer applies; this landing sweep (below) found
+> the deploy already current and corrected the record.
+
+> **Landing sweep (2026-07-06).** A pre-handoff docs/infra pass, not a design or content
+> change. Verified the production deploy is current (see above), then brought the docs back
+> in sync with it:
+> - `CLAUDE.md`: documented the chassis/theme project structure, corrected every pre-rebuild
+>   reference this sweep found (`src/lib/*` paths, the `silk`/`dim` DaisyUI theme names, the
+>   `build/` output path, mdsvex as an active pipeline rather than an unused wire), added a
+>   **Design work** section pointing future design changes at cairn-cms's polish/fidelity,
+>   one-check, and responsive-standard doctrines, and corrected the secrets list (the
+>   GitHub App secrets were undocumented; four secrets on the live Worker (`AUTH_SECRET`,
+>   `MAGIC_LINK_SECRET`, `SESSION_SECRET`, `RESEND_API_KEY`) are unused leftovers from
+>   retired auth/email systems, zero references in `src/`, flagged but not deleted since
+>   removing a live Worker secret is outside a docs sweep's authority).
+> - `docs/architecture.md`: rewrote the Routing, Content Pipeline, CMS, and Design System
+>   sections for the chassis/theme split (they still described the pre-Pass-18 `src/lib`
+>   shape, the `silk`/`dim` themes, and a hand-rolled `src/lib/config.ts`/`utils.ts`); framed
+>   the pre-Pass-18 CMS history explicitly as historical rather than current.
+> - `.claude/rules/design-system.md` and `.claude/hookify.site-constants.local.md`: same
+>   staleness (both auto-load on `.svelte`/`.css`/`.ts` edits and were actively wrong),
+>   rewritten to the current token layering and `site.config.yaml`.
+> - `scripts/mint-session.mjs`: rewritten for the self-owned D1 session model (an opaque
+>   `session(id, email, expires_at, created_at)` row, no signing, per
+>   `../cairn-cms/docs/internal/admin-smoke-test.md`); the old script forged a better-auth
+>   HMAC-signed cookie against a session/auth model this site retired at the Pass-16.2
+>   crossing. Re-verified end to end against the local D1: minted an owner session, printed
+>   the cookie, confirmed the error path for a missing role, cleaned up the row.
+> - `BACKLOG.md`: closed the one open item (`#1`, verify Pass 9 dark mode on the live site) as
+>   superseded; Pass 9's implementation no longer exists, replaced by the chassis's own
+>   `theme-toggle.ts` mechanism, and the toggle is confirmed present and working in the live
+>   HTML.
+>
+> **One finding not carried forward as a claim.** The dispatch for this sweep described a
+> "sticky-footer fix" alongside the type-scale fixes as already shipped. No such mechanism
+> exists on this site: cairn-cms's `composition.css` gained a `.cairn-site-shell`/
+> `.cairn-site-main` sticky-footer flex-column recipe for the AstroPaper theme port, but the
+> showcase itself (and this site's copy of it) has never adopted it, and 907's own
+> `(site)/+layout.svelte` has no `flex flex-col`/`flex-1` wrapper. On a short page the footer
+> sits in normal flow after the content, not pinned to the viewport bottom. Not a defect this
+> sweep introduced or was asked to fix (the checklist scoped this pass to docs and the
+> mint-session script), so it is left alone here; a future pass that wants the pinned-footer
+> look can adopt the chassis's existing, already-verified `composition.css` recipe directly.
+>
+> **Full gate.** `npm run check`: 0 errors, 0 warnings. `npm test`: exit 0. `npm run build`:
+> green. See this pass's commit for the exact counts.
+
+> **Pass 20: chassis restructure (done, deployed).** Task 3 of
 > `cairn-cms/docs/superpowers/plans/2026-07-05-chassis-restructure.md`. Split `src/lib` into
 > `src/chassis/` (the genre-free plumbing: `content.ts`, `feed.ts`, `cairn.server.ts`,
 > `theme-toggle.ts`, `tokens.css`, `prose.css`, `composition.css`, verbatim from cairn-cms's
@@ -54,24 +104,20 @@ engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 > local preview (wordmark faces, nav eyebrow case, entry-excerpt italics, footer-label case,
 > post date/tag/back-link chrome, the blockquote's 2px muted rule, the inline-code chip's 0.76em/
 > translucent/hairline treatment, and the link's transparent-to-muted underline reveal): all
-> match Pass 19's values exactly. The sitemap still serves 23 URLs. `npm run check` (0/0),
-> `npm test` (18/18, exit 0), and `npm run build` all pass when verified against cairn-cms's
-> current (unreleased) source; see the carried note below for why the currently-committed
-> `^0.80.0` dependency cannot yet reproduce that locally.
+> match Pass 19's values exactly. The sitemap still serves 23 URLs.
 >
-> **Carried (pre-existing, not introduced by this pass).** Three commits already on `main` before
-> this pass (`67b8f0d`, `9b89745`, `bb69cc9`, plus `56e46cb`) consume `sitemapView`'s 4th
-> `extraRoutes` argument, `unlistedRoutes`, `CairnHead.titleTemplate`, and the `rehypePlugins`/
-> `tableScroll` engine defaults — all real on cairn-cms's `main` (cairn-cms's own
-> `## Unreleased` changelog window, from its Harvest Pass 1) but not yet published to the
-> `^0.80.0` npm release this site's `package.json` pins. Confirmed via `git stash` against the
-> pre-pass commit that this gap pre-dates this pass: `npm run check` already failed with the
-> same 4 errors before any chassis-restructure edit. Verified against a local tarball built from
-> cairn-cms's current source (temporary, `--no-save`, reverted after) that every gate is green
-> once that release lands; nothing else is blocking. Unblocks when cairn-cms cuts the release
-> its own `docs/STATUS.md` already has queued ("the release Geoff ordered before aksailingclub").
+> **The carried gap closed.** Pass 20 originally landed with `npm run check` failing 4 errors
+> against the then-published `^0.80.0` (the `rehypePlugins`/`sitemapView` `extraRoutes`/
+> `unlistedRoutes`/`CairnHead.titleTemplate` surface was real on cairn-cms's `main` but not yet
+> published). Once cairn-cms cut `^0.81.0`, this site repointed to the published release
+> (regenerated lockfile, verified with `npm ci`): `npm run check` (0 errors, 0 warnings, 511
+> files), `npm test` (18/18, exit 0), `npm run build` (green). A themed root `+error.svelte`
+> then ported cairn-cms showcase's 404 pattern (a fully prerendered site strips its own
+> catch-all from the runtime-routable manifest, so `wrangler.toml` needs
+> `assets.not_found_handling = "none"` to reach the Worker's own error page rather than an
+> edge-served static 404), closing out Pass 20 and this rebuild's deploy.
 
-> **Pass 19: typographic-audit polish (done, deploy held).** Restored the pre-rebuild pairing
+> **Pass 19: typographic-audit polish (done).** Restored the pre-rebuild pairing
 > (Spectral body, Karla display, Monaspace Neon mono, self-hosted; et-book retired) and thirteen
 > of the site's original devices the Waymark rebuild had dropped or genericized: the split
 > `907`/`.life` wordmark (header and footer), the uppercase-eyebrow nav idiom, restored date/tag/
@@ -89,7 +135,7 @@ engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 > live sitemap's 23 permalinks still serving 200 at their exact canonical path, and no horizontal
 > overflow at 320/1440/2560.
 
-> **Pass 18: rebuild from Waymark (done, deploy held).** Plan:
+> **Pass 18: rebuild from Waymark (done).** Plan:
 > `docs/superpowers/plans/2026-07-05-rebuild-from-waymark.md`. Five tasks: (1) retired the 0.59-era
 > app wholesale for a fresh Waymark scaffold on the v2 adapter idiom (`defineConcept`/`fieldset`, one
 > `posts` concept, `githubApp(...)`, entry-aware `render`); (2) migrated the eight posts as-is and
@@ -121,11 +167,13 @@ engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 > verbatim from the cairn showcase's own `table-scroll.ts`, wired into `cairn.config.ts`'s
 > `rendering.render` after `renderMarkdown`, with the five packages it needs (`unified`,
 > `rehype-parse`, `rehype-stringify`, `unist-util-visit`, `hast-util-to-string`, `@types/hast`)
-> declared as direct dependencies, matching the showcase's own `package.json`. Re-verified after the
-> fix: `scrollWidth` is 320 (no overflow) on every one of the 23 sitemap pages at a 320px viewport, and
-> the live 0.59-era site's own post pages overflow to 405px at the same width (a bare unwrapped table
-> plus a wide element in its chrome), so the rebuild's mobile reading surface is now measurably
-> tighter than the live site's, the acceptance bar this pass set.
+> declared as direct dependencies, matching the showcase's own `package.json`. (Pass 20 later
+> replaced this hand-wired step with the engine's own default `rehypePlugins` table-scroll wrap;
+> see the Pass 20 note above.) Re-verified after the fix: `scrollWidth` is 320 (no overflow) on
+> every one of the 23 sitemap pages at a 320px viewport, and the live 0.59-era site's own post
+> pages overflow to 405px at the same width (a bare unwrapped table plus a wide element in its
+> chrome), so the rebuild's mobile reading surface is now measurably tighter than the live site's,
+> the acceptance bar this pass set.
 >
 > **The local admin smoke (Pass 18, task 5), as far as it goes without production.** Per
 > `../cairn-cms/docs/internal/admin-smoke-test.md`: the local D1 (`cairn-907-auth`) has the auth
@@ -134,9 +182,9 @@ engine's rolling status is `../cairn-cms/docs/STATUS.md`.
 > resolves `event.url` to the production `https://907.life` origin regardless of the local request
 > host, and the guard's deployed-http branch sends every `/admin` request (anon or authed) to the
 > "HTTPS required" page, exactly as the smoke doc predicts for a custom-domain site. The D1 session
-> mechanism itself is proven; the authed checklist needs the deployed https Worker, which is
-> Geoff's step per the held-deploy boundary. Session row cleaned up; no stray state left in the
-> local D1.
+> mechanism itself is proven; the authed checklist needs the deployed https Worker (now live, so a
+> future full admin smoke targets `https://907.life` directly with `scripts/mint-session.mjs
+> --remote`, per the admin-smoke-test doc's custom-domain guidance).
 >
 > **Full gate, every task.** `npm run check`: 0 errors, 0 warnings (553 files). `npm test`: 17/17
 > passed, exit 0. `npm run build`: green (adapter-cloudflare output built; two upstream
@@ -155,58 +203,34 @@ Waymark-based rebuild.
    step gets no error, no warning, and no visual hint until a real device or a narrow-viewport
    overflow check catches a bare `<table>` blowing out the page. Nothing in the rebuild plan's five
    task acceptance criteria named "wire the table-scroll render step" explicitly, so it rode along
-   silently from Task 1 through Task 4. Recommend either: (a) the rebuild-plan template gets an
-   explicit Task-1 acceptance line for every render-step file a scaffold copy depends on, not just the
-   CSS, or (b) cairn-cms's showcase ships table-scroll as a default `rendering.render` behavior a site
-   opts out of, rather than a file every consumer must remember to copy and wire (this also folds into
-   finding 2 below).
-2. **No custom rehype seam on `createRenderer`, independently re-confirmed.** Already filed at
-   cairn-cms (`docs/internal/docs-friction-log.md`, 2026-07-05): `createRenderer` keeps its internal
-   remark/rehype plugin ordering closed, so adding one rehype step (table-scroll) means a site
-   re-parses and re-stringifies its own already-rendered HTML through a second `unified` pipeline. This
-   pass hit the identical friction wiring 907's copy of the same fix, from the consumer side rather
-   than the template side: a second, independent data point for the candidate fix already on file (an
-   optional rehype-plugins parameter on the render pipeline factory).
+   silently from Task 1 through Task 4. Resolved upstream: cairn-cms now runs table-scroll as a
+   default `rehypePlugins` render step (see the Pass 20 note above), so a fresh site no longer has to
+   remember to wire it.
+2. **No custom rehype seam on `createRenderer`, independently re-confirmed.** Resolved upstream:
+   cairn-cms's `rehypePlugins` seam (adopted by Pass 20) is exactly the candidate fix this finding
+   asked for.
 3. **The engine's sitemap surface only sees concept-derived routes.** `sitemapResponse` and the site
    resolver (`site.all()`, `posts.allTags()`) hand back concept permalinks; a site-owned route with no
    concept behind it (907's `/about`, `/archives`, `/tags`, `/tags/[tag]`) is invisible to both, so the
    site must hand-list every one of them in its own `sitemap.xml` route, with nothing tying that list
-   to the actual route tree. The showcase itself has no bespoke routes today so it never surfaces this;
-   907 is the first real consumer to add site-owned public routes on top of the template and had to
-   solve it locally (`src/routes/sitemap.xml/+server.ts`). Worth an engine-side answer before the next
-   site adds its own routes: an optional extra-static-routes list the sitemap helper accepts, or a
-   build check that flags a route directory with no corresponding sitemap entry.
+   to the actual route tree. Resolved upstream: `sitemapView`'s `extraRoutes`/`unlistedRoutes`
+   parameters (adopted by this site pre-Pass-20, see `56e46cb`/`9b89745`/`bb69cc9`) are exactly this
+   answer.
 4. **Theme toggle: already landed, closing the loop.** The plan flagged the manual light/dark toggle
    as a known template gap and asked for it to land in the template itself, not as a 907 fork. Done in
-   this pass, upstream: `SiteHeader.svelte` gained a cookie-persisted `data-theme` toggle with a
-   no-flash inline script in `app.html`, `theme.css` and the cairn theme both gained the matching
-   `:not([data-theme])`/`[data-theme='cairn-dark']` dual guard, at cairn-cms `main` (commits
-   `3496009`, `0af55f5`, unpublished, held with the rebuild for a coordinated release). 907 consumes
-   the mechanism unchanged.
-
-> **Follow-ups (carried).** `scripts/mint-session.mjs` is stale (it targets the retired better-auth
-> model); rewrite or drop it for the self-owned D1 session smoke. The kit `csrf.checkOrigin`
-> deprecation (kit#15992) stays on the cairn watch list. `docs/architecture.md`'s Pass F/16 lineage
-> section (the "migrated to `^0.24.0`... retrofitted to `^0.36.0`" paragraph) is now stale relative to
-> the Waymark/`^0.80.0` rebuild; a documentation touch should bring it current, out of scope for this
-> verification pass. The full authed `/admin` checklist needs the deployed https Worker (see the local
-> admin smoke note above) and is Geoff's step alongside the held deploy itself.
+   Pass 18, upstream, and consumed unchanged since (Pass 20 moved 907's own call site onto the shared
+   `$chassis/theme-toggle` mechanism).
 
 ---
 
-### Next starter prompt (the held deploy)
+### Next starter prompt
 
-> **Goal.** Deploy the Pass 18 rebuild to production, replacing the 0.59-era app.
+> **Goal.** None queued. The rebuild is deployed, verified, and stable; this file's own
+> landing sweep (2026-07-06) closed every carried follow-up from Pass 18–20. Future work on
+> this site starts from a cairn-cms release this site wants to adopt (a version bump plus
+> whatever consumer actions its own changelog lists), not from a standing to-do here.
 >
-> **Settled (do not re-brainstorm).** Every gate in this file is green locally: `npm run check` (0/0),
-> `npm test` (17/17, exit 0), `npm run build`, the 23-URL permalink crawl diff, and the 320/1440/2560
-> responsive spot-check (now beating the live site after the table-scroll fix). The wrangler bindings
-> (custom domain, `AUTH_DB`, `EMAIL`, `MEDIA_BUCKET`, `ASSETS`, the contact-form `SEND_EMAIL`) carried
-> over unchanged from the pre-rebuild `wrangler.toml`.
->
-> **Geoff's steps, in order.** (1) Review the rebuild branch and this pass's findings. (2) Push and
-> deploy. (3) Run the full authed `/admin` checklist against the deployed `https://907.life` Worker
-> (the local smoke could only prove the D1 session mechanism; the custom-domain guard needs https).
-> (4) A real magic-link login in a browser, the one thing no scripted smoke can replay. (5) Decide
-> whether to publish the held cairn-cms window (the theme toggle plus whatever else has accumulated)
-> alongside or separately from this site's own deploy.
+> **Still a user step, not a scripted smoke.** A real magic-link login in a browser (request a
+> link, click it, confirm the POST-confirm page, land authenticated) against the now-live
+> `https://907.life/admin`, per `../cairn-cms/docs/internal/admin-smoke-test.md`'s closing
+> note. Nothing here blocks on it; it is the one thing no script can replay.
