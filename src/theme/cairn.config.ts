@@ -91,6 +91,6 @@ export const cairn = defineAdapter({
     // The preview knob: the (site) layout renders entries inside <main class="site-main">
     // (site.css), so the frame links the same theme/site sheets and reproduces that container.
     // Posts is the only concept, so no byConcept.
-    preview: { stylesheets: [themeCss, siteCss], containerClass: 'site-main' },
+    preview: { stylesheets: [themeCss, siteCss], containerClass: 'site-main prose' },
   },
 });
