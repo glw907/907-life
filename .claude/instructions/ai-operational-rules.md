@@ -14,7 +14,8 @@ Always source manually before using any env var:
 
 ```bash
 # Correct
-CF_TOKEN=$(bash -c 'source ~/.bashrc && echo -n $CLOUDFLARE_API_TOKEN')
+# Token scopes are recorded centrally in ~/.claude/docs/cloudflare-estate-inventory.md -- consult it, never guess.
+CF_TOKEN=$(bash -c 'source ~/.local/secrets && echo -n $CLOUDFLARE_API_TOKEN')
 RESEND_KEY=$(bash -c 'source ~/.bashrc && echo -n $RESEND_API_KEY')
 
 # Wrong — silently pipes empty string
