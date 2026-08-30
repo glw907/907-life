@@ -6,6 +6,11 @@
 
 ## Medium
 
+- [ ] **#2** Add a devcontainer with pinned Node and wrangler `#improvement` `#907-life` *(2026-08-30)*
+  Bluefin DX's endorsed tier for SvelteKit/Cloudflare work: the toolchain pins in the repo's
+  `.devcontainer/`, not host mise. Use Docker (not Podman) for the VS Code integration and
+  mind SELinux labels on bind mounts. Research: `~/.dotfiles/bluefin/devenv-research.md`.
+
 ## Low
 
 ## Closed
