@@ -4,6 +4,15 @@
 
 ## Active
 
+### 907.life rebuild on current cairn `907-rebuild`
+Rebuild 907.life on the current cairn release. The Survey re-skin is part of it: the site moves
+onto the Survey theme (topographic survey sheet, daisyUI 5 and Tailwind 4), and Survey's cairn
+layer is built here as Survey S2 (moved from cairn-themes, 2026-10-07). Survey's portable core
+shipped in cairn-themes Survey S1 and is copied in under the copy-on-create rule. The rebuild
+replaces `907-theme.css`, whose `!important` and `[data-theme]` overrides the cairn theme contract
+forbids. Starts with `engine-consult`; the brainstorm settles the rest of the rebuild's scope.
+Spec: `~/Projects/cairn-themes/docs/superpowers/specs/2026-10-07-survey-design.md`.
+
 ### ECN Nordic standalone site `ecnordic-standalone`
 Build ecnordic.ski as a standalone SvelteKit site forked from 907.life, with a new ECN
 theme, to get it live in the near term. Will be migrated into cairn-cms as a site
