@@ -1,3 +1,4 @@
+> Frozen as of 2026-10-10: git history and PR bodies are the record now (lean pass ruling 8).
 # HISTORY
 
 > Per-pass ledger, newest first. What landed, what the gates caught, and what a later pass

@@ -20,6 +20,9 @@ package once the engine is battle-ready.
 
 ## Planned
 
+### PR test CI `pr-test-ci`
+Add a pull-request workflow that runs `npm run check && npm test && npm run build` on `pull_request`. Until it lands, the full-suite home is the local close gate (lean pass ruling 11).
+
 ### Cairn CMS platform `cairn-cms`
 **SUPERSEDED direction (see `docs/STATUS.md` architecture note).** cairn-cms is no longer a
 multi-repo engine + Better Auth + service-account writes; it is an **embedded magic-link,
