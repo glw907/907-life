@@ -2,8 +2,8 @@
 
 Personal blog. SvelteKit + TypeScript, deployed to Cloudflare Workers.
 
-@docs/STATUS.md
-@docs/architecture.md
+Current state and next action: `docs/STATUS.md`. System shape and design decisions:
+`docs/architecture.md`. Read them on demand; they are not imported here.
 
 ## Stack
 
@@ -23,18 +23,14 @@ full.
 
 ## Development Workflow
 
-Pass-driven. Each pass has a starter prompt in `docs/STATUS.md`, a
-plan under `docs/superpowers/plans/`, and usually a spec under
-`docs/superpowers/specs/`.
-
-The phrases "continue development," "next pass," "finish pass," and "ship
-pass" invoke the `site-pass` skill (this repo's own roadmap), which covers
-both starting a pass (read STATUS, read plan, execute) and ending one (the
-consolidation ritual). cairn-cms is a separate standalone repo; this site
-consumes `@glw907/cairn-cms` from the npm registry by version range.
+Planned work runs through the `site-pass` skill (built on `pass-core`): STATUS holds the
+current state and next action, the pass plan lives under `docs/superpowers/plans/`, and a spec
+under `docs/superpowers/specs/` when one exists. The phrases "continue development," "next
+pass," "finish pass," and "ship pass" invoke it. cairn-cms is a separate standalone repo; this
+site consumes `@glw907/cairn-cms` from the npm registry by version range.
 
 **On-demand reading:**
-- `docs/STATUS.md`: current pass, pass table, next starter prompt. Open at the start of every pass.
+- `docs/STATUS.md`: current state, next action, open decisions. Open at the start of every pass.
 - `docs/architecture.md`: design decisions and system overview. Consult when planning structural changes.
 - `docs/superpowers/specs/`: feature specs. Pull the relevant spec before starting implementation.
 - `BACKLOG.md`: known issues and future work. Check before starting a pass; it may contain relevant known limitations.
@@ -76,9 +72,10 @@ value outside it has no display label.
 
 907.life is **consumer #2** of cairn-cms (the embedded magic-link, GitHub-committing CMS,
 a separate standalone repo). Editors sign in by email at `/admin` (no GitHub account)
-and edit raw markdown in a CodeMirror editor; saving commits to `main` via the shared GitHub App
-(`cairn-cms[bot]`), which auto-deploys. (907 runs cairn-cms `^0.81.0` since Pass 20's chassis
-restructure; the editor preview calls the same engine render as the published page.)
+and edit raw markdown in a CodeMirror editor; saving commits through the shared GitHub App
+(`cairn-cms[bot]`) on the engine's branch-and-publish flow; publishing lands on `main`, which
+auto-deploys. The version range is in `package.json`. The editor preview calls the same engine
+render as the published page.
 
 - **Adapter:** `src/theme/cairn.config.ts` uses `defineAdapter`/`defineConcept`/`fieldset` (the
   v2 idiom) for the posts concept (filename-based ids, a **curated tag vocabulary** sourced from
@@ -113,16 +110,10 @@ Manual: `npm run build && npx pagefind --site .svelte-kit/cloudflare && npx wran
 
 ## Design work
 
-907.life is a cairn-family **site rebuild**, one of the two fidelity tiers the family's
-polish standard defines (quite-close-and-improved, not glance-indistinguishable, which is the
-bar for a theme port). Any future rebuild, re-skin, or layout change on this site follows
-`../cairn-cms/CLAUDE.md`'s **polish and fidelity standards** and **the one-check rule**: no
-design plan from a verbal inventory alone, a side-by-side crop against the live site before
-calling a change done, and at least one full-page render read by the agent's own eyes before
-anything deploys (this site is not member-facing, so it does not additionally need Geoff's
-before/after approval, but the read-a-screenshot step still applies). The family also holds
-this site to **the responsive standard**: 320/390/768/1440/2560, composed at the extremes, not
-merely unbroken.
+907.life is a cairn-family site rebuild. Any rebuild, re-skin, or layout change here invokes the
+`visual-fidelity` skill, which carries the method, the verify loop, the one-check rule (a
+full-page render read before anything deploys), and the responsive standard. The family's
+polish and fidelity standards are in the `cairn-cms` repo's `CLAUDE.md` under "Visual work".
 
 ## Code Quality Rules
 
@@ -149,23 +140,3 @@ Hookify guards enforce these conventions automatically. Rules live in `.claude/h
 - Tokens: `var(--color-*)` for all colors, DaisyUI v5 semantic classes for layout, scoped `<style>` for design-specific rules
 - Never use DaisyUI v4 short CSS vars (`--bc`, `--p`, etc.); they were renamed in v5 and silently resolve to nothing.
 - Never hardcode `oklch()` in component styles; add or override a token in `src/theme/theme.css` or `907-theme.css` instead.
-
-## Cross-Site Admin
-
-For DNS, domain verification, or Cloudflare service config: `cd ~/Projects/cloudflare-sites && claude`
-
-
-## The family lessons (from the cairn arc, 2026-07; binding for all design/port work)
-
-- **The original manifest**: any rebuild/port/redesign enumerates its original
-  exhaustively FIRST (every page, section, image identity + crop, behavior) and verifies
-  against the manifest, never the plan. The `visual-fidelity` skill carries the method.
-- **The verify loop**: fresh-context verifiers grade; builders and fixers never
-  self-confirm; exit only on an independent PASS; the contrast probe on interactive
-  elements is mandatory.
-- **The one-check rule**: nothing deploys without a full-page render read in the main
-  loop; user-facing changes get Geoff's before/after.
-- **Defects are not design**: the original's typos, bugs, responsive failures always fix
-  (graded IMPROVED); our CSS is cleaner than the original's, always.
-- The deep records: cairn-cms docs/internal/2026-07-06-arc-post-mortem.md and the
-  pre-beta-harvest ledger.

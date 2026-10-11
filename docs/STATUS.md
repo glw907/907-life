@@ -1,6 +1,6 @@
 # STATUS
 
-Present tense only. Per-pass history lives in `docs/HISTORY.md`, strategy in `ROADMAP.md`.
+Present tense only. History lives in git and PR bodies, strategy in `ROADMAP.md`.
 
 ## Current state
 
