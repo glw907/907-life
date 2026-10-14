@@ -13,7 +13,7 @@
 
 - [ ] **#3** Add a pull-request workflow running `npm run check && npm test && npm run build` `#improvement` `#907-life` `#initiative:907-rebuild` *(2026-10-14)*
   A `pull_request` workflow. Until it lands, the full-suite home is the local close gate (lean pass ruling 11).
-  Moved from ROADMAP.md (`pr-test-ci`) when the roadmap retired.
+  Moved here from the retired roadmap (`pr-test-ci`).
 
 ## Low
 
