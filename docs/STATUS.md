@@ -1,6 +1,6 @@
 # STATUS
 
-Present tense only. History lives in git and PR bodies, strategy in `ROADMAP.md`.
+Present tense only. History lives in git and PR bodies, strategy in the initiative records (`glw907/initiatives`).
 
 ## Current state
 
@@ -16,7 +16,7 @@ Present tense only. History lives in git and PR bodies, strategy in `ROADMAP.md`
 
 ## Next action
 
-Start the 907.life rebuild (`ROADMAP.md`, `907-rebuild`) with a brainstorm session. The rebuild
+Start the 907.life rebuild (initiative `907-rebuild`) with a brainstorm session. The rebuild
 includes the Survey re-skin and Survey's cairn layer (Survey S2, moved here from cairn-themes on
 2026-10-07).
 
