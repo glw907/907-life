@@ -33,7 +33,7 @@ includes the Survey re-skin and Survey's cairn layer (Survey S2, moved here from
 > work).
 >
 > **Read first.** In `~/Projects/cairn-themes`: the Survey spec
-> `docs/superpowers/specs/2026-10-07-survey-design.md` ("Architecture" defines the cairn layer,
+> `docs/specs/2026-10-07-survey-design.md` ("Architecture" defines the cairn layer,
 > "Phases" names S2), `docs/HISTORY.md`'s Survey S1 entry ("Do not rediscover"), and
 > `survey-theme/core/`. The core is merged on cairn-themes `main`; 907.life copies it in under the
 > copy-on-create rule (a header naming the source path and the cairn-themes commit, never edited
