@@ -24,15 +24,15 @@ full.
 ## Development Workflow
 
 Planned work runs through the `site-pass` skill (built on `pass-core`): STATUS holds the
-current state and next action, the pass plan lives under `docs/superpowers/plans/`, and a spec
-under `docs/superpowers/specs/` when one exists. The phrases "continue development," "next
+current state and next action, the pass plan lives under `docs/plans/`, and a spec
+under `docs/specs/` when one exists. The phrases "continue development," "next
 pass," "finish pass," and "ship pass" invoke it. cairn-cms is a separate standalone repo; this
 site consumes `@glw907/cairn-cms` from the npm registry by version range.
 
 **On-demand reading:**
 - `docs/STATUS.md`: current state, next action, open decisions. Open at the start of every pass.
 - `docs/architecture.md`: design decisions and system overview. Consult when planning structural changes.
-- `docs/superpowers/specs/`: feature specs. Pull the relevant spec before starting implementation.
+- `docs/specs/`: feature specs. Pull the relevant spec before starting implementation.
 - `BACKLOG.md`: known issues and future work. Check before starting a pass; it may contain relevant known limitations.
 - `.claude/rules/design-system.md`: auto-loads when editing `.svelte`/`.css`. Contains color token, typography, and shared class binding facts.
 

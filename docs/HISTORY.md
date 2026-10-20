@@ -24,7 +24,7 @@ media library, single-mount admin). The engine's rolling status is
 > **Architecture note.** cairn-cms is an embedded magic-link CMS library published as
 > `@glw907/cairn-cms`, and each site is a standalone repo consuming it via a per-site adapter. 907.life
 > is consumer #2. The old "multi-repo engine" direction (passes 11–15) is superseded; those specs and
-> plans under `docs/superpowers/` are history only.
+> plans under `docs/` are history only.
 
 ---
 
@@ -94,7 +94,7 @@ media library, single-mount admin). The engine's rolling status is
 > green. See this pass's commit for the exact counts.
 
 > **Pass 20: chassis restructure (done, deployed).** Task 3 of
-> `cairn-cms/docs/superpowers/plans/2026-07-05-chassis-restructure.md`. Split `src/lib` into
+> `cairn-cms/docs/plans/2026-07-05-chassis-restructure.md`. Split `src/lib` into
 > `src/chassis/` (the genre-free plumbing: `content.ts`, `feed.ts`, `cairn.server.ts`,
 > `theme-toggle.ts`, `tokens.css`, `prose.css`, `composition.css`, verbatim from cairn-cms's
 > showcase where genuinely site-agnostic) and `src/theme/` (907's own adapter config, chrome
@@ -147,7 +147,7 @@ media library, single-mount admin). The engine's rolling status is
 > overflow at 320/1440/2560.
 
 > **Pass 18: rebuild from Waymark (done).** Plan:
-> `docs/superpowers/plans/2026-07-05-rebuild-from-waymark.md`. Five tasks: (1) retired the 0.59-era
+> `docs/plans/2026-07-05-rebuild-from-waymark.md`. Five tasks: (1) retired the 0.59-era
 > app wholesale for a fresh Waymark scaffold on the v2 adapter idiom (`defineConcept`/`fieldset`, one
 > `posts` concept, `githubApp(...)`, entry-aware `render`); (2) migrated the eight posts as-is and
 > curated the eleven live tags into `site.config.yaml`'s vocabulary, dropping the orphaned
