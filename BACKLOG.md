@@ -15,6 +15,10 @@
   A `pull_request` workflow. Until it lands, the full-suite home is the local close gate (lean pass ruling 11).
   Moved here from the retired roadmap (`pr-test-ci`).
 
+- [ ] **#4** Move 907.life to approval-queue's look (the Survey theme) `#improvement` `#907-life` `#initiative:docs-system` *(2026-10-20)*
+  Geoff's ruling in the reviewed-pages prototype sitting: the review queue's look is the house
+  look, and 907.life adopts it rather than the reverse. Source: `cairn-themes/survey-theme/`.
+
 ## Low
 
 ## Closed
